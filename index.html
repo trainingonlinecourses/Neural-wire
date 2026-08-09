@@ -61,6 +61,7 @@ mark{background:rgba(34,211,238,.28);color:#aef3ff;border-radius:3px;padding:0 2
 .btn:disabled{opacity:.45;cursor:wait;transform:none}
 .btn.primary{background:linear-gradient(135deg,#3b63f0,#274bcc);border-color:rgba(120,150,255,.5)}
 .btn.danger{border-color:rgba(255,84,112,.5)}
+.btn.on{border-color:rgba(34,211,238,.6);color:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.2)}
 .btn svg{width:15px;height:15px;flex:none}
 .btn.loading svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -98,7 +99,7 @@ main{padding:24px 0 60px}
 .search-box input:focus{border-color:rgba(79,124,255,.6);box-shadow:0 0 0 3px rgba(79,124,255,.15)}
 .search-box .sic{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--mut)}
 .search-box kbd{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:'JetBrains Mono';font-size:.6rem;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:2px 7px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px;align-items:center}
 .chips::-webkit-scrollbar{display:none}
 .chip{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid var(--line);background:#0a1120;color:var(--mut);padding:7px 14px;border-radius:999px;font-size:.75rem;font-weight:600;transition:.2s}
 .chip:hover{color:var(--ink);border-color:rgba(148,163,255,.4)}
@@ -107,6 +108,7 @@ main{padding:24px 0 60px}
 .chip .cdot.on{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .chip .cdot.off{background:var(--hot);box-shadow:0 0 8px rgba(255,84,112,.7)}
 .chip .cdot.wait{background:var(--warn);animation:pulse 1.2s infinite}
+.chip .cdot.cache{background:#60a5fa;box-shadow:0 0 8px #60a5fa}
 .chip .n{font-family:'JetBrains Mono';font-size:.62rem;color:var(--cyan)}
 .section-note{font-family:'JetBrains Mono';font-size:.64rem;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;margin-bottom:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .section-note::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -119,6 +121,9 @@ main{padding:24px 0 60px}
 .card{background:linear-gradient(180deg,var(--panel),#090f1c);border:1px solid var(--line);border-radius:var(--rad);overflow:hidden;display:flex;flex-direction:column;transition:.25s;animation:rise .45s ease both;cursor:pointer}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .card:hover{transform:translateY(-4px);border-color:rgba(79,124,255,.5);box-shadow:0 14px 34px rgba(0,0,0,.5),0 0 22px rgba(79,124,255,.14)}
+.card.is-read{opacity:.62}
+.card.is-read:hover{opacity:.95}
+.card.is-unread{box-shadow:inset 3px 0 0 var(--cyan)}
 .thumb{position:relative;height:168px;background:#0d1526;overflow:hidden;flex:none;--g:linear-gradient(135deg,#12203f,#0a1428)}
 .grid.compact .thumb{height:120px}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s}
@@ -136,6 +141,7 @@ main{padding:24px 0 60px}
 .snippet{font-size:.79rem;color:var(--mut);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .models-row{display:flex;gap:6px;flex-wrap:wrap}
 .model-pill{font-family:'JetBrains Mono';font-size:.6rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,84,112,.5);color:#ff8ba0;background:rgba(255,84,112,.08)}
+.topic-pill{font-family:'JetBrains Mono';font-size:.58rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid rgba(34,211,238,.4);color:#8fe3f4;background:rgba(34,211,238,.07)}
 .card-meta{margin-top:auto;display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:.66rem;color:var(--mut);flex-wrap:wrap}
 .card-meta .acts{margin-left:auto;display:flex;align-items:center;gap:6px}
 .act{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--mut);font-size:.8rem;transition:.2s}
@@ -240,6 +246,7 @@ main{padding:24px 0 60px}
 .m-meta{display:flex;gap:14px;flex-wrap:wrap;font-family:'JetBrains Mono';font-size:.68rem;color:var(--mut);margin-bottom:18px}
 .m-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--line)}
 .m-url{user-select:all;font-family:'JetBrains Mono';font-size:.72rem;color:var(--cyan);background:#0a1120;border:1px dashed rgba(34,211,238,.4);border-radius:10px;padding:10px 12px;word-break:break-all;margin-bottom:14px}
+.brief-pre{font-family:'JetBrains Mono';font-size:.66rem;background:#0a1120;border:1px solid var(--line);border-radius:10px;padding:14px;max-height:300px;overflow:auto;white-space:pre-wrap;color:#c3cde2;margin-bottom:16px}
 .kbd-grid{display:grid;gap:10px}
 .kbd-row{display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:.85rem;color:#c3cde2}
 .kbd-row kbd{font-family:'JetBrains Mono';font-size:.68rem;border:1px solid var(--line);background:#0a1120;border-radius:6px;padding:4px 10px;color:var(--cyan)}
@@ -262,7 +269,7 @@ main{padding:24px 0 60px}
 .sw i::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#5b6b8c;transition:.2s}
 .sw input:checked+i{background:rgba(45,212,167,.22);border-color:rgba(45,212,167,.5)}
 .sw input:checked+i::after{left:22px;background:var(--ok);box-shadow:0 0 8px rgba(45,212,167,.6)}
-.dr-ft{padding:14px 20px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:.6rem;color:var(--mut);letter-spacing:.08em}
+.dr-ft{padding:14px 20px;border-top:1px solid var(--line);font-family:'JetBrains Mono';font-size:.6rem;color:var(--mut);letter-spacing:.08em;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 #toast{position:fixed;bottom:calc(24px + var(--nav-h));left:50%;transform:translateX(-50%) translateY(20px);z-index:300;opacity:0;pointer-events:none;background:#0e1628;border:1px solid rgba(79,124,255,.5);border-radius:12px;padding:12px 20px;font-size:.82rem;box-shadow:0 14px 40px rgba(0,0,0,.6);transition:.3s;max-width:92vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%)}
 #toast.err{border-color:rgba(255,84,112,.6)}
@@ -320,7 +327,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(6,9,
       </div>
       <button class="icon-btn" id="savedHeadBtn" title="Saved items">🔖<span class="bub" id="savedBub" style="display:none">0</span></button>
       <button class="icon-btn" id="shortcutsBtn" title="Keyboard shortcuts (?)">⌨</button>
-      <button class="btn" id="wiresBtn" title="Manage news wires">
+      <button class="btn" id="wiresBtn" title="Manage news wires + cache">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><circle cx="4" cy="12" r="2"/><circle cx="12" cy="10" r="2"/><circle cx="20" cy="14" r="2"/></svg>
         <span class="btxt">WIRES</span>
       </button>
@@ -339,7 +346,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(6,9,
   <div class="stats-strip">
     <div class="stat-card"><div class="v" id="statStories" data-v="0">0</div><div class="k">Wire Stories</div></div>
     <div class="stat-card"><div class="v" id="statModels" data-v="0">0</div><div class="k">Model Stories</div></div>
-    <div class="stat-card"><div class="v" id="statWires" data-v="0">0/0</div><div class="k">Wires Live</div></div>
+    <div class="stat-card"><div class="v" id="statWires" data-v="0">0/0</div><div class="k">Wires Live/Cached</div></div>
     <div class="stat-card"><div class="v" id="statHF" data-v="0">—</div><div class="k">HF Trending</div></div>
     <div class="stat-card"><div class="v" id="statGH" data-v="0">—</div><div class="k">GitHub Matches</div></div>
     <div class="stat-card"><div class="v" id="statSync" style="font-size:.95rem">--:--</div><div class="k">Last Sync</div></div>
@@ -366,13 +373,18 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(6,9,
         <kbd>/</kbd>
       </div>
       <select class="gh-select" id="sortSel" title="Sort order">
-        <option value="newest">↓ Newest</option><option value="oldest">↑ Oldest</option><option value="az">A → Z</option>
+        <option value="newest">↓ Newest</option><option value="hot">🔥 Hot</option>
+        <option value="oldest">↑ Oldest</option><option value="az">A → Z</option>
       </select>
+      <button class="btn" id="unreadBtn" title="Show unread only">● UNREAD 0</button>
+      <button class="btn" id="markAllBtn" title="Mark everything visible as read">✓ MARK ALL READ</button>
+      <button class="btn" id="briefBtn" title="Generate shareable daily brief (B)">⚡ DAILY BRIEF</button>
       <button class="btn" id="densityBtn" title="Toggle compact density">▤ <span class="btxt">Density</span></button>
       <span class="result-count" id="newsCountTxt"></span>
     </div>
     <div class="chips" id="rangeChips"></div>
-    <div class="section-note">Wire sources — click to filter · dot = live status · manage in WIRES panel</div>
+    <div class="chips" id="topicNewsChips"></div>
+    <div class="section-note">Wire sources — click to filter · 🟢 live · 🔵 cached · 🔴 offline · manage in WIRES panel</div>
     <div class="chips" id="sourceChips"></div>
     <div class="grid" id="newsGrid"></div>
   </section>
@@ -466,17 +478,18 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(6,9,
   <div class="wrap foot">
     <div>
       <h4>About this desk</h4>
-      <p>Every headline, model announcement, trending repository, HF model and radar signal shown here is fetched <b style="color:var(--cyan)">live</b> from public endpoints and re-synced automatically — no fake data, no samples. Unreachable sources show red status instead of placeholders; any script error surfaces in the red banner instead of killing the page.</p>
-      <p style="margin-top:10px">Auto wire sync every 3 min · GitHub & HF cache 5 min · Popup-safe link opening · Clipboard fallback chain · Press <span class="mono" style="color:var(--cyan)">?</span> for shortcuts.</p>
+      <p>Every headline, model, repo and radar signal is fetched <b style="color:var(--cyan)">live</b> — and every successful fetch is <b style="color:var(--gold)">persisted to your browser</b>, so the desk loads instantly on revisit and keeps showing real last-fetched data even when a wire (or your network) is down. Fresh syncs refresh cached data in place.</p>
+      <p style="margin-top:10px">Auto wire sync every 3 min · Persistent cache for news/GitHub/HF/spotlight · Unread history + filters persist · Popup-safe links + clipboard fallback · Press <span class="mono" style="color:var(--cyan)">?</span> for shortcuts.</p>
     </div>
     <div>
       <h4>Live data sources</h4>
       <ul>
-        <li><b>RSS WIRES</b> · OpenAI · Google AI · DeepMind · HF · Microsoft · NVIDIA · AWS · TechCrunch · VentureBeat · The Verge · MIT TR · Ars Technica (via rss2json)</li>
-        <li><b>JSON WIRES</b> · Hacker News Algolia · dev.to AI · lobste.rs AI (no proxy needed)</li>
+        <li><b>RSS WIRES</b> · OpenAI · Google AI · DeepMind · HF · Microsoft · NVIDIA · AWS · TechCrunch · VentureBeat · The Verge · MIT TR · Ars Technica</li>
+        <li><b>JSON WIRES</b> · Hacker News Algolia · dev.to AI · lobste.rs AI</li>
         <li><b>MODELS</b> · Hugging Face Hub API (trendingScore)</li>
-        <li><b>CODE</b> · GitHub REST Search API + repo spotlight</li>
-        <li><b>WORLD</b> · WorldMonitor API (api.worldmonitor.app) — key-optional radar</li>
+        <li><b>CODE</b> · GitHub REST Search API + worldmonitor spotlight</li>
+        <li><b>WORLD</b> · WorldMonitor API — key-optional radar</li>
+        <li><b>LOCAL</b> · localStorage persistence (cache · saved · prefs · read-state)</li>
       </ul>
     </div>
   </div>
@@ -489,7 +502,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px;background:rgba(6,9,
     <button class="icon-btn" id="drawerClose" style="width:34px;height:34px">✕</button>
   </div>
   <div class="dr-list" id="drawerList"></div>
-  <div class="dr-ft">TOGGLING A WIRE ON FETCHES IT LIVE · STATE PERSISTS IN YOUR BROWSER</div>
+  <div class="dr-ft"><span>TOGGLE WIRES LIVE · CACHED DATA SURVIVES RELOADS</span><button class="btn" id="clearCacheBtn" style="padding:6px 10px;font-size:.62rem">🧹 CLEAR CACHE</button></div>
 </aside>
 <div id="modalWrap"><div class="modal-box" id="modalBox"></div></div>
 <button id="toTop" title="Back to top">↑</button>
@@ -541,6 +554,18 @@ var MODEL_TERMS=[
   ['Sora',/\bSora\b/i],['Veo',/\bVeo\b/i],['DALL·E',/DALL[-·]?E/i],['Imagen',/\bImagen\b/i],
   ['Copilot',/\bCopilot\b/i],['Falcon',/\bFalcon\b/i],['Manus',/\bManus\b/i],
 ];
+var TOPIC_RULES=[
+  ['FUNDING',/\b(funding|raise[sd]?|series\s?[a-c]|invest\w*|valuation|acqui\w*|merger|ipo)\b/i],
+  ['REGULATION',/\b(regulat\w*|lawsuit|court|ban\b|bans\b|policy|compliance|executive order|senate|congress|eu ai act|antitrust|lawmakers?)\b/i],
+  ['RESEARCH',/\b(paper|research|benchmark|state[- ]of[- ]the[- ]art|study|arxiv|evaluat\w*|dataset|training run|breakthrough)\b/i],
+  ['HARDWARE',/\b(chips?|gpus?|tpus?|data\s?centers?|cluster|robot\w*|hardware|silicon|wafer)\b/i],
+  ['SECURITY',/\b(security|hack\w*|breach|vulnerab\w*|cyber\w*|jailbreak|safety|alignment|exploit)\b/i],
+  ['OPEN SOURCE',/\b(open[- ]source|open weights|hugging ?face|apache|mit license|community model)\b/i],
+  ['PRODUCT',/\b(launch\w*|releas\w*|availab\w*|rolls out|ships|new feature|api\b|app\b|plugin|integration)\b/i],
+  ['PARTNERSHIP',/\b(partner\w*|deal\b|collaborat\w*|agreement|alliance|teams up)\b/i],
+];
+function detectTopics(t){var hits=[],i;for(i=0;i<TOPIC_RULES.length;i++){var n=TOPIC_RULES[i][0],re=TOPIC_RULES[i][1];
+  if(re.test(t)&&hits.indexOf(n)<0)hits.push(n);}return hits;}
 var LANG_COLORS={Python:'#3572A5',JavaScript:'#f1e05a',TypeScript:'#3178c6','Jupyter Notebook':'#DA5B0B',
   Rust:'#dea584',Go:'#00ADD8','C++':'#f34b7d',C:'#555555',Java:'#b07219',Kotlin:'#A97BFF',Swift:'#F05138',
   Ruby:'#701516',PHP:'#4F5D95','C#':'#178600',Shell:'#89e051',HTML:'#e34c26',CSS:'#563d7c',Zig:'#ec915c',
@@ -559,7 +584,8 @@ var PROXY_BUILDERS=[
 ];
 var newsAll=[],activeSource='all',activeTab='news',newsQuery='',modelQuery='';
 var newsRange='all',newsSort='newest',compact=false,tickerPaused=false;
-var modelSel=new Set();
+var unreadOnly=false,firstLoad=true;
+var modelSel=new Set(),topicSel=new Set(),readSet=new Set();
 var srcState={},itemsBySource={};
 SOURCES.forEach(function(s){srcState[s.id]={status:'wait',count:0};});
 var enabledSources={};SOURCES.forEach(function(s){enabledSources[s.id]=true;});
@@ -568,8 +594,9 @@ var ghData={rising:{items:null,at:0,total:0},active:{items:null,at:0,total:0}};
 var repoIndex={};
 var hfKind='models',hfCache={models:null,spaces:null,at:0};
 var exState={topic:'ai',q:'',lang:'',sort:'stars',page:1,total:0,initialized:false};
+var exHydrated=null;
 var wmRepo=null,wmRepoAt=0,radarLoaded=false,radarBusy=false;
-var savedItems=[],countdown=NEWS_TTL;
+var savedItems=[],countdown=NEWS_TTL,windowBrief='';
 function $(s){var el=document.querySelector(s);return el;}
 function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
@@ -611,6 +638,71 @@ function proxyFetchText(url,ms){
   }
   return attempt(0);}
 function smartText(url){return fetchText(url,10000).catch(function(){return proxyFetchText(url,14000);});}
+function cachePut(id,items){
+  try{
+    var slim=items.slice(0,20).map(function(it){return {t:it.title,l:it.link,d:(it.desc||'').slice(0,220),
+      dt:it.date.getTime(),src:it.src,img:it.img||'',pts:it.points,cmts:it.comments,disc:it.discuss};});
+    localStorage.setItem('nw_cache_'+id,JSON.stringify({at:Date.now(),items:slim}));
+  }catch(_){}
+}
+function cacheGet(id){try{var v=JSON.parse(localStorage.getItem('nw_cache_'+id));
+  if(v&&Array.isArray(v.items)&&v.items.length)return v;return null;}catch(_){return null;}}
+function cacheToItems(c,src){
+  return c.items.map(function(s){
+    return normItem({title:s.t,link:s.l,pubDate:new Date(s.dt).toISOString(),description:s.d,
+      thumbnail:s.img,points:s.pts,comments:s.cmts,discuss:s.disc},src);});
+}
+function slimRepo(r){return {full_name:r.full_name,name:r.name,html_url:r.html_url,description:r.description,
+  stargazers_count:r.stargazers_count,forks_count:r.forks_count,watchers_count:r.watchers_count,
+  open_issues_count:r.open_issues_count,language:r.language,topics:r.topics||[],
+  created_at:r.created_at,updated_at:r.updated_at,pushed_at:r.pushed_at,homepage:r.homepage,
+  owner:{login:(r.owner&&r.owner.login)||''},license:r.license?{spdx_id:r.license.spdx_id}:null};}
+function ghCachePut(mode,d){try{localStorage.setItem('nw_gh_'+mode,JSON.stringify({at:d.at,total:d.total,items:d.items.map(slimRepo)}));}catch(_){}}
+function ghCacheGet(mode){try{var v=JSON.parse(localStorage.getItem('nw_gh_'+mode));
+  if(v&&v.items&&v.items.length){v.items.forEach(function(r){repoIndex[r.full_name]=r;});return v;}return null;}catch(_){return null;}}
+function hfCachePut(kind){try{localStorage.setItem('nw_hf_'+kind,JSON.stringify({at:hfCache.at,items:hfCache[kind]}));}catch(_){}}
+function hfCacheGet(kind){try{var v=JSON.parse(localStorage.getItem('nw_hf_'+kind));
+  if(v&&v.items&&v.items.length)return v;return null;}catch(_){return null;}}
+function spotPut(){try{localStorage.setItem('nw_spot',JSON.stringify({at:wmRepoAt,repo:slimRepo(wmRepo)}));}catch(_){}}
+function spotGet(){try{var v=JSON.parse(localStorage.getItem('nw_spot'));
+  if(v&&v.repo&&v.repo.full_name)return v;return null;}catch(_){return null;}}
+function exCachePut(items){try{localStorage.setItem('nw_explorer',JSON.stringify({at:Date.now(),
+  state:{topic:exState.topic,q:exState.q,lang:exState.lang,sort:exState.sort,page:exState.page,total:exState.total},
+  items:items.map(slimRepo)}));}catch(_){}}
+function exCacheGet(){try{var v=JSON.parse(localStorage.getItem('nw_explorer'));
+  if(v&&v.items&&v.items.length)return v;return null;}catch(_){return null;}}
+function clearAllCaches(){
+  var kill=[];
+  try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);
+    if(/^nw_(cache_|gh_|hf_|spot|explorer)/.test(k))kill.push(k);}}catch(_){}
+  kill.forEach(function(k){try{localStorage.removeItem(k);}catch(_){}});
+  toast('🧹 Fetched-data cache cleared — reloading');
+  setTimeout(function(){window.location.reload();},700);
+}
+function savePrefs(){
+  lsSet('nw_prefs',{src:activeSource,range:newsRange,sort:newsSort,unreadOnly:unreadOnly,compact:compact,
+    topics:Array.from(topicSel),models:Array.from(modelSel)});
+}
+function loadPrefs(){
+  var p=lsGet('nw_prefs',null);if(!p)return;
+  if(p.src)activeSource=p.src;
+  if(p.range)newsRange=p.range;
+  if(p.sort)newsSort=p.sort;
+  unreadOnly=!!p.unreadOnly;compact=!!p.compact;
+  if(Array.isArray(p.topics))p.topics.forEach(function(t){topicSel.add(t);});
+  if(Array.isArray(p.models))p.models.forEach(function(m){modelSel.add(m);});
+  var sv=$('#sortSel');if(sv)sv.value=newsSort;
+}
+function loadRead(){var arr=lsGet('nw_read',[]);if(Array.isArray(arr))arr.forEach(function(k){readSet.add(k);});}
+function persistRead(){lsSet('nw_read',Array.from(readSet).slice(-2000));}
+function markRead(key){
+  if(!key||readSet.has(key))return;
+  readSet.add(key);persistRead();updateUnreadUI();
+}
+function updateUnreadUI(){
+  var n=newsAll.filter(function(it){return !readSet.has(it.link);}).length;
+  var b=$('#unreadBtn');if(b){b.textContent='● UNREAD '+n;b.classList.toggle('on',unreadOnly);}
+}
 function copyText(text){
   function legacy(){
     var ok=false;
@@ -691,13 +783,15 @@ function normItem(raw,src){
   var desc=stripHtml(raw.description||'').slice(0,400);
   var date=new Date(raw.pubDate||raw.date||Date.now());
   if(isNaN(date.getTime()))date=new Date();
-  var models=detectModels(title+' '+desc);
+  var blob=title+' '+desc;
+  var models=detectModels(blob);
+  var topics=detectTopics(blob);
   var isModel=models.length>0||
     (/\b(releases?|launch\w*|unveil\w*|announc\w*|introduc\w*|debut\w*)\b/i.test(title)&&
      /\b(model|LLM|agent|chatbot|video gen)\b/i.test(title));
   return {id:src.id+'::'+link,title:title,link:link,desc:desc,date:date,src:src.id,
     img:(raw.thumbnail||'').trim(),points:raw.points||null,comments:raw.comments||null,
-    discuss:raw.discuss||null,models:models,isModel:isModel};
+    discuss:raw.discuss||null,models:models,topics:topics,isModel:isModel};
 }
 function parseFeedXML(txt,src){
   var doc=new DOMParser().parseFromString(txt,'text/xml');
@@ -775,10 +869,12 @@ function rebuildNews(){
   var merged=[];
   act.forEach(function(s){merged=merged.concat(itemsBySource[s.id]||[]);});
   newsAll=dedupe(merged).sort(function(a,b){return b.date-a.date;});
-  renderNews();renderModels();renderTicker();renderSourceChips();renderModelChips();updateCounts();updateStats();
+  renderNews();renderModels();renderTicker();renderSourceChips();renderModelChips();renderTopicNewsChips();
+  updateCounts();updateStats();updateUnreadUI();
 }
 function loadOne(src){
-  srcState[src.id].status='wait';renderSourceChips();
+  srcState[src.id].status=(itemsBySource[src.id]&&itemsBySource[src.id].length)?'cache':'wait';
+  renderSourceChips();
   var p;
   if(src.kind==='rss')p=fetchRSS(src);
   else if(src.kind==='hn')p=fetchHN();
@@ -786,26 +882,53 @@ function loadOne(src){
   else if(src.kind==='lobsters')p=fetchLobsters();
   else p=Promise.reject(new Error('unknown source kind'));
   return p.then(function(items){
-      itemsBySource[src.id]=items;srcState[src.id]={status:'on',count:items.length};
+      itemsBySource[src.id]=items;
+      srcState[src.id]={status:'on',count:items.length};
+      cachePut(src.id,items);
     }).catch(function(){
-      srcState[src.id].status='off';srcState[src.id].count=0;
+      var c=cacheGet(src.id);
+      if(c){itemsBySource[src.id]=cacheToItems(c,src);
+        srcState[src.id]={status:'cache',count:c.items.length,age:c.at};}
+      else{srcState[src.id]={status:'off',count:0};}
     }).then(function(){rebuildNews();});
 }
 function loadNews(){
+  var before=new Set(newsAll.map(function(it){return it.link;}));
   var act=SOURCES.filter(function(s){return enabledSources[s.id];});
   return Promise.all(act.map(function(s){return loadOne(s);})).then(function(){
     var el=$('#statSync');if(el)el.textContent=new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
     countdown=NEWS_TTL;
+    var fresh=0;
+    newsAll.forEach(function(it){if(!before.has(it.link))fresh++;});
+    if(!firstLoad&&fresh>0)toast('📡 +'+fresh+' new stories arrived on the wires');
+    firstLoad=false;
     if(!newsAll.length){
       showFatal('All wires failed — network/CORS restriction likely. Use SYNC NOW to retry.','fetch');
     }
   });
 }
+function hydrateFromCache(){
+  SOURCES.forEach(function(s){
+    var c=cacheGet(s.id);
+    if(c&&c.items.length){
+      itemsBySource[s.id]=cacheToItems(c,s);
+      srcState[s.id]={status:'cache',count:c.items.length,age:c.at};
+    }
+  });
+  var gr=ghCacheGet('rising');if(gr)ghData.rising=gr;
+  var ga=ghCacheGet('active');if(ga)ghData.active=ga;
+  var hm=hfCacheGet('models');if(hm){hfCache.models=hm.items;hfCache.at=hm.at;}
+  var hs=hfCacheGet('spaces');if(hs){hfCache.spaces=hs.items;}
+  var sp=spotGet();
+  if(sp){wmRepo=sp.repo;wmRepoAt=sp.at;repoIndex[wmRepo.full_name]=wmRepo;renderSpots();}
+  exHydrated=exCacheGet();
+  rebuildNews();
+}
 function renderRangeChips(){
   var c=$('#rangeChips');if(!c)return;
   c.innerHTML=RANGES.map(function(r){
     return '<button class="chip '+(newsRange===r[0]?'active':'')+'" data-range="'+r[0]+'">'+r[1]+'</button>';}).join('');
-  $$('#rangeChips .chip').forEach(function(ch){ch.onclick=function(){newsRange=ch.dataset.range;renderRangeChips();renderNews();};});
+  $$('#rangeChips .chip').forEach(function(ch){ch.onclick=function(){newsRange=ch.dataset.range;savePrefs();renderRangeChips();renderNews();};});
 }
 function renderSourceChips(){
   var c=$('#sourceChips');if(!c)return;
@@ -819,7 +942,20 @@ function renderSourceChips(){
       '<span class="cdot '+st.status+'"></span>'+esc(s.name)+' <span class="n">'+st.count+'</span></button>';
   });
   c.innerHTML=html;
-  $$('#sourceChips .chip').forEach(function(ch){ch.onclick=function(){activeSource=ch.dataset.src;renderSourceChips();renderNews();};});
+  $$('#sourceChips .chip').forEach(function(ch){ch.onclick=function(){activeSource=ch.dataset.src;savePrefs();renderSourceChips();renderNews();};});
+}
+function renderTopicNewsChips(){
+  var c=$('#topicNewsChips');if(!c)return;
+  var tally={};
+  newsAll.forEach(function(it){(it.topics||[]).forEach(function(t){tally[t]=(tally[t]||0)+1;});});
+  var top=TOPIC_RULES.map(function(r){return r[0];}).filter(function(t){return tally[t];});
+  c.innerHTML='<span class="mono" style="font-size:.6rem;color:var(--mut);letter-spacing:.14em">TOPIC TAGS ▸</span>'+
+    (top.length?top.map(function(t){
+      return '<button class="chip '+(topicSel.has(t)?'active':'')+'" data-tp="'+esc(t)+'">'+esc(t)+' <span class="n">'+tally[t]+'</span></button>';}).join('')
+    :'<span class="mono" style="font-size:.62rem;color:var(--mut)">auto-detected topics appear here…</span>');
+  $$('#topicNewsChips .chip').forEach(function(ch){ch.onclick=function(){
+    var t=ch.dataset.tp;if(topicSel.has(t))topicSel.delete(t);else topicSel.add(t);
+    savePrefs();renderTopicNewsChips();renderNews();};});
 }
 function renderModelChips(){
   var c=$('#modelChips');if(!c)return;
@@ -831,7 +967,7 @@ function renderModelChips(){
     : '<span class="mono" style="font-size:.66rem;color:var(--mut)">Model name chips appear here once detected on the wires…</span>';
   $$('#modelChips .chip').forEach(function(ch){ch.onclick=function(){
     var m=ch.dataset.m;if(modelSel.has(m))modelSel.delete(m);else modelSel.add(m);
-    renderModelChips();renderModels();};});
+    savePrefs();renderModelChips();renderModels();};});
 }
 function thumbHTML(it,s){
   var badges='<span class="badge" style="background:'+s.color+'">'+esc(s.name.toUpperCase())+'</span>'+(it.isModel?'<span class="mtag">MODEL</span>':'');
@@ -850,17 +986,19 @@ function newsCardHTML(it,i,q){
   var s=srcById[it.src];
   var extra=it.points!=null?' · ▲'+it.points+(it.comments!=null?'/'+it.comments+'💬':''):'';
   var pills=it.models.length?'<div class="models-row">'+it.models.slice(0,4).map(function(m){return '<span class="model-pill">'+esc(m)+'</span>';}).join('')+'</div>':'';
-  return '<article class="card" style="animation-delay:'+Math.min(i*40,480)+'ms" data-act="open-news" data-key="'+esc(it.link)+'">'+
+  var tp=(it.topics||[]).length?'<div class="models-row">'+it.topics.slice(0,2).map(function(t){return '<span class="topic-pill">'+esc(t)+'</span>';}).join('')+'</div>':'';
+  var isRead=readSet.has(it.link);
+  return '<article class="card '+(isRead?'is-read':'is-unread')+'" style="animation-delay:'+Math.min(i*40,480)+'ms" data-act="open-news" data-key="'+esc(it.link)+'">'+
     thumbHTML(it,s)+
     '<div class="card-body">'+
       '<h3>'+highlight(it.title,q)+'</h3>'+
       (it.desc?'<p class="snippet">'+highlight(it.desc,q)+'</p>':'')+
-      pills+
-      '<div class="card-meta"><span>⏱ '+ago(it.date)+'</span><span>'+esc(it.date.toLocaleDateString(undefined,{month:'short',day:'numeric'}))+extra+'</span>'+
+      pills+tp+
+      '<div class="card-meta"><span>⏱ '+ago(it.date)+(isRead?'':' · <b style="color:var(--cyan)">NEW</b>')+'</span><span>'+esc(it.date.toLocaleDateString(undefined,{month:'short',day:'numeric'}))+extra+'</span>'+
         '<span class="acts">'+
           saveBtnHTML('STORY','n|'+it.link,it.title,it.link,s.name+' · '+ago(it.date))+
           '<button class="act" data-act="copy" data-link="'+esc(it.link)+'" title="Copy link">⧉</button>'+
-          '<a class="open" href="'+esc(it.link)+'" target="_blank" rel="noopener">READ ↗</a>'+
+          '<a class="open" href="'+esc(it.link)+'" data-read="'+esc(it.link)+'" target="_blank" rel="noopener">READ ↗</a>'+
         '</span></div>'+
     '</div>'+
   '</article>';
@@ -870,13 +1008,21 @@ function skeletonCards(n){
   for(i=0;i<n;i++)out+='<div class="skel"><div class="s-img sh"></div><div class="s-body"><div class="sh h1"></div><div class="sh h2"></div><div class="sh h3"></div><div class="sh h4"></div></div></div>';
   return out;
 }
+function hotScore(it){
+  var ageH=(Date.now()-it.date.getTime())/3600000;
+  return (it.points||0)*3+(it.comments||0)+Math.max(0,48-ageH);
+}
 function filteredNews(){
   var items=newsAll;
   if(activeSource!=='all')items=items.filter(function(it){return it.src===activeSource;});
   if(newsRange!=='all')items=items.filter(function(it){return Date.now()-it.date.getTime()<=RANGE_MS[newsRange];});
+  if(unreadOnly)items=items.filter(function(it){return !readSet.has(it.link);});
+  if(topicSel.size)items=items.filter(function(it){
+    var ok=true;topicSel.forEach(function(t){if((it.topics||[]).indexOf(t)<0)ok=false;});return ok;});
   if(newsQuery){var q=newsQuery.toLowerCase();items=items.filter(function(it){return (it.title+' '+it.desc).toLowerCase().indexOf(q)>=0;});}
   if(newsSort==='oldest')items=items.slice().sort(function(a,b){return a.date-b.date;});
   else if(newsSort==='az')items=items.slice().sort(function(a,b){return a.title.localeCompare(b.title);});
+  else if(newsSort==='hot')items=items.slice().sort(function(a,b){return hotScore(b)-hotScore(a);});
   return items;
 }
 function renderNews(){
@@ -886,8 +1032,8 @@ function renderNews(){
   var items=filteredNews();
   var cnt=$('#newsCountTxt');if(cnt)cnt.innerHTML='SHOWING <b>'+items.length+'</b> OF '+newsAll.length+' STORIES';
   g.innerHTML=items.length?items.slice(0,84).map(function(it,i){return newsCardHTML(it,i,newsQuery);}).join('')
-    :'<div class="empty"><b>'+(newsAll.length?'No matching stories':'No live stories yet — every wire failed')+'</b>'+
-     (newsAll.length?'Try a different filter, time range or search term.':'Likely a network/CORS restriction in this environment. Press SYNC NOW (or R) to retry.')+'</div>';
+    :'<div class="empty"><b>'+(newsAll.length?(unreadOnly?'No unread stories — all caught up!':'No matching stories'):'No live stories yet — every wire failed')+'</b>'+
+     (newsAll.length?(unreadOnly?'Turn off the unread filter or sync again for more.':'Try a different filter, time range or search term.'):'Likely a network/CORS restriction in this environment. Press SYNC NOW (or R) to retry.')+'</div>';
 }
 function renderModels(){
   var g=$('#modelGrid');if(!g)return;
@@ -905,7 +1051,7 @@ function renderTicker(){
   var top=newsAll.slice(0,14);
   if(!top.length){track.innerHTML='<span class="tk-empty">ESTABLISHING LIVE CONNECTION TO NEWS WIRES…</span>';return;}
   var one=top.map(function(it){var s=srcById[it.src];
-    return '<a class="tk-item" href="'+esc(it.link)+'" target="_blank" rel="noopener">'+
+    return '<a class="tk-item" href="'+esc(it.link)+'" data-read="'+esc(it.link)+'" target="_blank" rel="noopener">'+
       '<span class="src" style="background:'+s.color+'">'+esc(s.short)+'</span>'+esc(it.title)+'</a>';}).join('');
   track.innerHTML=one+one;
 }
@@ -918,8 +1064,43 @@ function updateCounts(){
 function updateStats(){
   animateNum($('#statStories'),newsAll.length);
   animateNum($('#statModels'),newsAll.filter(function(it){return it.isModel;}).length);
-  var on=SOURCES.filter(function(s){return srcState[s.id]&&srcState[s.id].status==='on';}).length;
+  var on=SOURCES.filter(function(s){return srcState[s.id]&&(srcState[s.id].status==='on'||srcState[s.id].status==='cache');}).length;
   var w=$('#statWires');if(w){w.textContent=on+'/'+SOURCES.length;w.dataset.v=on;}
+}
+function buildBrief(){
+  var cutoff=Date.now()-86400000;
+  var lines=['# NEURALWIRE — Daily AI Brief','# '+new Date().toLocaleString(),''];
+  SOURCES.forEach(function(s){
+    if(!enabledSources[s.id])return;
+    var its=(itemsBySource[s.id]||[]).filter(function(it){return it.date.getTime()>=cutoff;}).slice(0,3);
+    if(!its.length)return;
+    lines.push('## '+s.name);
+    its.forEach(function(it){lines.push('- ['+it.title+']('+it.link+')');});
+    lines.push('');
+  });
+  lines.push('> Compiled live from '+SOURCES.length+' wires by NEURALWIRE — zero sample content.');
+  return lines.join('\n');
+}
+function openBrief(){
+  if(!newsAll.length){toast('No stories yet — sync first',true);return;}
+  windowBrief=buildBrief();
+  openModal(
+    '<div class="m-kicker"><span style="background:var(--gold);color:#04121a;padding:3px 9px;border-radius:6px;font-weight:700">⚡ DAILY BRIEF</span><span>· last 24h · real headlines only</span></div>'+
+    '<div class="m-title">Your shareable AI news digest</div>'+
+    '<pre class="brief-pre">'+esc(windowBrief)+'</pre>'+
+    '<div class="m-actions">'+
+      '<button class="btn primary" data-act="brief-copy">⧉ COPY MARKDOWN</button>'+
+      '<button class="btn" data-act="brief-dl">⬇ DOWNLOAD .MD</button>'+
+      '<button class="btn" data-act="close-modal">CLOSE</button>'+
+    '</div>');
+}
+function downloadBrief(){
+  var blob=new Blob([windowBrief],{type:'text/markdown'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  var d=new Date();
+  a.download='neuralwire-brief-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.md';
+  a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  toast('⬇ Brief downloaded');
 }
 function ghSearch(q,sort,order,per,page){
   var url='https://api.github.com/search/repositories?q='+encodeURIComponent(q)+'&per_page='+per+'&page='+page;
@@ -965,7 +1146,7 @@ function loadTrending(mode,force){
   var grid=$('#trendGrid');
   var cached=ghData[mode];
   if(!force&&cached.items&&Date.now()-cached.at<GH_CACHE_TTL){renderTrending();return Promise.resolve();}
-  grid.innerHTML=skeletonCards(6);$('#langBars').innerHTML='';$('#trendStats').innerHTML='';
+  if(!cached.items)grid.innerHTML=skeletonCards(6);
   var st=$('#trendStamp');if(st)st.textContent='PULLING LIVE FROM GITHUB API…';
   var d7=isoDaysAgo(7),d1=isoDaysAgo(1);
   var queries=mode==='rising'
@@ -981,23 +1162,27 @@ function loadTrending(mode,force){
     else items.sort(function(a,b){return new Date(b.pushed_at)-new Date(a.pushed_at);});
     items=items.slice(0,24);
     ghData[mode]={items:items,at:Date.now(),total:total};
+    ghCachePut(mode,ghData[mode]);
     renderTrending();updateCounts();
   }).catch(function(e){
-    grid.innerHTML='<div class="empty"><b>GitHub request failed ('+esc(e.message)+')</b>'+
-      (/403|429/.test(e.message)?'Unauthenticated rate limit — wait ~1 minute and retry.':'Check your connection and retry.')+'</div>';
+    if(!ghData[mode].items){
+      grid.innerHTML='<div class="empty"><b>GitHub request failed ('+esc(e.message)+')</b>'+
+        (/403|429/.test(e.message)?'Unauthenticated rate limit — wait ~1 minute and retry.':'Check your connection and retry.')+'</div>';
+    }else toast('GitHub refresh failed — showing cached data',true);
     var st2=$('#trendStamp');if(st2)st2.textContent='ERROR — '+e.message;
   });
 }
 function renderTrending(){
   var d=ghData[trendMode];if(!d||!d.items)return;
   var items=d.items,at=d.at,total=d.total;
+  var stale=Date.now()-at>GH_CACHE_TTL;
   var starsSum=items.reduce(function(a,r){return a+r.stargazers_count;},0);
   var ts=$('#trendStats');
   if(ts)ts.innerHTML=
     '<div class="stat"><b>'+fmtStars(total)+'</b>matching repos on GitHub</div>'+
     '<div class="stat"><b>'+fmtStars(starsSum)+'</b>combined stars in list</div>'+
     '<div class="stat"><b>'+items.length+'</b>repos shown (live)</div>'+
-    '<div class="stat"><b>'+new Date(at).toLocaleTimeString()+'</b>last fetched</div>';
+    '<div class="stat"><b>'+new Date(at).toLocaleTimeString()+'</b>'+(stale?'cached · refreshing…':'last fetched')+'</div>';
   var st=$('#trendStamp');
   if(st)st.textContent=trendMode==='rising'
     ?'METHOD: CREATED ≤7 DAYS · TOPICS ai/llm/generative-ai · BY STARS'
@@ -1020,15 +1205,25 @@ function buildExQuery(){
   p.push('stars:>=1');
   return p.join(' ');
 }
+function renderExCached(v){
+  (v.items||[]).forEach(function(r){repoIndex[r.full_name]=r;});
+  $('#exStats').innerHTML=
+    '<div class="stat"><b>'+fmtStars(v.state.total||v.items.length)+'</b>repos matched</div>'+
+    '<div class="stat"><b>'+ago(v.at)+'</b>restored from cache</div>'+
+    '<div class="stat"><b>refreshing…</b>live query running</div>';
+  $('#exGrid').innerHTML=v.items.map(function(r,i){return ghCardHTML(r,i,0);}).join('');
+}
 function runExplorer(){
   var grid=$('#exGrid');if(!grid)return;
-  grid.innerHTML=skeletonCards(6);
+  if(!exHydrated)grid.innerHTML=skeletonCards(6);
+  exHydrated=null;
   $('#exStats').innerHTML='';$('#exPager').innerHTML='';
   return ghSearch(buildExQuery(),exState.sort||null,'desc',24,exState.page).then(function(j){
     exState.total=j.total_count||0;
     var ce=$('#cntExplorer');if(ce)ce.textContent=fmtStars(exState.total);
     animateNum($('#statGH'),exState.total,function(v){return fmtStars(v);});
     (j.items||[]).forEach(function(r){repoIndex[r.full_name]=r;});
+    exCachePut(j.items||[]);
     $('#exStats').innerHTML=
       '<div class="stat"><b>'+fmtStars(j.total_count||0)+'</b>repositories matched (live)</div>'+
       '<div class="stat"><b>'+exState.page+'</b>page · 24 per page</div>'+
@@ -1065,7 +1260,7 @@ function loadHF(kind,force){
   $('#hfSpaces').classList.toggle('active',kind==='spaces');
   var grid=$('#hfGrid');
   if(!force&&hfCache[kind]&&Date.now()-hfCache.at<GH_CACHE_TTL){renderHF();return Promise.resolve();}
-  grid.innerHTML=skeletonCards(6);
+  if(!hfCache[kind])grid.innerHTML=skeletonCards(6);
   var st=$('#hfStamp');if(st)st.textContent='PULLING LIVE FROM HUGGING FACE HUB…';
   var urls=[
     'https://huggingface.co/api/'+kind+'?sort=trendingScore&limit=18&full=false',
@@ -1080,9 +1275,12 @@ function loadHF(kind,force){
   }
   return tryUrl(0).then(function(data){
     hfCache[kind]=data.map(normHF);hfCache.at=Date.now();
+    hfCachePut(kind);
     renderHF();
   }).catch(function(e){
-    grid.innerHTML='<div class="empty"><b>Hugging Face unreachable ('+esc(e.message)+')</b>Direct API + CORS proxies failed — check connection and press Refresh.</div>';
+    if(!hfCache[kind]){
+      grid.innerHTML='<div class="empty"><b>Hugging Face unreachable ('+esc(e.message)+')</b>Direct API + CORS proxies failed — check connection and press Refresh.</div>';
+    }else toast('HF refresh failed — showing cached data',true);
     var st2=$('#hfStamp');if(st2)st2.textContent='ERROR — '+e.message;
   });
 }
@@ -1090,7 +1288,8 @@ function renderHF(){
   var items=hfCache[hfKind];if(!items)return;
   var grid=$('#hfGrid');if(!grid)return;
   var st=$('#hfStamp');
-  if(st)st.textContent=items.length+' TRENDING '+hfKind.toUpperCase()+' · FETCHED '+new Date(hfCache.at).toLocaleTimeString()+' · huggingface.co API';
+  var stale=Date.now()-hfCache.at>GH_CACHE_TTL;
+  if(st)st.textContent=items.length+' TRENDING '+hfKind.toUpperCase()+' · '+(stale?'CACHED '+ago(hfCache.at)+' · refreshing…':'FETCHED '+new Date(hfCache.at).toLocaleTimeString())+' · huggingface.co API';
   animateNum($('#statHF'),items.length);
   var ch=$('#cntHF');if(ch)ch.textContent=items.length;
   grid.innerHTML=items.map(function(m,i){
@@ -1151,10 +1350,12 @@ function loadSpotlight(){
   if(wmRepo&&Date.now()-wmRepoAt<GH_CACHE_TTL){renderSpots();return Promise.resolve();}
   return fetch('https://api.github.com/repos/koala73/worldmonitor',{headers:{Accept:'application/vnd.github+json'},signal:timeoutSig(12000)})
     .then(function(r){if(!r.ok)throw new Error('GitHub '+r.status);return r.json();})
-    .then(function(j){wmRepo=j;wmRepoAt=Date.now();repoIndex[wmRepo.full_name]=wmRepo;renderSpots();})
+    .then(function(j){wmRepo=j;wmRepoAt=Date.now();repoIndex[wmRepo.full_name]=wmRepo;spotPut();renderSpots();})
     .catch(function(e){
-      $$('.spot-holder').forEach(function(h){
-        h.innerHTML='<div class="banner show"><span>Spotlight fetch failed ('+esc(e.message)+')</span><button data-act="retry-spot">Retry</button></div>';});
+      if(!wmRepo){
+        $$('.spot-holder').forEach(function(h){
+          h.innerHTML='<div class="banner show"><span>Spotlight fetch failed ('+esc(e.message)+')</span><button data-act="retry-spot">Retry</button></div>';});
+      }
     });
 }
 function rFgRender(data){
@@ -1306,10 +1507,16 @@ function findNews(link){
   }
   return null;
 }
+function readTime(text){
+  var words=String(text||'').split(/\s+/).length;
+  return Math.max(1,Math.round(words/200));
+}
 function openNewsModal(link){
   var it=findNews(link);
   if(!it){toast('Story not in current cache',true);return;}
+  markRead(it.link);
   var s=srcById[it.src];
+  var tp=(it.topics||[]).length?'<div class="models-row" style="margin-bottom:14px">'+it.topics.map(function(t){return '<span class="topic-pill">'+esc(t)+'</span>';}).join('')+'</div>':'';
   openModal(
     '<div class="m-kicker"><span style="background:'+s.color+';color:#04121a;padding:3px 9px;border-radius:6px;font-weight:700">'+esc(s.name.toUpperCase())+'</span>'+
       (it.isModel?'<span style="color:var(--hot)">● MODEL STORY</span>':'')+'<span>· '+ago(it.date)+'</span></div>'+
@@ -1317,17 +1524,20 @@ function openNewsModal(link){
     (it.img?'<img src="'+esc(it.img)+'" style="width:100%;border-radius:12px;margin-bottom:14px;max-height:300px;object-fit:cover" onerror="this.remove()">':'')+
     '<div class="m-body">'+esc(it.desc||'Full content available at the source — open the original wire article below.')+'</div>'+
     (it.models.length?'<div class="models-row" style="margin-bottom:14px">'+it.models.map(function(m){return '<span class="model-pill">'+esc(m)+'</span>';}).join('')+'</div>':'')+
+    tp+
     '<div class="m-meta">'+
       '<span>📅 '+esc(it.date.toLocaleString())+'</span>'+
+      (it.desc?'<span>⏳ ~'+readTime(it.desc)+' min read</span>':'')+
       (it.points!=null?'<span>▲ '+it.points+' points</span>':'')+
       (it.comments!=null?'<span>💬 '+it.comments+' comments</span>':'')+
       '<span>📡 '+esc(s.name)+' wire</span>'+
     '</div>'+
     '<div class="m-actions">'+
-      '<a class="btn primary" href="'+esc(it.link)+'" target="_blank" rel="noopener">OPEN ORIGINAL ↗</a>'+
+      '<a class="btn primary" href="'+esc(it.link)+'" data-read="'+esc(it.link)+'" target="_blank" rel="noopener">OPEN ORIGINAL ↗</a>'+
       (it.discuss?'<a class="btn" href="'+esc(it.discuss)+'" target="_blank" rel="noopener">💬 DISCUSSION</a>':'')+
       saveBtnHTML('STORY','n|'+it.link,it.title,it.link,s.name,'btn')+
       '<button class="btn" data-act="copy" data-link="'+esc(it.link)+'">⧉ COPY LINK</button>'+
+      '<button class="btn" data-act="share" data-link="'+esc(it.link)+'" data-title="'+esc(it.title)+'">⇪ SHARE</button>'+
     '</div>');
 }
 function openRepoModal(fullName){
@@ -1355,6 +1565,7 @@ function openRepoModal(fullName){
       (r.homepage?'<a class="btn" href="'+esc(r.homepage)+'" target="_blank" rel="noopener">🌐 HOMEPAGE</a>':'')+
       saveBtnHTML('REPO',key,r.full_name,r.html_url,'★'+fmtStars(r.stargazers_count),'btn')+
       '<button class="btn" data-act="copy" data-link="'+esc(r.html_url)+'">⧉ COPY LINK</button>'+
+      '<button class="btn" data-act="share" data-link="'+esc(r.html_url)+'" data-title="'+esc(r.full_name)+'">⇪ SHARE</button>'+
     '</div>');
 }
 function openShortcuts(){
@@ -1366,6 +1577,7 @@ function openShortcuts(){
       '<div class="kbd-row"><span>Close modal / drawer</span><kbd>Esc</kbd></div>'+
       '<div class="kbd-row"><span>Switch tabs (News → Saved)</span><kbd>1 – 7</kbd></div>'+
       '<div class="kbd-row"><span>Sync all wires now</span><kbd>R</kbd></div>'+
+      '<div class="kbd-row"><span>Daily brief</span><kbd>B</kbd></div>'+
       '<div class="kbd-row"><span>Open this panel</span><kbd>?</kbd></div>'+
       '<div class="kbd-row"><span>Back to top</span><kbd>T</kbd></div>'+
     '</div>'+
@@ -1378,9 +1590,12 @@ function renderDrawer(){
     var host='api (JSON)';
     if(s.url){try{host=new URL(s.url).host;}catch(_){host=s.url;}}
     else host={'hn':'hn.algolia.com','devto':'dev.to/api','lobsters':'lobste.rs'}[s.id]||'api';
+    var info=st.status==='on'?st.count+' stories · live'
+      :st.status==='cache'?st.count+' stories · cached '+ago(st.age||Date.now())
+      :st.status==='wait'?'syncing…':'unreachable';
     return '<div class="dr-row">'+
       '<span class="cdot '+st.status+'" style="width:9px;height:9px;border-radius:50%;flex:none"></span>'+
-      '<div class="nm"><b>'+esc(s.name)+'</b><span>'+esc(host)+' · '+(st.status==='on'?st.count+' stories':(st.status==='wait'?'syncing…':'unreachable'))+'</span></div>'+
+      '<div class="nm"><b>'+esc(s.name)+'</b><span>'+esc(host)+' · '+info+'</span></div>'+
       '<label class="sw"><input type="checkbox" '+(enabledSources[s.id]?'checked':'')+' data-wire="'+s.id+'"><i></i></label>'+
     '</div>';}).join('');
   $$('#drawerList input[data-wire]').forEach(function(inp){
@@ -1398,9 +1613,22 @@ function openTab(name){
   $$('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
   $$('#mobileNav button').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name);});
   $$('.pane').forEach(function(p){p.classList.toggle('active',p.id==='pane-'+name);});
-  if(name==='trending'&&!ghData[trendMode].items)loadTrending(trendMode);
-  if(name==='hf'&&!hfCache[hfKind])loadHF(hfKind);
-  if(name==='explorer'&&!exState.initialized){exState.initialized=true;renderTopicChips();runExplorer();}
+  if(name==='trending'){
+    if(!ghData[trendMode].items)loadTrending(trendMode);
+    else{renderTrending();if(Date.now()-ghData[trendMode].at>GH_CACHE_TTL)loadTrending(trendMode,true);}
+  }
+  if(name==='hf'){
+    if(!hfCache[hfKind])loadHF(hfKind);
+    else{renderHF();if(Date.now()-hfCache.at>GH_CACHE_TTL)loadHF(hfKind,true);}
+  }
+  if(name==='explorer'&&!exState.initialized){
+    exState.initialized=true;
+    if(exHydrated){
+      Object.assign(exState,exHydrated.state);exState.initialized=true;
+      renderTopicChips();renderExCached(exHydrated);
+    }else renderTopicChips();
+    runExplorer();
+  }
   if(name==='radar'&&!radarLoaded){radarLoaded=true;loadRadar();}
   if(name==='saved')renderSaved();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1412,11 +1640,22 @@ document.addEventListener('click',function(e){
   if(act==='save'){e.preventDefault();e.stopPropagation();
     toggleSave({key:el.dataset.key,kind:el.dataset.kind,title:el.dataset.title,link:el.dataset.link,sub:el.dataset.sub});return;}
   if(act==='copy'){e.preventDefault();e.stopPropagation();copyText(el.dataset.link);return;}
+  if(act==='share'){e.preventDefault();e.stopPropagation();
+    var url=el.dataset.link,ttl=el.dataset.title||document.title;
+    if(navigator.share){navigator.share({title:ttl,url:url}).catch(function(){});}
+    else copyText(url);return;}
+  if(act==='brief-copy'){copyText(windowBrief);return;}
+  if(act==='brief-dl'){downloadBrief();return;}
   if(act==='unsave'){
     var found=null;savedItems.forEach(function(x){if(x.key===el.dataset.key)found=x;});
     if(found)toggleSave(found);return;}
   if(act==='goto'){e.preventDefault();window.location.href=el.dataset.link;return;}
-  if(act==='open-news'){if(e.target.closest('a,button'))return;openNewsModal(el.dataset.key);return;}
+  if(act==='open-news'){
+    if(e.target.closest('a,button'))return;
+    markRead(el.dataset.key);
+    var cardEl=el.closest('.card');
+    if(cardEl){cardEl.classList.add('is-read');cardEl.classList.remove('is-unread');}
+    openNewsModal(el.dataset.key);return;}
   if(act==='open-repo'){if(e.target.closest('a,button'))return;openRepoModal(el.dataset.key);return;}
   if(act==='retry-spot'){loadSpotlight();return;}
   if(act==='close-modal'){closeModal();return;}
@@ -1426,6 +1665,8 @@ document.addEventListener('click',function(e){
   if(!a)return;
   var href=a.getAttribute('href');
   if(!href||!/^https?:/i.test(href))return;
+  var rd=a.getAttribute('data-read');
+  if(rd)markRead(rd);
   e.preventDefault();
   openExternal(href);
 });
@@ -1445,14 +1686,22 @@ function refreshAll(){
     if(btn){btn.classList.remove('loading');btn.disabled=false;}
   });
 }
+function markAllRead(){
+  newsAll.forEach(function(it){readSet.add(it.link);});
+  persistRead();renderNews();updateUnreadUI();
+  toast('✓ All current stories marked as read');
+}
 function wire(id,fn){var el=$(id);if(el)el.onclick=fn;}
 (function wireControls(){
   var e;
   e=$('#newsSearch');if(e)e.addEventListener('input',function(ev){newsQuery=ev.target.value.trim();renderNews();});
   e=$('#modelSearch');if(e)e.addEventListener('input',function(ev){modelQuery=ev.target.value.trim();renderModels();});
-  e=$('#sortSel');if(e)e.onchange=function(ev){newsSort=ev.target.value;renderNews();};
-  wire('#densityBtn',function(){compact=!compact;lsSet('nw_compact',compact);renderNews();
+  e=$('#sortSel');if(e)e.onchange=function(ev){newsSort=ev.target.value;savePrefs();renderNews();};
+  wire('#densityBtn',function(){compact=!compact;savePrefs();renderNews();
     toast(compact?'Compact density on':'Comfortable density on');});
+  wire('#unreadBtn',function(){unreadOnly=!unreadOnly;savePrefs();updateUnreadUI();renderNews();});
+  wire('#markAllBtn',markAllRead);
+  wire('#briefBtn',openBrief);
   wire('#tickerPause',function(){tickerPaused=!tickerPaused;
     var tw=$('#tickerWrap');if(tw)tw.classList.toggle('paused',tickerPaused);
     var tb=$('#tickerPause');if(tb)tb.textContent=tickerPaused?'▶':'⏸';});
@@ -1474,6 +1723,7 @@ function wire(id,fn){var el=$(id);if(el)el.onclick=fn;}
   wire('#wiresBtn',openDrawer);
   wire('#drawerClose',closeDrawer);
   wire('#drawerBackdrop',closeDrawer);
+  wire('#clearCacheBtn',clearAllCaches);
   wire('#drawerAllOn',function(){
     var off=SOURCES.filter(function(s){return !enabledSources[s.id];});
     SOURCES.forEach(function(s){enabledSources[s.id]=true;});
@@ -1507,6 +1757,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='/'){e.preventDefault();if(activeTab!=='news')openTab('news');var ns=$('#newsSearch');if(ns)ns.focus();}
   else if(e.key==='?'){openShortcuts();}
   else if(e.key.toLowerCase()==='r'){refreshAll();}
+  else if(e.key.toLowerCase()==='b'){openBrief();}
   else if(e.key.toLowerCase()==='t'){window.scrollTo({top:0,behavior:'smooth'});}
   else if(/^[1-7]$/.test(e.key)){openTab(TAB_ORDER[+e.key-1]);}
 });
@@ -1531,16 +1782,21 @@ setInterval(function(){
 },1000);
 function boot(){
   enabledSources=Object.assign(Object.fromEntries(SOURCES.map(function(s){return [s.id,true];})),lsGet('nw_sources',{}));
-  compact=lsGet('nw_compact',false);
+  loadPrefs();
+  loadRead();
   persistSaved();
   renderRangeChips();renderSourceChips();renderSaved();
-  var ng=$('#newsGrid');if(ng)ng.innerHTML=skeletonCards(9);
-  var mg=$('#modelGrid');if(mg)mg.innerHTML=skeletonCards(6);
+  var sv=$('#sortSel');if(sv)sv.value=newsSort;
+  hydrateFromCache();
+  var ng=$('#newsGrid');
+  if(ng&&!newsAll.length)ng.innerHTML=skeletonCards(9);
+  var mg=$('#modelGrid');if(mg&&!newsAll.length)mg.innerHTML=skeletonCards(6);
   loadSpotlight();
   loadNews().then(function(){
     var offline=SOURCES.filter(function(s){return enabledSources[s.id]&&srcState[s.id].status==='off';}).map(function(s){return s.name;});
+    var cachedN=SOURCES.filter(function(s){return enabledSources[s.id]&&srcState[s.id].status==='cache';}).length;
     var live=SOURCES.filter(function(s){return enabledSources[s.id]&&srcState[s.id].status==='on';}).length;
-    if(offline.length)toast('Live sync done — '+live+' wires online · unreachable: '+offline.slice(0,3).join(', ')+(offline.length>3?'…':''),true);
+    if(offline.length)toast('Live sync done — '+live+' live · '+cachedN+' cached · unreachable: '+offline.slice(0,3).join(', ')+(offline.length>3?'…':''),true);
     else if(live)toast('✓ Live sync complete — '+live+'/'+SOURCES.length+' wires online, '+newsAll.length+' real stories loaded');
   }).catch(function(e){showFatal('Boot news sync failed: '+e.message,'boot');});
 }
@@ -1548,3 +1804,4 @@ try{boot();}catch(e){showFatal('BOOT CRASH: '+e.message,'boot');}
 </script>
 </body>
 </html>
+
