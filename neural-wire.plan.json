@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TestSprite/testsprite-cli/v0.5.0/schemas/plan.schema.json",
+  "projectId": "78e15e3a-0bd3-4a63-a516-fabc45fc770d",
+  "type": "frontend",
+  "name": "NEURALWIRE news desk core flow",
+  "description": "Verifies the core NEURALWIRE experience: the live news feed loads, search and model filtering work, and the Model Watch / Leaderboard pages render.",
+  "priority": "p1",
+  "planSteps": [
+    {
+      "type": "assertion",
+      "description": "Navigate to https://neural-wire-nine.vercel.app/ and assert the NEURALWIRE news feed loads a list of article cards with titles"
+    },
+    {
+      "type": "action",
+      "description": "Type a common AI keyword (e.g. 'model' or 'OpenAI') into the search bar"
+    },
+    {
+      "type": "assertion",
+      "description": "Assert the story list filters down to articles matching the search term"
+    },
+    {
+      "type": "action",
+      "description": "Clear the search and switch the filter dropdown to 'MODEL RELEASES'"
+    },
+    {
+      "type": "assertion",
+      "description": "Assert only model-related cards remain visible in the feed"
+    },
+    {
+      "type": "action",
+      "description": "Open the Model Watch page"
+    },
+    {
+      "type": "assertion",
+      "description": "Assert model cards render with names and status"
+    },
+    {
+      "type": "action",
+      "description": "Open the Leaderboard page"
+    },
+    {
+      "type": "assertion",
+      "description": "Assert the benchmark leaderboard table renders with at least one row"
+    }
+  ]
+}
