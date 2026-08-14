@@ -46,3 +46,5 @@ next-env.d.ts
 
 # leftover create-next-app scaffold
 /nw-app/
+
+.vercel
