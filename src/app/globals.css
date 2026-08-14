@@ -413,6 +413,43 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 }
 @media (max-width: 560px) { .ticker-label { padding: 0 10px; } }
 
+/* Unified trending ranking */
+.trend { display: grid; gap: 10px; }
+.trend-row {
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center;
+  background: linear-gradient(180deg, var(--panel), var(--card));
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px;
+  transition: 0.2s; color: inherit;
+}
+.trend-row:hover { border-color: rgba(79, 124, 255, 0.5); transform: translateY(-2px); }
+.trend-rank {
+  font-family: 'JetBrains Mono'; font-weight: 700; font-size: 0.9rem; color: var(--cyan);
+  width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px;
+  background: var(--field); border: 1px solid var(--line);
+}
+.trend-rank.top { background: linear-gradient(135deg, #ffd21e, #ff9d0b); color: #04121a; border-color: transparent; }
+.trend-kind {
+  font-family: 'JetBrains Mono'; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em;
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+}
+.trend-kind.gh { color: #0e1526; background: linear-gradient(135deg, #22d3ee, #67e8f9); }
+.trend-kind.hf { color: #0e1526; background: linear-gradient(135deg, #ffd21e, #ff9d0b); }
+.trend-kind.radar { color: #fff; background: linear-gradient(135deg, #3b63f0, #274bcc); }
+.trend-main { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.trend-name { font-weight: 600; font-size: 0.95rem; word-break: break-word; }
+.trend-row:hover .trend-name { color: var(--cyan); }
+.trend-sub { font-family: 'JetBrains Mono'; font-size: 0.62rem; color: var(--mut); }
+.trend-meta { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; min-width: 140px; }
+.trend-metric { font-family: 'JetBrains Mono'; font-size: 0.78rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
+.trend-heat { width: 120px; height: 6px; border-radius: 99px; background: var(--lb-bar); overflow: hidden; }
+.trend-heat i { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), var(--cyan)); border-radius: 99px; }
+.trend-pct { font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--mut); }
+@media (max-width: 640px) {
+  .trend-row { grid-template-columns: 40px 1fr; }
+  .trend-meta { grid-column: 2; flex-direction: row; align-items: center; gap: 10px; min-width: 0; }
+  .trend-heat { width: 80px; }
+}
+
 /* Theme toggle */
 .theme-toggle { padding: 8px 11px; font-size: 0.95rem; line-height: 1; }
 

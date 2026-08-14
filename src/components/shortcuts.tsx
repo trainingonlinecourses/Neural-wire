@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 const KEYS: { key: string; href: string; label: string }[] = [
   { key: 'm', href: '/model-watch', label: 'Model Watch' },
   { key: 'b', href: '/brief', label: 'Today in AI' },
+  { key: 't', href: '/trending', label: 'Trending' },
   { key: 'l', href: '/leaderboard', label: 'Leaderboard' },
   { key: 'g', href: '/github', label: 'GitHub Trending' },
   { key: 'h', href: '/huggingface', label: 'HF Hub' },
