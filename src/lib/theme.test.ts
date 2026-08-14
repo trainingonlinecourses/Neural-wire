@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beginThemeTransition, resolveTheme } from './theme';
+import { beginThemeTransition, parseTheme, resolveTheme, withThemePref } from './theme';
 
 describe('resolveTheme', () => {
   it('prefers an explicit stored choice', () => {
@@ -13,6 +13,29 @@ describe('resolveTheme', () => {
   it('treats an empty or invalid stored value as no preference', () => {
     expect(resolveTheme('', true)).toBe('light');
     expect(resolveTheme('neon', false)).toBe('dark');
+  });
+});
+
+describe('withThemePref', () => {
+  it('merges the theme into existing prefs without dropping other keys', () => {
+    const prefs = withThemePref({ density: 'compact' }, 'light');
+    expect(prefs).toEqual({ density: 'compact', theme: 'light' });
+  });
+  it('handles an empty prefs object', () => {
+    expect(withThemePref({}, 'dark')).toEqual({ theme: 'dark' });
+  });
+});
+
+describe('parseTheme', () => {
+  it('accepts only the two themes', () => {
+    expect(parseTheme('dark')).toBe('dark');
+    expect(parseTheme('light')).toBe('light');
+  });
+  it('returns null for missing or invalid values', () => {
+    expect(parseTheme(null)).toBeNull();
+    expect(parseTheme(undefined)).toBeNull();
+    expect(parseTheme('neon')).toBeNull();
+    expect(parseTheme(42)).toBeNull();
   });
 });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { applyTheme, beginThemeTransition, resolveTheme, storeTheme, THEME_KEY, type Theme } from '@/lib/theme';
+import { applyTheme, beginThemeTransition, parseTheme, resolveTheme, storeTheme, THEME_KEY, type Theme } from '@/lib/theme';
 
 /**
  * Dark/light theme toggle. Without an explicit choice the theme follows the
@@ -28,6 +28,23 @@ export function ThemeToggle() {
       }
     };
     mq.addEventListener('change', onSystemChange);
+
+    // Account-level preference: when signed in, the server copy is canonical
+    // and overrides this device's local choice so the theme follows the user.
+    fetch('/api/prefs/theme')
+      .then((r) => r.json())
+      .then((j: { theme?: unknown }) => {
+        const t = parseTheme(j.theme);
+        if (!t) return;
+        storeTheme(t);
+        beginThemeTransition();
+        applyTheme(t);
+        setTheme(t);
+      })
+      .catch(() => {
+        /* offline / demo — keep the local behavior */
+      });
+
     return () => mq.removeEventListener('change', onSystemChange);
   }, []);
 
@@ -37,6 +54,13 @@ export function ThemeToggle() {
     storeTheme(next);
     applyTheme(next);
     setTheme(next);
+    fetch('/api/prefs/theme', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ theme: next }),
+    }).catch(() => {
+      /* offline / demo — the local choice still applies */
+    });
   };
 
   const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
