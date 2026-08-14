@@ -66,6 +66,7 @@ export function LeaderboardView() {
       <div className="wrap">
         <div className="card" style={{ cursor: 'default' }}>
           <div className="card-body" style={{ padding: 0 }}>
+            <div className="lb-scroll">
             <table className="lb-table">
               <thead>
                 <tr>
@@ -96,6 +97,7 @@ export function LeaderboardView() {
                 ))}
               </tbody>
             </table>
+            </div>
             {loading && <p className="empty" style={{ margin: 0 }}>Loading…</p>}
             {!loading && rows.length === 0 && (
               <p className="empty" style={{ margin: 0 }}>

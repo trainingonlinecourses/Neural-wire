@@ -7,12 +7,28 @@ export function NewsCard({ story }: { story: Story }) {
   const s = srcById[story.sourceId];
   return (
     <article className="card">
-      <div className="thumb" style={{ background: s?.grad || 'var(--thumb)' }}>
+      <div
+        className="thumb"
+        data-short={s?.short || 'NW'}
+        style={{
+          background: s?.grad || 'var(--thumb)',
+          ['--src' as string]: s?.color || '#4f7cff',
+        }}
+      >
         <span className="badge" style={{ background: s?.color || '#4f7cff' }}>
           {(s?.name || story.sourceId).toUpperCase()}
         </span>
         {story.isModel && <span className="mtag">MODEL</span>}
-        {story.img && <img loading="lazy" src={story.img} alt="" />}
+        {story.img && (
+          <img
+            loading="lazy"
+            src={story.img}
+            alt=""
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        )}
       </div>
       <div className="card-body">
         <h3>

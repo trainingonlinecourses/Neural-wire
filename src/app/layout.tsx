@@ -1,11 +1,24 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { Nav } from '@/components/nav';
 import { Shortcuts } from '@/components/shortcuts';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SignOutButton } from '@/components/sign-out-button';
 import { createClient } from '@/lib/supabase/server';
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space',
+  display: 'swap',
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
@@ -24,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
