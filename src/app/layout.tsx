@@ -3,6 +3,7 @@ import Link from 'next/link';
 import './globals.css';
 import { Nav } from '@/components/nav';
 import { Shortcuts } from '@/components/shortcuts';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { SignOutButton } from '@/components/sign-out-button';
 import { createClient } from '@/lib/supabase/server';
 
@@ -24,6 +25,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('nw-theme');var t=(s==='light'||s==='dark')?s:(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t;}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
         <header className="topbar">
           <div className="wrap hd">
@@ -41,6 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <span className="dot" />
                 LIVE
               </div>
+              <ThemeToggle />
               {email ? (
                 <SignOutButton email={email} />
               ) : (
