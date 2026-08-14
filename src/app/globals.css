@@ -300,6 +300,18 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .lb-table .unit-cell { color: var(--mut); font-size: 0.66rem; }
 .lb-table .date { color: var(--mut); font-size: 0.66rem; white-space: nowrap; }
 
+/* Auto-refresh countdown (newsroom) */
+.meta-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sync, .sync-count {
+  font-family: 'JetBrains Mono'; font-size: 0.62rem; letter-spacing: 0.08em;
+  padding: 5px 10px; border-radius: 999px; white-space: nowrap;
+}
+.sync { color: var(--ok); border: 1px solid rgba(45, 212, 167, 0.35); background: rgba(45, 212, 167, 0.06); }
+.sync.err { color: var(--hot); border-color: rgba(255, 84, 112, 0.45); background: rgba(255, 84, 112, 0.07); }
+.sync-count { color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.35); background: rgba(34, 211, 238, 0.06); }
+.sync-count.urgent { color: var(--warn); border-color: rgba(251, 191, 36, 0.5); animation: pulse 1.2s infinite; }
+.sync-btn { padding: 5px 12px; font-size: 0.62rem; letter-spacing: 0.1em; border-radius: 999px; }
+
 /* Story card action buttons */
 .act {
   width: 28px; height: 28px; display: inline-grid; place-items: center;
