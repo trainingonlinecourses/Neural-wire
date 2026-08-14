@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatCountdown, idDiff, storyDiff } from './refresh';
+import { addedKeys, formatCountdown, idDiff, storyDiff } from './refresh';
 import type { Story } from './types';
 
 const story = (id: string): Story => ({
@@ -31,6 +31,21 @@ describe('formatCountdown', () => {
   });
   it('never goes negative', () => {
     expect(formatCountdown(-4)).toBe('0:00');
+  });
+});
+
+describe('addedKeys', () => {
+  it('returns keys present in next but not prev', () => {
+    expect(addedKeys(['a', 'b'], ['b', 'c'])).toEqual(['c']);
+  });
+  it('returns the empty list for identical sets', () => {
+    expect(addedKeys(['a', 'b'], ['b', 'a'])).toEqual([]);
+  });
+  it('dedupes the next list', () => {
+    expect(addedKeys(['a'], ['b', 'b'])).toEqual(['b']);
+  });
+  it('treats a fresh prev as all-new', () => {
+    expect(addedKeys([], ['x', 'y'])).toEqual(['x', 'y']);
   });
 });
 

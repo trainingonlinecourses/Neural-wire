@@ -2,6 +2,7 @@ import { srcById } from '@/lib/sources';
 import type { Story } from '@/lib/types';
 import { ago } from '@/lib/utils';
 import { CopyLink } from './copy-link';
+import { SafeImage } from './safe-image';
 
 export function NewsCard({ story }: { story: Story }) {
   const s = srcById[story.sourceId];
@@ -19,16 +20,7 @@ export function NewsCard({ story }: { story: Story }) {
           {(s?.name || story.sourceId).toUpperCase()}
         </span>
         {story.isModel && <span className="mtag">MODEL</span>}
-        {story.img && (
-          <img
-            loading="lazy"
-            src={story.img}
-            alt=""
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        )}
+        {story.img && <SafeImage src={story.img} />}
       </div>
       <div className="card-body">
         <h3>

@@ -515,6 +515,30 @@ main { min-height: 60vh; padding: 26px 0 60px; }
   content: ''; width: 6px; height: 6px; border-radius: 50%;
   background: var(--global-ink); display: inline-block; margin-right: 5px;
 }
+/* NEW badge — appears on rows added by the latest sync, flash once on entry. */
+.trend-new {
+  font-family: var(--font-mono), 'JetBrains Mono';
+  font-size: 0.55rem; font-weight: 800; letter-spacing: 0.12em; line-height: 1.5;
+  color: #0e1526; background: linear-gradient(135deg, var(--hot), #ff9d0b);
+  padding: 1px 8px; border-radius: 999px; flex: none; white-space: nowrap;
+  box-shadow: 0 0 14px rgba(255, 84, 112, 0.55);
+  animation: new-badge-flash 2.4s ease-out both;
+}
+.trend-row.new-row { animation: new-row-flash 2.4s ease-out; }
+@keyframes new-badge-flash {
+  0% { transform: scale(1.8) rotate(-5deg); opacity: 0; }
+  14% { transform: scale(1) rotate(0deg); opacity: 1; }
+  32% { transform: scale(1.14); }
+  48% { transform: scale(1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes new-row-flash {
+  0% { box-shadow: 0 0 0 0 rgba(255, 84, 112, 0.5), 0 0 26px rgba(255, 84, 112, 0.35); border-color: rgba(255, 84, 112, 0.8); }
+  100% { box-shadow: 0 0 0 16px rgba(255, 84, 112, 0), 0 0 0 rgba(255, 84, 112, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trend-new, .trend-row.new-row { animation: none; }
+}
 @media (max-width: 640px) {
   .trend-row { grid-template-columns: 40px 1fr; }
   .trend-meta { grid-column: 2; flex-direction: row; align-items: center; gap: 10px; min-width: 0; }

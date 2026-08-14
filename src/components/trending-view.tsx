@@ -13,7 +13,7 @@ import {
   type TrendingKind,
   type TrendingRow,
 } from '@/lib/trending';
-import { formatCountdown, idDiff } from '@/lib/refresh';
+import { addedKeys, formatCountdown, idDiff } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
 import { ago } from '@/lib/utils';
 import { TrendRow } from './trend-row';
@@ -37,6 +37,8 @@ export function TrendingView() {
   const [at, setAt] = useState(0);
   const [lastSync, setLastSync] = useState<{ added: number; removed: number } | null>(null);
   const [syncFailed, setSyncFailed] = useState(false);
+  /** kind:id keys introduced by the most recent sync — they show the NEW badge. */
+  const [newKeys, setNewKeys] = useState<Set<string>>(new Set());
   const rowsRef = useRef<TrendingRow[] | null>(null);
 
   const load = useCallback((force = false) => {
@@ -69,8 +71,12 @@ export function TrendingView() {
       const ranked = rankAll(groups);
       const prev = rowsRef.current;
       if (prev) {
-        setLastSync(idDiff(prev.map((r) => r.kind + ':' + r.id), ranked.map((r) => r.kind + ':' + r.id)));
+        const prevKeys = prev.map((r) => r.kind + ':' + r.id);
+        const nextKeys = ranked.map((r) => r.kind + ':' + r.id);
+        setLastSync(idDiff(prevKeys, nextKeys));
         setSyncFailed(errs.length > 0);
+        // Rows that appeared since the previous sync get the flashing NEW badge.
+        setNewKeys(new Set(addedKeys(prevKeys, nextKeys)));
       }
       rowsRef.current = ranked;
       cache[r] = { rows: ranked, at: Date.now() };
@@ -83,6 +89,8 @@ export function TrendingView() {
   const selectRange = (r: TimeRange) => {
     rangeRef.current = r;
     setRangeState(r);
+    rowsRef.current = null; // a range switch is a fresh ranking, not a sync diff
+    setNewKeys(new Set());
     load(true);
   };
 
@@ -183,7 +191,12 @@ export function TrendingView() {
       <div className="wrap">
         <div className="trend">
           {shown?.map((r, i) => (
-            <TrendRow key={r.kind + ':' + r.id} row={r} rank={i + 1} />
+            <TrendRow
+              key={r.kind + ':' + r.id}
+              row={r}
+              rank={i + 1}
+              isNew={newKeys.has(r.kind + ':' + r.id)}
+            />
           ))}
           {loading && !rows && <p className="empty">Pulling GitHub, Hugging Face & WorldMonitor live…</p>}
           {!rows && !loading && !error && <p className="empty">Loading…</p>}

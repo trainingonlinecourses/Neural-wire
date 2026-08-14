@@ -3,12 +3,13 @@ import type { TrendingKind, TrendingRow } from '@/lib/trending';
 export const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
 
 /** One ranked row — rank badge, source tag, name, tags, metric and heat bar. */
-export function TrendRow({ row, rank }: { row: TrendingRow; rank: number }) {
+export function TrendRow({ row, rank, isNew = false }: { row: TrendingRow; rank: number; isNew?: boolean }) {
   const inner = (
     <>
       <div className={'trend-rank' + (rank <= 3 ? ' top' : '')}>{rank}</div>
       <div className="trend-main">
         <span className={'trend-kind ' + row.kind}>{KIND_LABEL[row.kind]}</span>
+        {isNew && <span className="trend-new">NEW</span>}
         <span className="trend-name">{row.name}</span>
         {row.tags &&
           row.tags.length > 0 &&
@@ -32,10 +33,10 @@ export function TrendRow({ row, rank }: { row: TrendingRow; rank: number }) {
     </>
   );
   return row.href ? (
-    <a className="trend-row" href={row.href} target="_blank" rel="noopener noreferrer">
+    <a className={'trend-row' + (isNew ? ' new-row' : '')} href={row.href} target="_blank" rel="noopener noreferrer">
       {inner}
     </a>
   ) : (
-    <div className="trend-row">{inner}</div>
+    <div className={'trend-row' + (isNew ? ' new-row' : '')}>{inner}</div>
   );
 }

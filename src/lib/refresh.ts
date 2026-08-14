@@ -14,14 +14,18 @@ export interface StoryDiff {
   removed: number;
 }
 
+/** The ids present in `next` but not `prev` (order-insensitive, deduped). */
+export function addedKeys(prev: string[], next: string[]): string[] {
+  const prevIds = new Set(prev);
+  return [...new Set(next)].filter((id) => !prevIds.has(id));
+}
+
 /** Compares two id lists (order-insensitive) and counts additions/removals. */
 export function idDiff(prev: string[], next: string[]): StoryDiff {
-  const prevIds = new Set(prev);
+  const added = addedKeys(prev, next).length;
   const nextIds = new Set(next);
-  let added = 0;
   let removed = 0;
-  for (const id of nextIds) if (!prevIds.has(id)) added++;
-  for (const id of prevIds) if (!nextIds.has(id)) removed++;
+  for (const id of new Set(prev)) if (!nextIds.has(id)) removed++;
   return { added, removed };
 }
 
