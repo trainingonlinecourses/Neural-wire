@@ -2,6 +2,7 @@ import { buildBrief } from '@/lib/brief';
 import { getNewsData } from '@/lib/data';
 import { srcById } from '@/lib/sources';
 import { NewsCard } from '@/components/news-card';
+import { Movers } from '@/components/movers';
 import { ago } from '@/lib/utils';
 
 export const revalidate = 180;
@@ -81,6 +82,8 @@ export default async function BriefPage() {
           )}
         </div>
       </div>
+
+      <Movers />
 
       <div className="wrap">
         <div className="section-note">Newest stories</div>

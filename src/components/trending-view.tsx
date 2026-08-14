@@ -6,6 +6,7 @@ import {
   fetchHfTrending,
   fetchRadarSignals,
   rankAll,
+  signalToCand,
   type Cand,
   type RadarSignal,
   type TimeRange,
@@ -15,6 +16,7 @@ import {
 import { formatCountdown, idDiff } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
 import { ago } from '@/lib/utils';
+import { TrendRow } from './trend-row';
 
 type Filter = 'all' | TrendingKind;
 
@@ -22,54 +24,6 @@ const CACHE_TTL = 5 * 60 * 1000;
 let cache: Partial<Record<TimeRange, { rows: TrendingRow[]; at: number }>> = {};
 
 const RANGES: TimeRange[] = ['24h', '7d', '30d'];
-
-const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
-
-function signalToCand(s: RadarSignal): Cand {
-  return {
-    id: s.id,
-    name: s.name,
-    sub: s.detail,
-    metric: s.value != null ? s.value + ' / 100' : '—',
-    value: s.value ?? 0,
-    href: s.href,
-    tags: [],
-  };
-}
-
-function TrendRow({ row, rank }: { row: TrendingRow; rank: number }) {
-  const inner = (
-    <>
-      <div className={'trend-rank' + (rank <= 3 ? ' top' : '')}>{rank}</div>
-      <div className="trend-main">
-        <span className={'trend-kind ' + row.kind}>{KIND_LABEL[row.kind]}</span>
-        <span className="trend-name">{row.name}</span>
-        {row.tags &&
-          row.tags.length > 0 &&
-          row.tags.map((t) => (
-            <span className="gh-topic" key={t}>
-              {t}
-            </span>
-          ))}
-        <span className="trend-sub">{row.sub}</span>
-      </div>
-      <div className="trend-meta">
-        <span className="trend-metric">{row.metric}</span>
-        <div className="trend-heat">
-          <i style={{ width: row.heat + '%' }} />
-        </div>
-        <span className="trend-pct">{row.heat}% heat</span>
-      </div>
-    </>
-  );
-  return row.href ? (
-    <a className="trend-row" href={row.href} target="_blank" rel="noopener noreferrer">
-      {inner}
-    </a>
-  ) : (
-    <div className="trend-row">{inner}</div>
-  );
-}
 
 const AUTO_REFRESH_SECONDS = 180;
 

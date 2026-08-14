@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { GH_STAR_FLOOR, hfSortFor, RANGE_DAYS, rankAll, withinWindow, type Cand } from './trending';
+import {
+  GH_STAR_FLOOR,
+  hfSortFor,
+  liveSignalCands,
+  RANGE_DAYS,
+  rankAll,
+  signalToCand,
+  withinWindow,
+  type Cand,
+  type RadarSignal,
+} from './trending';
 
 const cand = (id: string, value: number): Cand => ({
   id,
@@ -73,5 +83,50 @@ describe('time ranges', () => {
     expect(withinWindow(now - day - 1, 1, now)).toBe(false);
     expect(withinWindow(now - 7 * day, 7, now)).toBe(true);
     expect(withinWindow(now - 7 * day - 1, 7, now)).toBe(false);
+  });
+});
+
+describe('signalToCand', () => {
+  const signal = (id: string, value: number | null): RadarSignal => ({
+    id,
+    name: id,
+    icon: '📡',
+    value,
+    detail: 'reading',
+    href: 'https://www.worldmonitor.app',
+  });
+
+  it('maps a numeric signal to a scored candidate', () => {
+    expect(signalToCand(signal('fg', 42)).value).toBe(42);
+    expect(signalToCand(signal('fg', 42)).metric).toBe('42 / 100');
+  });
+  it('maps a null-value signal to a zero-score candidate', () => {
+    const c = signalToCand(signal('climate', null));
+    expect(c.value).toBe(0);
+    expect(c.metric).toBe('—');
+  });
+});
+
+describe('liveSignalCands', () => {
+  const signal = (id: string, value: number | null, detail: string): RadarSignal => ({
+    id,
+    name: id,
+    icon: '📡',
+    value,
+    detail,
+    href: 'https://www.worldmonitor.app',
+  });
+
+  it('drops pure status rows and keeps real readings', () => {
+    const cands = liveSignalCands([
+      signal('fg', 55, 'greed'),
+      signal('climate', null, 'WorldMonitor API key required'),
+      signal('co2', null, 'endpoint unreachable'),
+    ]);
+    expect(cands.map((c) => c.id)).toEqual(['fg']);
+  });
+  it('keeps informational rows with a real detail even without a number', () => {
+    const cands = liveSignalCands([signal('air', null, 'JFK — Ground Stop')]);
+    expect(cands.map((c) => c.id)).toEqual(['air']);
   });
 });

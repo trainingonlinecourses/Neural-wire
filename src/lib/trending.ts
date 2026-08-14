@@ -78,6 +78,28 @@ export function withinWindow(createdMs: number, days: number, now = Date.now()):
   return createdMs >= now - days * 86_400_000;
 }
 
+/* ---------- Shared row mapping ---------- */
+
+/** Radar signal -> ranking candidate (null-value signals rank at the bottom). */
+export function signalToCand(s: RadarSignal): Cand {
+  return {
+    id: s.id,
+    name: s.name,
+    sub: s.detail,
+    metric: s.value != null ? s.value + ' / 100' : '—',
+    value: s.value ?? 0,
+    href: s.href,
+    tags: [],
+  };
+}
+
+/** Radar signals -> candidates, dropping pure status rows (key required / unreachable). */
+export function liveSignalCands(signals: RadarSignal[]): Cand[] {
+  return signals
+    .filter((s) => s.value != null || !/(key required|unreachable)/i.test(s.detail))
+    .map(signalToCand);
+}
+
 /* ---------- GitHub (same queries as the GitHub page, rising mode) ---------- */
 
 interface RawRepo {
