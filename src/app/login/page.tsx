@@ -50,7 +50,7 @@ function LoginContent() {
     <main className="wrap" style={{ maxWidth: 420, marginTop: '12vh' }}>
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <h1>
-          NEURAL<em style={{ fontStyle: 'normal', color: 'var(--cyan)' }}>WIRE</em>
+          NEURAL<em style={{ fontStyle: 'normal', color: 'var(--cyan-ink)' }}>WIRE</em>
         </h1>
         <div className="tag" style={{ color: 'var(--mut)', letterSpacing: '.2em', fontSize: '.6rem' }}>
           REAL-TIME AI INTELLIGENCE DESK
@@ -94,7 +94,7 @@ function LoginContent() {
               <span>{err}</span>
             </div>
           )}
-          {msg && <div style={{ color: 'var(--ok)', fontSize: '.8rem' }}>{msg}</div>}
+          {msg && <div style={{ color: 'var(--ok-ink)', fontSize: '.8rem' }}>{msg}</div>}
           <button className="btn primary" disabled={busy} style={{ justifyContent: 'center' }}>
             {busy ? '…' : mode === 'magic' ? 'SEND MAGIC LINK' : mode === 'signup' ? 'CREATE ACCOUNT' : 'SIGN IN'}
           </button>

@@ -33,7 +33,7 @@ export function HeadlineTicker({ stories, limit = 10 }: { stories: Story[]; limi
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <span className="ticker-src" style={{ color: src?.color || 'var(--cyan)' }}>
+                    <span className="ticker-src" style={{ color: src?.color || 'var(--cyan-ink)' }}>
                       {src?.short || s.sourceId}
                     </span>
                     <span className="ticker-title">{s.title}</span>

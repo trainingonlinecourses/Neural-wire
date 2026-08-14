@@ -99,7 +99,7 @@ export function WatchlistView() {
           <div key={f.entity?.name} className="card">
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: '.95rem', color: 'var(--gold)' }}>
+                <h3 style={{ fontSize: '.95rem', color: 'var(--gold-ink)' }}>
                   {f.entity?.kind === 'company' ? '🏢' : f.entity?.kind === 'model' ? '🧠' : '👤'} {f.entity?.name}
                 </h3>
                 <button className="btn danger" style={{ marginLeft: 'auto' }} onClick={() => unfollow(f.entity?.name || '')}>

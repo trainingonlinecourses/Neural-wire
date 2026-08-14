@@ -52,7 +52,7 @@ function rFgRender(data: unknown): string {
   if (numHits.length) {
     const v = numHits[0].v as number;
     const lbl = lblHits.length ? (lblHits[0].v as string) : '—';
-    const col = v < 25 ? 'var(--hot)' : v < 50 ? 'var(--warn)' : 'var(--ok)';
+    const col = v < 25 ? 'var(--hot-ink)' : v < 50 ? 'var(--warn-ink)' : 'var(--ok-ink)';
     return (
       '<div class="radar-big"><div class="num" style="color:' + col + '">' + v.toFixed(1) + '</div>' +
       '<div class="lab" style="color:' + col + '">' + lbl.toUpperCase().replace(/</g, '&lt;') + '</div>' +
@@ -139,8 +139,8 @@ async function fetchWM(path: string, key: string): Promise<{ ok: boolean; needKe
 function keyNeededHTML() {
   return (
     '<div style="font-size:.78rem;color:var(--mut);padding:8px 0">' +
-    'This endpoint requires a WorldMonitor API key (header <span class="mono" style="color:var(--cyan)">X-WorldMonitor-Key</span>). ' +
-    'Get one at <a href="https://www.worldmonitor.app" target="_blank" rel="noopener" style="color:var(--gold)">worldmonitor.app</a>.</div>'
+    'This endpoint requires a WorldMonitor API key (header <span class="mono" style="color:var(--cyan-ink)">X-WorldMonitor-Key</span>). ' +
+    'Get one at <a href="https://www.worldmonitor.app" target="_blank" rel="noopener" style="color:var(--gold-ink)">worldmonitor.app</a>.</div>'
   );
 }
 

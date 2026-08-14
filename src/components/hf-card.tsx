@@ -35,7 +35,7 @@ export function HfCard({ m, isModel }: { m: HfItem; isModel: boolean }) {
       <div className="hf-meta">
         <span>❤ {fmtStars(m.likes)}</span>
         {isModel && m.downloads != null && <span>⇣ {fmtStars(m.downloads)}</span>}
-        <a className="open" style={{ marginLeft: 'auto', color: 'var(--gold)', fontWeight: 600 }} href={'https://huggingface.co/' + m.id} target="_blank" rel="noopener noreferrer">
+        <a className="open" style={{ marginLeft: 'auto', color: 'var(--gold-ink)', fontWeight: 600 }} href={'https://huggingface.co/' + m.id} target="_blank" rel="noopener noreferrer">
           OPEN ↗
         </a>
       </div>

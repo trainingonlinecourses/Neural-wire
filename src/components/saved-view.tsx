@@ -102,7 +102,7 @@ export function SavedView() {
           <div key={c.id} className="card">
             <div className="card-body">
               <button className="coll-head" onClick={() => openCollection(c.id)}>
-                <h3 style={{ fontSize: '.95rem', color: 'var(--cyan)' }}>📁 {c.name}</h3>
+                <h3 style={{ fontSize: '.95rem', color: 'var(--cyan-ink)' }}>📁 {c.name}</h3>
                 <span className="dim">{open === c.id ? '−' : '+ ' + (items[c.id]?.length ?? 0) + ' saved'}</span>
               </button>
               {c.description && <p className="dim">{c.description}</p>}

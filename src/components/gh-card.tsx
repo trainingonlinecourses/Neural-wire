@@ -53,7 +53,7 @@ export function GhCard({ r, rank }: { r: GhRepo; rank?: number }) {
         )}
         <span>★ {fmtStars(r.stargazers_count)}</span>
         <span>⑂ {fmtStars(r.forks_count)}</span>
-        <a className="open" style={{ marginLeft: 'auto', color: 'var(--cyan)', fontWeight: 600 }} href={r.html_url} target="_blank" rel="noopener noreferrer">
+        <a className="open" style={{ marginLeft: 'auto', color: 'var(--cyan-ink)', fontWeight: 600 }} href={r.html_url} target="_blank" rel="noopener noreferrer">
           REPO ↗
         </a>
       </div>

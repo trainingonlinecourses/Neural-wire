@@ -7,7 +7,7 @@ export function NewsCard({ story }: { story: Story }) {
   const s = srcById[story.sourceId];
   return (
     <article className="card">
-      <div className="thumb" style={{ background: s?.grad || '#0d1526' }}>
+      <div className="thumb" style={{ background: s?.grad || 'var(--thumb)' }}>
         <span className="badge" style={{ background: s?.color || '#4f7cff' }}>
           {(s?.name || story.sourceId).toUpperCase()}
         </span>
