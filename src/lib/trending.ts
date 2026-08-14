@@ -58,6 +58,26 @@ export function rankAll(groups: { kind: TrendingKind; items: Cand[] }[]): Trendi
   return rows;
 }
 
+/* ---------- Time range selection ---------- */
+
+export type TimeRange = '24h' | '7d' | '30d';
+
+/** Window size in days per range (24h = 1 day). */
+export const RANGE_DAYS: Record<TimeRange, number> = { '24h': 1, '7d': 7, '30d': 30 };
+
+/** Minimum stars for the GitHub query per range (older windows need a floor). */
+export const GH_STAR_FLOOR: Record<TimeRange, number> = { '24h': 1, '7d': 3, '30d': 20 };
+
+/** Hugging Face sort per range: trendingScore is short-window, likes suit 30d. */
+export function hfSortFor(range: TimeRange): 'trendingScore' | 'likes' {
+  return range === '30d' ? 'likes' : 'trendingScore';
+}
+
+/** True when a created-at timestamp (ms) falls inside the window. */
+export function withinWindow(createdMs: number, days: number, now = Date.now()): boolean {
+  return createdMs >= now - days * 86_400_000;
+}
+
 /* ---------- GitHub (same queries as the GitHub page, rising mode) ---------- */
 
 interface RawRepo {
@@ -78,12 +98,13 @@ async function ghSearch(q: string, per = 30): Promise<RawRepo[]> {
   return (j.items || []) as RawRepo[];
 }
 
-export async function fetchGhTrending(): Promise<Cand[]> {
-  const d7 = isoDaysAgo(7);
+export async function fetchGhTrending(range: TimeRange = '7d'): Promise<Cand[]> {
+  const since = isoDaysAgo(RANGE_DAYS[range]);
+  const floor = GH_STAR_FLOOR[range];
   const queries = [
-    'topic:ai created:>=' + d7 + ' stars:>=3',
-    'topic:llm created:>=' + d7 + ' stars:>=3',
-    'topic:generative-ai created:>=' + d7 + ' stars:>=3',
+    'topic:ai created:>=' + since + ' stars:>=' + floor,
+    'topic:llm created:>=' + since + ' stars:>=' + floor,
+    'topic:generative-ai created:>=' + since + ' stars:>=' + floor,
   ];
   const results = await Promise.all(queries.map((q) => ghSearch(q)));
   const seen = new Set<string>();
@@ -116,6 +137,8 @@ interface RawHF {
   downloads?: number;
   pipeline_tag?: string;
   library_name?: string;
+  createdAt?: number;
+  created_at?: number;
 }
 
 async function hfFetch(url: string): Promise<RawHF[]> {
@@ -124,10 +147,13 @@ async function hfFetch(url: string): Promise<RawHF[]> {
   return r.json();
 }
 
-export async function fetchHfTrending(): Promise<Cand[]> {
+export async function fetchHfTrending(range: TimeRange = '7d'): Promise<Cand[]> {
+  const days = RANGE_DAYS[range];
+  const sort = hfSortFor(range);
+  const other = sort === 'likes' ? 'trendingScore' : 'likes';
   const urls = [
-    'https://huggingface.co/api/models?sort=trendingScore&limit=18&full=false',
-    'https://huggingface.co/api/models?sort=likes&limit=18&full=false',
+    `https://huggingface.co/api/models?sort=${sort}&limit=60&full=false`,
+    `https://huggingface.co/api/models?sort=${other}&limit=60&full=false`,
   ];
   let j: RawHF[] = [];
   for (const u of urls) {
@@ -135,14 +161,16 @@ export async function fetchHfTrending(): Promise<Cand[]> {
       j = await hfFetch(u);
       if (j.length) break;
     } catch {
-      /* try the fallback URL */
+      /* try the fallback sort */
     }
   }
   if (j.length === 0) throw new Error('HF API unreachable');
-  return j.slice(0, 15).map((m) => ({
+  const inWindow = j.filter((m) => withinWindow(m.createdAt ?? m.created_at ?? 0, days));
+  if (sort === 'likes') inWindow.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+  return inWindow.slice(0, 15).map((m) => ({
     id: m.id || '',
     name: m.id || '',
-    sub: (m.pipeline_tag || m.library_name || 'model') + ' · trending',
+    sub: (m.pipeline_tag || m.library_name || 'model') + ' · ' + range,
     metric: '❤ ' + fmtStars(m.likes ?? 0) + ' likes',
     value: m.likes ?? 0,
     href: 'https://huggingface.co/' + (m.id || ''),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rankAll, type Cand } from './trending';
+import { GH_STAR_FLOOR, hfSortFor, RANGE_DAYS, rankAll, withinWindow, type Cand } from './trending';
 
 const cand = (id: string, value: number): Cand => ({
   id,
@@ -50,5 +50,28 @@ describe('rankAll', () => {
   it('handles an empty category without dividing by zero', () => {
     const rows = rankAll([{ kind: 'gh', items: [] }]);
     expect(rows).toEqual([]);
+  });
+});
+
+describe('time ranges', () => {
+  it('maps each range to its window in days', () => {
+    expect(RANGE_DAYS).toEqual({ '24h': 1, '7d': 7, '30d': 30 });
+  });
+  it('raises the GitHub star floor for older windows', () => {
+    expect(GH_STAR_FLOOR['24h']).toBeLessThan(GH_STAR_FLOOR['7d']);
+    expect(GH_STAR_FLOOR['7d']).toBeLessThan(GH_STAR_FLOOR['30d']);
+  });
+  it('uses trendingScore for short windows and likes for 30d', () => {
+    expect(hfSortFor('24h')).toBe('trendingScore');
+    expect(hfSortFor('7d')).toBe('trendingScore');
+    expect(hfSortFor('30d')).toBe('likes');
+  });
+  it('keeps timestamps inside the window inclusive of the boundary', () => {
+    const now = 1_700_000_000_000;
+    const day = 86_400_000;
+    expect(withinWindow(now - day, 1, now)).toBe(true);
+    expect(withinWindow(now - day - 1, 1, now)).toBe(false);
+    expect(withinWindow(now - 7 * day, 7, now)).toBe(true);
+    expect(withinWindow(now - 7 * day - 1, 7, now)).toBe(false);
   });
 });

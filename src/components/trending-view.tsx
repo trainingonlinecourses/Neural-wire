@@ -8,6 +8,7 @@ import {
   rankAll,
   type Cand,
   type RadarSignal,
+  type TimeRange,
   type TrendingKind,
   type TrendingRow,
 } from '@/lib/trending';
@@ -18,7 +19,9 @@ import { ago } from '@/lib/utils';
 type Filter = 'all' | TrendingKind;
 
 const CACHE_TTL = 5 * 60 * 1000;
-let cache: { rows: TrendingRow[]; at: number } | null = null;
+let cache: Partial<Record<TimeRange, { rows: TrendingRow[]; at: number }>> = {};
+
+const RANGES: TimeRange[] = ['24h', '7d', '30d'];
 
 const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
 
@@ -72,6 +75,8 @@ const AUTO_REFRESH_SECONDS = 180;
 
 export function TrendingView() {
   const [filter, setFilter] = useState<Filter>('all');
+  const [range, setRangeState] = useState<TimeRange>('7d');
+  const rangeRef = useRef<TimeRange>('7d');
   const [rows, setRows] = useState<TrendingRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,15 +86,17 @@ export function TrendingView() {
   const rowsRef = useRef<TrendingRow[] | null>(null);
 
   const load = useCallback((force = false) => {
-    if (!force && cache && Date.now() - cache.at < CACHE_TTL) {
-      setRows(cache.rows);
-      setAt(cache.at);
+    const r = rangeRef.current;
+    const hit = cache[r];
+    if (!force && hit && Date.now() - hit.at < CACHE_TTL) {
+      setRows(hit.rows);
+      setAt(hit.at);
       return;
     }
     setLoading(true);
     setError(null);
     const key = (typeof window !== 'undefined' ? window.localStorage.getItem('nw_wmkey') : '') || '';
-    Promise.allSettled([fetchGhTrending(), fetchHfTrending(), fetchRadarSignals(key)]).then((results) => {
+    Promise.allSettled([fetchGhTrending(r), fetchHfTrending(r), fetchRadarSignals(key)]).then((results) => {
       const kinds: TrendingKind[] = ['gh', 'hf', 'radar'];
       const groups: { kind: TrendingKind; items: Cand[] }[] = [];
       const errs: string[] = [];
@@ -112,12 +119,18 @@ export function TrendingView() {
         setSyncFailed(errs.length > 0);
       }
       rowsRef.current = ranked;
-      cache = { rows: ranked, at: Date.now() };
+      cache[r] = { rows: ranked, at: Date.now() };
       setRows(ranked);
       setAt(Date.now());
       setLoading(false);
     });
   }, []);
+
+  const selectRange = (r: TimeRange) => {
+    rangeRef.current = r;
+    setRangeState(r);
+    load(true);
+  };
 
   useEffect(() => {
     load();
@@ -153,6 +166,19 @@ export function TrendingView() {
               🌍 RADAR
             </button>
           </div>
+          <div className="seg" role="group" aria-label="Time range">
+            {RANGES.map((r) => (
+              <button
+                key={r}
+                className={'seg-btn' + (range === r ? ' active' : '')}
+                onClick={() => selectRange(r)}
+                aria-pressed={range === r}
+                title={'Trending from the last ' + (r === '24h' ? '24 hours' : r === '7d' ? '7 days' : '30 days')}
+              >
+                {r.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <button className="btn primary" onClick={sync} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
@@ -177,7 +203,7 @@ export function TrendingView() {
           </div>
         </div>
         <div className="meta-row">
-          <span>UNIFIED RANKING — heat = position within its own source (★ stars · ❤ likes · 🌍 index), normalized to 100</span>
+          <span>UNIFIED RANKING — LAST {range.toUpperCase()} · heat = position within its own source (★ stars · ❤ likes · 🌍 index), normalized to 100</span>
           <span className="meta-right">
             {lastSync !== null && (
               <span className={'sync' + (syncFailed ? ' err' : '')}>
