@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   fetchGhTrending,
   fetchHfTrending,
@@ -11,6 +11,8 @@ import {
   type TrendingKind,
   type TrendingRow,
 } from '@/lib/trending';
+import { formatCountdown, idDiff } from '@/lib/refresh';
+import { useAutoSync } from '@/lib/use-auto-sync';
 import { ago } from '@/lib/utils';
 
 type Filter = 'all' | TrendingKind;
@@ -66,12 +68,17 @@ function TrendRow({ row, rank }: { row: TrendingRow; rank: number }) {
   );
 }
 
+const AUTO_REFRESH_SECONDS = 180;
+
 export function TrendingView() {
   const [filter, setFilter] = useState<Filter>('all');
   const [rows, setRows] = useState<TrendingRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [at, setAt] = useState(0);
+  const [lastSync, setLastSync] = useState<{ added: number; removed: number } | null>(null);
+  const [syncFailed, setSyncFailed] = useState(false);
+  const rowsRef = useRef<TrendingRow[] | null>(null);
 
   const load = useCallback((force = false) => {
     if (!force && cache && Date.now() - cache.at < CACHE_TTL) {
@@ -99,6 +106,12 @@ export function TrendingView() {
         setError('partial: ' + errs.join(' · '));
       }
       const ranked = rankAll(groups);
+      const prev = rowsRef.current;
+      if (prev) {
+        setLastSync(idDiff(prev.map((r) => r.kind + ':' + r.id), ranked.map((r) => r.kind + ':' + r.id)));
+        setSyncFailed(errs.length > 0);
+      }
+      rowsRef.current = ranked;
       cache = { rows: ranked, at: Date.now() };
       setRows(ranked);
       setAt(Date.now());
@@ -110,6 +123,8 @@ export function TrendingView() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const { remaining, syncing, sync } = useAutoSync(AUTO_REFRESH_SECONDS, () => load(true));
 
   const shown = rows ? (filter === 'all' ? rows : rows.filter((r) => r.kind === filter)) : null;
   const counts = rows
@@ -138,7 +153,7 @@ export function TrendingView() {
               🌍 RADAR
             </button>
           </div>
-          <button className="btn primary" onClick={() => load(true)} disabled={loading}>
+          <button className="btn primary" onClick={sync} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
         </div>
@@ -163,7 +178,26 @@ export function TrendingView() {
         </div>
         <div className="meta-row">
           <span>UNIFIED RANKING — heat = position within its own source (★ stars · ❤ likes · 🌍 index), normalized to 100</span>
-          {error && <span className="err">{error}</span>}
+          <span className="meta-right">
+            {lastSync !== null && (
+              <span className={'sync' + (syncFailed ? ' err' : '')}>
+                {syncing
+                  ? '⟳ syncing…'
+                  : syncFailed
+                    ? '⚠ sync failed'
+                    : lastSync.added > 0 || lastSync.removed > 0
+                      ? `✓ +${lastSync.added} · −${lastSync.removed}`
+                      : '✓ up to date'}
+              </span>
+            )}
+            <span
+              className={'sync-count' + (remaining <= 10 && !syncing ? ' urgent' : '')}
+              title="Auto re-syncs every 3 minutes without a reload"
+            >
+              ⟳ {syncing ? '…' : formatCountdown(remaining)}
+            </span>
+            {error && <span className="err">{error}</span>}
+          </span>
         </div>
       </div>
       <div className="wrap">

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatCountdown, storyDiff } from './refresh';
+import { formatCountdown, idDiff, storyDiff } from './refresh';
 import type { Story } from './types';
 
 const story = (id: string): Story => ({
@@ -31,6 +31,21 @@ describe('formatCountdown', () => {
   });
   it('never goes negative', () => {
     expect(formatCountdown(-4)).toBe('0:00');
+  });
+});
+
+describe('idDiff', () => {
+  it('reports added and removed ids', () => {
+    expect(idDiff(['a', 'b'], ['b', 'c'])).toEqual({ added: 1, removed: 1 });
+  });
+  it('reports no changes for identical lists', () => {
+    expect(idDiff(['a', 'b'], ['b', 'a'])).toEqual({ added: 0, removed: 0 });
+  });
+  it('handles a fully fresh list', () => {
+    expect(idDiff([], ['x'])).toEqual({ added: 1, removed: 0 });
+  });
+  it('counts duplicates once', () => {
+    expect(idDiff(['a', 'a'], ['a'])).toEqual({ added: 0, removed: 0 });
   });
 });
 
