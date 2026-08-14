@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SourceRow, NewsData } from '@/lib/data';
 import type { Story } from '@/lib/types';
 import { NewsCard } from './news-card';
+import { HeadlineTicker } from './headline-ticker';
 import { filterStories } from '@/lib/filter';
 import { fmtDate } from '@/lib/utils';
 import { formatCountdown, storyDiff } from '@/lib/refresh';
@@ -124,6 +125,9 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   return (
     <>
+      <div className="wrap">
+        <HeadlineTicker stories={feed.stories} />
+      </div>
       <div className="wrap">
         <div className="searchbar">
           <input
