@@ -497,8 +497,9 @@ main { min-height: 60vh; padding: 26px 0 60px; }
   .trend-heat { width: 80px; }
 }
 
-/* Theme toggle */
-.theme-toggle { padding: 8px 11px; font-size: 0.95rem; line-height: 1; }
+/* Theme control (light / dark / system) */
+.theme-seg { padding: 3px; }
+.theme-seg .seg-btn { padding: 7px 11px; font-size: 0.85rem; line-height: 1; }
 
 /* While a theme switch is in flight, ease every surface instead of snapping.
    The class lives on <html> for ~400ms (added by beginThemeTransition) so

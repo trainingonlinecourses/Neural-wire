@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { tryClient } from '@/lib/supabase/server';
-import { parseTheme, withThemePref } from '@/lib/theme';
+import { parseMode, withThemePref } from '@/lib/theme';
 
 export const runtime = 'nodejs';
 
@@ -19,7 +19,7 @@ export async function GET() {
     .select('prefs')
     .eq('user_id', user.id)
     .maybeSingle();
-  return NextResponse.json({ theme: parseTheme((data?.prefs as Record<string, unknown> | null)?.theme) });
+  return NextResponse.json({ theme: parseMode((data?.prefs as Record<string, unknown> | null)?.theme) });
 }
 
 /** PUT /api/prefs/theme {theme} — persist the signed-in user's theme across devices. */
@@ -33,8 +33,8 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const body = (await req.json()) as { theme?: unknown };
-  const theme = parseTheme(body.theme);
-  if (!theme) return NextResponse.json({ error: 'theme required' }, { status: 400 });
+  const theme = parseMode(body.theme);
+  if (!theme) return NextResponse.json({ error: 'theme mode required' }, { status: 400 });
 
   const { data: existing } = await supabase
     .from('user_prefs')

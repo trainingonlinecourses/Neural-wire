@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beginThemeTransition, parseTheme, resolveTheme, withThemePref } from './theme';
+import { beginThemeTransition, parseMode, resolveTheme, withThemePref } from './theme';
 
 describe('resolveTheme', () => {
   it('prefers an explicit stored choice', () => {
@@ -14,6 +14,24 @@ describe('resolveTheme', () => {
     expect(resolveTheme('', true)).toBe('light');
     expect(resolveTheme('neon', false)).toBe('dark');
   });
+  it('treats the stored system mode as no preference', () => {
+    expect(resolveTheme('system', true)).toBe('light');
+    expect(resolveTheme('system', false)).toBe('dark');
+  });
+});
+
+describe('parseMode', () => {
+  it('accepts all three modes', () => {
+    expect(parseMode('light')).toBe('light');
+    expect(parseMode('dark')).toBe('dark');
+    expect(parseMode('system')).toBe('system');
+  });
+  it('returns null for missing or invalid values', () => {
+    expect(parseMode(null)).toBeNull();
+    expect(parseMode(undefined)).toBeNull();
+    expect(parseMode('neon')).toBeNull();
+    expect(parseMode(42)).toBeNull();
+  });
 });
 
 describe('withThemePref', () => {
@@ -24,18 +42,8 @@ describe('withThemePref', () => {
   it('handles an empty prefs object', () => {
     expect(withThemePref({}, 'dark')).toEqual({ theme: 'dark' });
   });
-});
-
-describe('parseTheme', () => {
-  it('accepts only the two themes', () => {
-    expect(parseTheme('dark')).toBe('dark');
-    expect(parseTheme('light')).toBe('light');
-  });
-  it('returns null for missing or invalid values', () => {
-    expect(parseTheme(null)).toBeNull();
-    expect(parseTheme(undefined)).toBeNull();
-    expect(parseTheme('neon')).toBeNull();
-    expect(parseTheme(42)).toBeNull();
+  it('can store the system mode for cross-device follow', () => {
+    expect(withThemePref({}, 'system')).toEqual({ theme: 'system' });
   });
 });
 
