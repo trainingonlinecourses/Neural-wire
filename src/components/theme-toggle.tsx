@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { applyTheme, resolveTheme, storeTheme, THEME_KEY, type Theme } from '@/lib/theme';
+import { applyTheme, beginThemeTransition, resolveTheme, storeTheme, THEME_KEY, type Theme } from '@/lib/theme';
 
 /**
  * Dark/light theme toggle. Without an explicit choice the theme follows the
@@ -22,7 +22,10 @@ export function ThemeToggle() {
     setMounted(true);
     apply();
     const onSystemChange = () => {
-      if (!localStorage.getItem(THEME_KEY)) apply();
+      if (!localStorage.getItem(THEME_KEY)) {
+        beginThemeTransition();
+        apply();
+      }
     };
     mq.addEventListener('change', onSystemChange);
     return () => mq.removeEventListener('change', onSystemChange);
@@ -30,6 +33,7 @@ export function ThemeToggle() {
 
   const toggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    beginThemeTransition();
     storeTheme(next);
     applyTheme(next);
     setTheme(next);

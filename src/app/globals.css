@@ -47,8 +47,8 @@
   --glow-a: rgba(79, 124, 255, 0.14);
   --glow-b: rgba(34, 211, 238, 0.08);
   --grid: rgba(148, 163, 255, 0.025);
-  --panel-grad: linear-gradient(180deg, #0e1628, #0a101d);
-  --ticker-bg: linear-gradient(180deg, rgba(13, 21, 38, 0.85), #090f1c);
+  --panel-grad: linear-gradient(180deg, var(--panel2), var(--field));
+  --ticker-a: rgba(13, 21, 38, 0.85);
   color-scheme: dark;
 }
 
@@ -89,10 +89,34 @@
   --glow-a: rgba(79, 124, 255, 0.1);
   --glow-b: rgba(14, 116, 144, 0.06);
   --grid: rgba(13, 21, 38, 0.045);
-  --panel-grad: linear-gradient(180deg, #ffffff, #eef2f9);
-  --ticker-bg: linear-gradient(180deg, #ffffff, #eef2f9);
+  --panel-grad: linear-gradient(180deg, var(--field), var(--panel2));
+  --ticker-a: #ffffff;
   color-scheme: light;
 }
+
+/* Register color tokens so gradients (cards, buttons, ticker) interpolate during theme transitions. */
+@property --bg { syntax: '<color>'; inherits: true; initial-value: #05070d; }
+@property --panel { syntax: '<color>'; inherits: true; initial-value: #0b1120; }
+@property --panel2 { syntax: '<color>'; inherits: true; initial-value: #0e1628; }
+@property --card { syntax: '<color>'; inherits: true; initial-value: #090f1c; }
+@property --field { syntax: '<color>'; inherits: true; initial-value: #0a1120; }
+@property --thumb { syntax: '<color>'; inherits: true; initial-value: #0d1526; }
+@property --ink { syntax: '<color>'; inherits: true; initial-value: #e8edf7; }
+@property --mut { syntax: '<color>'; inherits: true; initial-value: #8b95ab; }
+@property --muted-ink { syntax: '<color>'; inherits: true; initial-value: #c3cde2; }
+@property --line { syntax: '<color>'; inherits: true; initial-value: rgba(148, 163, 255, 0.13); }
+@property --btn-a { syntax: '<color>'; inherits: true; initial-value: #101a30; }
+@property --btn-b { syntax: '<color>'; inherits: true; initial-value: #0b1322; }
+@property --ticker-a { syntax: '<color>'; inherits: true; initial-value: rgba(13, 21, 38, 0.85); }
+@property --topbar-bg { syntax: '<color>'; inherits: true; initial-value: rgba(5, 8, 15, 0.82); }
+@property --footer-bg { syntax: '<color>'; inherits: true; initial-value: rgba(6, 9, 17, 0.7); }
+@property --lb-bar { syntax: '<color>'; inherits: true; initial-value: #16223c; }
+@property --scroll-thumb { syntax: '<color>'; inherits: true; initial-value: #1c2740; }
+@property --stat-bg { syntax: '<color>'; inherits: true; initial-value: rgba(13, 21, 38, 0.6); }
+@property --banner-ink { syntax: '<color>'; inherits: true; initial-value: #ffb3c1; }
+@property --glow-a { syntax: '<color>'; inherits: true; initial-value: rgba(79, 124, 255, 0.14); }
+@property --glow-b { syntax: '<color>'; inherits: true; initial-value: rgba(34, 211, 238, 0.08); }
+@property --grid { syntax: '<color>'; inherits: true; initial-value: rgba(148, 163, 255, 0.025); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -105,7 +129,6 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   padding-bottom: var(--nav-h);
-  transition: background-color 0.25s ease, color 0.25s ease;
   background-image:
     radial-gradient(900px 500px at 85% -10%, var(--glow-a), transparent 60%),
     radial-gradient(700px 400px at -10% 30%, var(--glow-b), transparent 60%),
@@ -128,7 +151,6 @@ mark { background: var(--mark-bg); color: var(--mark-ink); border-radius: 3px; p
   background: var(--topbar-bg);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
-  transition: background-color 0.25s ease;
 }
 .wrap { max-width: 1380px; margin: 0 auto; padding: 0 22px; }
 .hd { display: flex; align-items: center; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
@@ -383,7 +405,7 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .ticker {
   display: flex; align-items: stretch;
   border: 1px solid rgba(79, 124, 255, 0.35); border-radius: 12px;
-  background: var(--ticker-bg);
+  background: linear-gradient(180deg, var(--ticker-a), var(--card));
   overflow: hidden; margin-bottom: 16px;
   box-shadow: 0 0 18px rgba(79, 124, 255, 0.08);
 }
@@ -452,6 +474,33 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 
 /* Theme toggle */
 .theme-toggle { padding: 8px 11px; font-size: 0.95rem; line-height: 1; }
+
+/* While a theme switch is in flight, ease every surface instead of snapping.
+   The class lives on <html> for ~400ms (added by beginThemeTransition) so
+   hover effects keep their own transitions the rest of the time. */
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    fill 0.3s ease,
+    --bg 0.3s ease, --panel 0.3s ease, --panel2 0.3s ease, --card 0.3s ease,
+    --field 0.3s ease, --thumb 0.3s ease, --ink 0.3s ease, --mut 0.3s ease,
+    --muted-ink 0.3s ease, --line 0.3s ease, --btn-a 0.3s ease, --btn-b 0.3s ease,
+    --ticker-a 0.3s ease, --topbar-bg 0.3s ease, --footer-bg 0.3s ease,
+    --lb-bar 0.3s ease, --scroll-thumb 0.3s ease, --stat-bg 0.3s ease,
+    --banner-ink 0.3s ease, --glow-a 0.3s ease, --glow-b 0.3s ease, --grid 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: none !important;
+  }
+}
 
 /* Auto-refresh countdown (newsroom) */
 .meta-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
