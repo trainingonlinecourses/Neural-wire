@@ -13,7 +13,7 @@ import {
   type TrendingKind,
   type TrendingRow,
 } from '@/lib/trending';
-import { addedKeys, formatCountdown, idDiff } from '@/lib/refresh';
+import { addedKeys, formatCountdown, idDiff, parseRefreshInterval, refreshIntervalLabel, REFRESH_INTERVALS } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
 import { ago } from '@/lib/utils';
 import { TrendRow } from './trend-row';
@@ -25,7 +25,8 @@ let cache: Partial<Record<TimeRange, { rows: TrendingRow[]; at: number }>> = {};
 
 const RANGES: TimeRange[] = ['24h', '7d', '30d'];
 
-const AUTO_REFRESH_SECONDS = 180;
+const REFRESH_KEY = 'nw_trend_refresh';
+const DEFAULT_REFRESH_SECONDS = 180;
 
 export function TrendingView() {
   const [filter, setFilter] = useState<Filter>('all');
@@ -39,7 +40,13 @@ export function TrendingView() {
   const [syncFailed, setSyncFailed] = useState(false);
   /** kind:id keys introduced by the most recent sync — they show the NEW badge. */
   const [newKeys, setNewKeys] = useState<Set<string>>(new Set());
+  const [intervalSec, setIntervalSec] = useState(DEFAULT_REFRESH_SECONDS);
   const rowsRef = useRef<TrendingRow[] | null>(null);
+
+  // Restore the persisted refresh interval on mount (client-only, avoids SSR mismatch).
+  useEffect(() => {
+    setIntervalSec(parseRefreshInterval(window.localStorage.getItem(REFRESH_KEY)));
+  }, []);
 
   const load = useCallback((force = false) => {
     const r = rangeRef.current;
@@ -94,12 +101,22 @@ export function TrendingView() {
     load(true);
   };
 
+  const selectInterval = (sec: number) => {
+    if (!(REFRESH_INTERVALS as readonly number[]).includes(sec)) return;
+    setIntervalSec(sec);
+    try {
+      window.localStorage.setItem(REFRESH_KEY, String(sec));
+    } catch {
+      /* storage unavailable — keep the in-memory choice */
+    }
+  };
+
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { remaining, syncing, sync } = useAutoSync(AUTO_REFRESH_SECONDS, () => load(true));
+  const { remaining, syncing, sync } = useAutoSync(intervalSec, () => load(true));
 
   const shown = rows ? (filter === 'all' ? rows : rows.filter((r) => r.kind === filter)) : null;
   const counts = rows
@@ -144,6 +161,19 @@ export function TrendingView() {
           <button className="btn primary" onClick={sync} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
+          <select
+            className="field refresh-select"
+            value={intervalSec}
+            onChange={(e) => selectInterval(Number(e.target.value))}
+            title="Auto re-sync interval"
+            aria-label="Auto re-sync interval"
+          >
+            {REFRESH_INTERVALS.map((s) => (
+              <option key={s} value={s}>
+                {refreshIntervalLabel(s)}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="wrap">
@@ -180,7 +210,7 @@ export function TrendingView() {
             )}
             <span
               className={'sync-count' + (remaining <= 10 && !syncing ? ' urgent' : '')}
-              title="Auto re-syncs every 3 minutes without a reload"
+              title={`Auto re-syncs every ${refreshIntervalLabel(intervalSec).toLowerCase()} without a reload`}
             >
               ⟳ {syncing ? '…' : formatCountdown(remaining)}
             </span>

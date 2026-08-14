@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { addedKeys, formatCountdown, idDiff, storyDiff } from './refresh';
+import {
+  addedKeys,
+  formatCountdown,
+  idDiff,
+  parseRefreshInterval,
+  refreshIntervalLabel,
+  REFRESH_INTERVALS,
+  storyDiff,
+} from './refresh';
 import type { Story } from './types';
 
 const story = (id: string): Story => ({
@@ -31,6 +39,31 @@ describe('formatCountdown', () => {
   });
   it('never goes negative', () => {
     expect(formatCountdown(-4)).toBe('0:00');
+  });
+});
+
+describe('parseRefreshInterval', () => {
+  it('accepts each allowed interval', () => {
+    for (const s of REFRESH_INTERVALS) expect(parseRefreshInterval(s)).toBe(s);
+  });
+  it('accepts numeric strings', () => {
+    expect(parseRefreshInterval('600')).toBe(600);
+  });
+  it('falls back for unknown values', () => {
+    expect(parseRefreshInterval(240)).toBe(180);
+    expect(parseRefreshInterval('abc')).toBe(180);
+    expect(parseRefreshInterval(null)).toBe(180);
+  });
+  it('honors a custom fallback', () => {
+    expect(parseRefreshInterval(999, 60)).toBe(60);
+  });
+});
+
+describe('refreshIntervalLabel', () => {
+  it('formats minutes', () => {
+    expect(refreshIntervalLabel(60)).toBe('1 MIN');
+    expect(refreshIntervalLabel(180)).toBe('3 MIN');
+    expect(refreshIntervalLabel(600)).toBe('10 MIN');
   });
 });
 

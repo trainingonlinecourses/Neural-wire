@@ -404,6 +404,7 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .err { color: var(--hot-ink); font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.66rem; }
 .searchbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 4px 0 14px; }
 .searchbar .field { flex: 1 1 240px; min-width: 180px; }
+.refresh-select { flex: none; width: auto; min-width: 0; cursor: pointer; }
 .hd-right { display: flex; gap: 12px; align-items: center; }
 .btn { cursor: pointer; }
 .btn.danger { color: var(--hot-ink); }

@@ -7,6 +7,20 @@ export function formatCountdown(totalSeconds: number): string {
   return `${m}:${String(s % 60).padStart(2, '0')}`;
 }
 
+/** Allowed auto-refresh intervals, in seconds (1 / 3 / 5 / 10 minutes). */
+export const REFRESH_INTERVALS = [60, 180, 300, 600] as const;
+
+/** Coerce a stored value (number or string) into an allowed interval, else fallback. */
+export function parseRefreshInterval(value: unknown, fallback = 180): number {
+  const n = typeof value === 'number' ? value : Number(value);
+  return (REFRESH_INTERVALS as readonly number[]).includes(n) ? n : fallback;
+}
+
+/** Human label for an interval, e.g. 300 -> "5 MIN". */
+export function refreshIntervalLabel(seconds: number): string {
+  return `${seconds / 60} MIN`;
+}
+
 export interface StoryDiff {
   /** items present in `next` but not `prev` */
   added: number;
