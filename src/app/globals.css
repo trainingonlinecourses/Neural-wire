@@ -55,6 +55,7 @@
   --gold-ink: #ffd21e;
   --warn-ink: #fbbf24;
   --hot-ink: #ff5470;
+  --global-ink: #b3a7ff;
   color-scheme: dark;
 }
 
@@ -102,6 +103,7 @@
   --gold-ink: #a16207;
   --warn-ink: #92400e;
   --hot-ink: #be123c;
+  --global-ink: #6d28d9;
   color-scheme: light;
 }
 
@@ -133,6 +135,7 @@
 @property --gold-ink { syntax: '<color>'; inherits: true; initial-value: #ffd21e; }
 @property --warn-ink { syntax: '<color>'; inherits: true; initial-value: #fbbf24; }
 @property --hot-ink { syntax: '<color>'; inherits: true; initial-value: #ff5470; }
+@property --global-ink { syntax: '<color>'; inherits: true; initial-value: #b3a7ff; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -491,6 +494,12 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .trend-heat { width: 120px; height: 6px; border-radius: 99px; background: var(--lb-bar); overflow: hidden; }
 .trend-heat i { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), var(--cyan)); border-radius: 99px; }
 .trend-pct { font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--mut); }
+.trend-pcts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.trend-pct.global { color: var(--global-ink); }
+.trend-pct.global::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--global-ink); display: inline-block; margin-right: 5px;
+}
 @media (max-width: 640px) {
   .trend-row { grid-template-columns: 40px 1fr; }
   .trend-meta { grid-column: 2; flex-direction: row; align-items: center; gap: 10px; min-width: 0; }
@@ -519,7 +528,8 @@ html.theme-transition *::after {
     --ticker-a 0.3s ease, --topbar-bg 0.3s ease, --footer-bg 0.3s ease,
     --lb-bar 0.3s ease, --scroll-thumb 0.3s ease, --stat-bg 0.3s ease,
     --banner-ink 0.3s ease, --glow-a 0.3s ease, --glow-b 0.3s ease, --grid 0.3s ease,
-    --cyan-ink 0.3s ease, --ok-ink 0.3s ease, --gold-ink 0.3s ease, --warn-ink 0.3s ease, --hot-ink 0.3s ease;
+    --cyan-ink 0.3s ease, --ok-ink 0.3s ease, --gold-ink 0.3s ease, --warn-ink 0.3s ease, --hot-ink 0.3s ease,
+    --global-ink 0.3s ease;
 }
 @media (prefers-reduced-motion: reduce) {
   html.theme-transition *,

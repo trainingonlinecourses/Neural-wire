@@ -57,6 +57,19 @@ describe('rankAll', () => {
     expect(rows[rows.length - 1].id).toBe('climate');
   });
 
+  it('assigns a cross-category global percentile (100 top, 0 bottom)', () => {
+    const rows = rankAll([
+      { kind: 'gh', items: [cand('a', 1000), cand('b', 500)] },
+      { kind: 'hf', items: [cand('m', 300), cand('n', 10)] },
+    ]);
+    expect(rows.map((r) => r.global)).toEqual([100, 67, 33, 0]);
+  });
+
+  it('gives a single row full global heat', () => {
+    const rows = rankAll([{ kind: 'gh', items: [cand('only', 10)] }]);
+    expect(rows[0].global).toBe(100);
+  });
+
   it('handles an empty category without dividing by zero', () => {
     const rows = rankAll([{ kind: 'gh', items: [] }]);
     expect(rows).toEqual([]);

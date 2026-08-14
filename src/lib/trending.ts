@@ -27,6 +27,8 @@ export interface TrendingRow extends Cand {
   kind: TrendingKind;
   /** 0-100, position within the item's own category. */
   heat: number;
+  /** 0-100 cross-category percentile: absolute strength in the merged ranking. */
+  global: number;
 }
 
 const KIND_PRIORITY: Record<TrendingKind, number> = { gh: 0, hf: 1, radar: 2 };
@@ -46,7 +48,7 @@ export function rankAll(groups: { kind: TrendingKind; items: Cand[] }[]): Trendi
   for (const g of groups) {
     const max = maxByKind[g.kind] || 0;
     for (const it of g.items) {
-      rows.push({ ...it, kind: g.kind, heat: max > 0 ? Math.round((100 * it.value) / max) : 0 });
+      rows.push({ ...it, kind: g.kind, heat: max > 0 ? Math.round((100 * it.value) / max) : 0, global: 0 });
     }
   }
   rows.sort((a, b) => {
@@ -54,6 +56,11 @@ export function rankAll(groups: { kind: TrendingKind; items: Cand[] }[]): Trendi
     if (KIND_PRIORITY[a.kind] !== KIND_PRIORITY[b.kind]) return KIND_PRIORITY[a.kind] - KIND_PRIORITY[b.kind];
     if (b.value !== a.value) return b.value - a.value;
     return a.name.localeCompare(b.name);
+  });
+  // Cross-category percentile: the top item is 100, the bottom is 0.
+  const total = rows.length;
+  rows.forEach((r, i) => {
+    r.global = total <= 1 ? 100 : Math.round((100 * (total - 1 - i)) / (total - 1));
   });
   return rows;
 }

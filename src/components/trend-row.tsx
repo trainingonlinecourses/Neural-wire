@@ -24,7 +24,10 @@ export function TrendRow({ row, rank }: { row: TrendingRow; rank: number }) {
         <div className="trend-heat">
           <i style={{ width: row.heat + '%' }} />
         </div>
-        <span className="trend-pct">{row.heat}% heat</span>
+        <div className="trend-pcts">
+          <span className="trend-pct">{row.heat}% in-source</span>
+          <span className="trend-pct global">{row.global}% overall</span>
+        </div>
       </div>
     </>
   );
