@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { SourceRow, NewsData } from '@/lib/data';
 import { NewsCard } from './news-card';
+import { filterStories } from '@/lib/filter';
 import { fmtDate } from '@/lib/utils';
 
 type Sort = 'newest' | 'oldest';
@@ -18,16 +19,7 @@ export function NewsExplorer({ data }: { data: NewsData }) {
     let list = data.stories;
     if (src !== 'all') list = list.filter((s) => s.sourceId === src);
     if (show === 'models') list = list.filter((s) => s.isModel);
-    if (q.trim()) {
-      const needle = q.trim().toLowerCase();
-      list = list.filter(
-        (s) =>
-          s.title.toLowerCase().includes(needle) ||
-          s.description.toLowerCase().includes(needle) ||
-          s.models.some((m) => m.toLowerCase().includes(needle)) ||
-          s.topics.some((t) => t.toLowerCase().includes(needle)),
-      );
-    }
+    list = filterStories(list, q);
     return [...list].sort((a, b) =>
       sort === 'newest' ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
     );

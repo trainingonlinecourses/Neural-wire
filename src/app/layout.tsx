@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
 import { Nav } from '@/components/nav';
+import { Shortcuts } from '@/components/shortcuts';
 import { SignOutButton } from '@/components/sign-out-button';
 import { createClient } from '@/lib/supabase/server';
 
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </header>
         <main>{children}</main>
+        <Shortcuts />
         <footer className="foot">
           <div className="wrap">
             <span>

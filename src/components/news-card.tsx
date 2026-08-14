@@ -1,6 +1,7 @@
 import { srcById } from '@/lib/sources';
 import type { Story } from '@/lib/types';
 import { ago } from '@/lib/utils';
+import { CopyLink } from './copy-link';
 
 export function NewsCard({ story }: { story: Story }) {
   const s = srcById[story.sourceId];
@@ -40,6 +41,7 @@ export function NewsCard({ story }: { story: Story }) {
         )}
         <div className="card-meta">
           <span>⏱ {ago(story.date)}</span>
+          <CopyLink href={story.link} />
           <a className="open" href={story.link} target="_blank" rel="noopener noreferrer">
             READ ↗
           </a>
