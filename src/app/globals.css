@@ -538,6 +538,13 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .trend-sub { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; color: var(--mut); }
 .trend-meta { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; min-width: 140px; }
 .trend-metric { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.78rem; font-weight: 700; color: var(--gold-ink); white-space: nowrap; }
+/* 24h climb chip — new stars (GH) or HF trending momentum */
+.trend-delta {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.6rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+  color: var(--ok-ink); border: 1px solid rgba(45, 212, 167, 0.4); background: rgba(45, 212, 167, 0.08);
+}
+.trend-delta.hf { color: var(--gold-ink); border-color: rgba(255, 210, 30, 0.4); background: rgba(255, 210, 30, 0.07); }
 .trend-heat { width: 120px; height: 6px; border-radius: 99px; background: var(--lb-bar); overflow: hidden; }
 .trend-heat i { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), var(--cyan)); border-radius: 99px; }
 .trend-pct { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.6rem; color: var(--mut); }

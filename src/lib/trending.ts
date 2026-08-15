@@ -21,6 +21,16 @@ export interface Cand {
   value: number;
   href: string | null;
   tags?: string[];
+  /** Hugging Face momentum score for the sort window (24h/7d), when known. */
+  trendingScore?: number;
+}
+
+/** 24h climb signal attached to a movers row: new stars (GH) or HF momentum. */
+export interface RowDelta {
+  /** New stars gained in the last 24h (GitHub WatchEvents). */
+  stars?: number;
+  /** Hugging Face trendingScore for the window. */
+  score?: number;
 }
 
 export interface TrendingRow extends Cand {
@@ -29,6 +39,7 @@ export interface TrendingRow extends Cand {
   heat: number;
   /** 0-100 cross-category percentile: absolute strength in the merged ranking. */
   global: number;
+  delta?: RowDelta;
 }
 
 const KIND_PRIORITY: Record<TrendingKind, number> = { gh: 0, hf: 1, radar: 2 };
@@ -90,10 +101,56 @@ export function withinWindow(createdMs: number, days: number, now = Date.now()):
 const MOVERS_TTL = 3 * 60 * 1000;
 let moversCache: { range: TimeRange; rows: TrendingRow[]; at: number } | null = null;
 
+/* 24h climb signal (GH star deltas). Each repo needs its own events call, so a
+   rate-limit backoff keeps us from hammering the GitHub API. */
+let deltaCooldownUntil = 0;
+
+/**
+ * Stars gained by one repo in the last 24h, counted from its public event
+ * stream (a WatchEvent with action 'started' is a new star). Returns null when
+ * the count is unavailable; rateLimited flags a 403/429 so callers can back off.
+ */
+export async function fetchGhStarDelta(
+  fullName: string,
+): Promise<{ stars: number | null; rateLimited: boolean }> {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${fullName}/events?per_page=100`, {
+      headers: { Accept: 'application/vnd.github+json' },
+      signal: AbortSignal.timeout(12000),
+    });
+    if (r.status === 403 || r.status === 429) return { stars: null, rateLimited: true };
+    if (!r.ok) return { stars: null, rateLimited: false };
+    const j = (await r.json()) as unknown;
+    if (!Array.isArray(j)) return { stars: null, rateLimited: false };
+    const cutoff = Date.now() - 24 * 3_600_000;
+    const stars = j
+      .filter((e: Record<string, unknown>) => {
+        if (e.type !== 'WatchEvent') return false;
+        const action = (e.payload as Record<string, unknown> | undefined)?.action;
+        if (action && action !== 'started') return false;
+        const t = typeof e.created_at === 'string' ? Date.parse(e.created_at) : NaN;
+        return Number.isFinite(t) && t >= cutoff;
+      })
+      .length;
+    return { stars, rateLimited: false };
+  } catch {
+    return { stars: null, rateLimited: false };
+  }
+}
+
+/** Compact 24h-climb label for a movers row: new stars (GH) or HF momentum. */
+export function deltaText(delta: RowDelta): string | null {
+  if (delta.stars != null) return '▲ +' + fmtStars(delta.stars) + ' ★';
+  if (delta.score != null) return '▲ ' + fmtStars(delta.score) + ' score';
+  return null;
+}
+
 /**
  * The merged movers ranking for a window, computed once per TTL and shared by
  * every consumer (brief Movers, watchlist movers status). Status-only radar
  * rows are dropped and the radar key is not passed, matching the /brief digest.
+ * Each row also gets its 24h climb signal: star deltas for the top GH repos
+ * (events API, per-repo call) and HF trendingScore for models.
  */
 export async function getMoversRows(range: TimeRange = '24h'): Promise<TrendingRow[]> {
   if (!moversCache || moversCache.range !== range || Date.now() - moversCache.at > MOVERS_TTL) {
@@ -106,7 +163,32 @@ export async function getMoversRows(range: TimeRange = '24h'): Promise<TrendingR
     if (ghRes.status === 'fulfilled') groups.push({ kind: 'gh', items: ghRes.value });
     if (hfRes.status === 'fulfilled') groups.push({ kind: 'hf', items: hfRes.value });
     if (radarRes.status === 'fulfilled') groups.push({ kind: 'radar', items: liveSignalCands(radarRes.value) });
-    moversCache = { range, rows: rankAll(groups), at: Date.now() };
+    const rows = rankAll(groups);
+
+    // 24h climb signal — GH star deltas (only the rendered top repos; bounded
+    // per-repo calls with a cooldown after a rate limit).
+    if (Date.now() >= deltaCooldownUntil) {
+      const ghTop = rows.filter((r) => r.kind === 'gh').slice(0, 10);
+      const deltas = await Promise.all(ghTop.map((r) => fetchGhStarDelta(r.id)));
+      let limited = false;
+      ghTop.forEach((r, i) => {
+        const d = deltas[i];
+        if (d.rateLimited) {
+          limited = true;
+          return;
+        }
+        if (d.stars != null) r.delta = { ...(r.delta || {}), stars: d.stars };
+      });
+      if (limited) deltaCooldownUntil = Date.now() + 10 * 60 * 1000;
+    }
+    // HF momentum — no extra call needed, trendingScore rides the fetch above.
+    for (const r of rows) {
+      if (r.kind === 'hf' && r.trendingScore != null) {
+        r.delta = { ...(r.delta || {}), score: r.trendingScore };
+      }
+    }
+
+    moversCache = { range, rows, at: Date.now() };
   }
   return moversCache.rows;
 }
@@ -223,6 +305,7 @@ interface RawHF {
   library_name?: string;
   createdAt?: number;
   created_at?: number;
+  trendingScore?: number;
 }
 
 async function hfFetch(url: string): Promise<RawHF[]> {
@@ -259,6 +342,7 @@ export async function fetchHfTrending(range: TimeRange = '7d'): Promise<Cand[]> 
     value: m.likes ?? 0,
     href: 'https://huggingface.co/' + (m.id || ''),
     tags: [m.pipeline_tag || '', m.library_name || ''].filter(Boolean),
+    trendingScore: m.trendingScore,
   }));
 }
 

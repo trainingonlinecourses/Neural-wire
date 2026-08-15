@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  deltaText,
+  fetchGhStarDelta,
   GH_STAR_FLOOR,
   hfSortFor,
   liveSignalCands,
@@ -119,6 +121,63 @@ describe('signalToCand', () => {
     const c = signalToCand(signal('climate', null));
     expect(c.value).toBe(0);
     expect(c.metric).toBe('—');
+  });
+});
+
+describe('fetchGhStarDelta', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const stubFetch = (status: number, body: unknown) => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        status,
+        ok: status >= 200 && status < 300,
+        json: async () => body,
+      })),
+    );
+  };
+
+  it('counts WatchEvents in the last 24h, ignoring older stars and other events', async () => {
+    const now = Date.now();
+    stubFetch(200, [
+      { type: 'WatchEvent', created_at: new Date(now - 3_600_000).toISOString(), payload: { action: 'started' } },
+      { type: 'WatchEvent', created_at: new Date(now - 25 * 3_600_000).toISOString(), payload: { action: 'started' } },
+      { type: 'WatchEvent', created_at: new Date(now - 7_200_000).toISOString(), payload: { action: 'started' } },
+      { type: 'PushEvent', created_at: new Date(now - 60_000).toISOString() },
+      { type: 'WatchEvent', created_at: new Date(now - 3_600_000).toISOString(), payload: { action: 'unstarted' } },
+    ]);
+    const { stars, rateLimited } = await fetchGhStarDelta('openai/whisper');
+    expect(stars).toBe(2);
+    expect(rateLimited).toBe(false);
+  });
+
+  it('reports rateLimited on 403/429', async () => {
+    stubFetch(403, { message: 'API rate limit exceeded' });
+    expect(await fetchGhStarDelta('a/b')).toEqual({ stars: null, rateLimited: true });
+    stubFetch(429, { message: 'too many requests' });
+    expect(await fetchGhStarDelta('a/b')).toEqual({ stars: null, rateLimited: true });
+  });
+
+  it('returns null on non-ok responses without rate limiting', async () => {
+    stubFetch(500, {});
+    expect(await fetchGhStarDelta('a/b')).toEqual({ stars: null, rateLimited: false });
+  });
+
+  it('returns null when the body is not an array', async () => {
+    stubFetch(200, { message: 'moved permanently' });
+    expect(await fetchGhStarDelta('a/b')).toEqual({ stars: null, rateLimited: false });
+  });
+});
+
+describe('deltaText', () => {
+  it('labels star deltas and HF momentum compactly', () => {
+    expect(deltaText({ stars: 43 })).toBe('▲ +43 ★');
+    expect(deltaText({ score: 9082 })).toBe('▲ 9.1k score');
+  });
+
+  it('returns null when no climb signal is set', () => {
+    expect(deltaText({})).toBeNull();
   });
 });
 

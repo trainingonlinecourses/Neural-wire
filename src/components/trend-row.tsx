@@ -1,9 +1,11 @@
+import { deltaText } from '@/lib/trending';
 import type { TrendingKind, TrendingRow } from '@/lib/trending';
 
 export const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
 
 /** One ranked row — rank badge, source tag, name, tags, metric and heat bar. */
 export function TrendRow({ row, rank, isNew = false }: { row: TrendingRow; rank: number; isNew?: boolean }) {
+  const delta = row.delta ? deltaText(row.delta) : null;
   const inner = (
     <>
       <div className={'trend-rank' + (rank <= 3 ? ' top' : '')}>{rank}</div>
@@ -22,6 +24,14 @@ export function TrendRow({ row, rank, isNew = false }: { row: TrendingRow; rank:
       </div>
       <div className="trend-meta">
         <span className="trend-metric">{row.metric}</span>
+        {delta && (
+          <span
+            className={'trend-delta' + (row.delta?.score != null ? ' hf' : '')}
+            title={row.delta?.score != null ? 'Hugging Face trending momentum' : 'new stars in the last 24h'}
+          >
+            {delta}
+          </span>
+        )}
         <div className="trend-heat">
           <i style={{ width: row.heat + '%' }} />
         </div>
