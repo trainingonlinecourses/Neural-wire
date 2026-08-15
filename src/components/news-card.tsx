@@ -3,8 +3,9 @@ import type { Story } from '@/lib/types';
 import { ago } from '@/lib/utils';
 import { CopyLink } from './copy-link';
 import { SafeImage } from './safe-image';
+import { CoverageChip } from './coverage-chip';
 
-export function NewsCard({ story }: { story: Story }) {
+export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: Story[] }) {
   const s = srcById[story.sourceId];
   return (
     <article className="card">
@@ -54,6 +55,7 @@ export function NewsCard({ story }: { story: Story }) {
             READ ↗
           </a>
         </div>
+        <CoverageChip members={coverage} />
       </div>
     </article>
   );

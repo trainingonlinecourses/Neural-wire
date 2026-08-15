@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  fetchGhStarDelta,
   fetchGhTrending,
   fetchHfTrending,
   fetchRadarSignals,
   rankAll,
   signalToCand,
+  sortByRisers,
   type Cand,
   type RadarSignal,
   type TimeRange,
@@ -19,6 +21,7 @@ import { ago } from '@/lib/utils';
 import { TrendRow } from './trend-row';
 
 type Filter = 'all' | TrendingKind;
+type SortMode = 'heat' | 'risers';
 
 const CACHE_TTL = 5 * 60 * 1000;
 let cache: Partial<Record<TimeRange, { rows: TrendingRow[]; at: number }>> = {};
@@ -41,6 +44,9 @@ export function TrendingView() {
   /** kind:id keys introduced by the most recent sync — they show the NEW badge. */
   const [newKeys, setNewKeys] = useState<Set<string>>(new Set());
   const [intervalSec, setIntervalSec] = useState(DEFAULT_REFRESH_SECONDS);
+  const [sortMode, setSortMode] = useState<SortMode>('heat');
+  /** Client-side backoff after a GitHub 403/429 while attaching star deltas (ref, not state, to avoid a stale closure in load). */
+  const climbLockedRef = useRef(false);
   const rowsRef = useRef<TrendingRow[] | null>(null);
 
   // Restore the persisted refresh interval on mount (client-only, avoids SSR mismatch).
@@ -90,8 +96,36 @@ export function TrendingView() {
       setRows(ranked);
       setAt(Date.now());
       setLoading(false);
+      void attachClimbs(ranked);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * Attach real 24h star deltas to the top GH repos so the RISERS sort has
+   * genuine climb data. Bounded, non-blocking, with a 10-min cooldown on
+   * rate-limit responses (shared-IP safety, same guard as the brief server).
+   */
+  const attachClimbs = async (rows: TrendingRow[]) => {
+    if (climbLockedRef.current) return;
+    const ghTop = rows.filter((r) => r.kind === 'gh').slice(0, 6);
+    if (!ghTop.length) return;
+    const results = await Promise.allSettled(ghTop.map((r) => fetchGhStarDelta(r.id)));
+    let limited = false;
+    const starsById = new Map<string, number>();
+    results.forEach((res, i) => {
+      if (res.status === 'fulfilled') {
+        if (res.value.rateLimited) limited = true;
+        else if (res.value.stars != null) starsById.set(ghTop[i].id, res.value.stars);
+      }
+    });
+    if (limited) climbLockedRef.current = true;
+    if (starsById.size) {
+      setRows((prev) =>
+        prev?.map((r) => (starsById.has(r.id) ? { ...r, delta: { ...(r.delta || {}), stars: starsById.get(r.id)! } } : r)) ?? null,
+      );
+    }
+  };
 
   const selectRange = (r: TimeRange) => {
     rangeRef.current = r;
@@ -118,7 +152,13 @@ export function TrendingView() {
 
   const { remaining, syncing, sync } = useAutoSync(intervalSec, () => load(true));
 
-  const shown = rows ? (filter === 'all' ? rows : rows.filter((r) => r.kind === filter)) : null;
+  const shown = rows
+    ? sortMode === 'risers'
+      ? sortByRisers(filter === 'all' ? rows : rows.filter((r) => r.kind === filter))
+      : filter === 'all'
+        ? rows
+        : rows.filter((r) => r.kind === filter)
+    : null;
   const counts = rows
     ? {
         gh: rows.filter((r) => r.kind === 'gh').length,
@@ -143,6 +183,24 @@ export function TrendingView() {
             </button>
             <button className={'seg-btn' + (filter === 'radar' ? ' active' : '')} onClick={() => setFilter('radar')}>
               🌍 RADAR
+            </button>
+          </div>
+          <div className="seg" role="group" aria-label="Sort mode">
+            <button
+              className={'seg-btn' + (sortMode === 'heat' ? ' active' : '')}
+              onClick={() => setSortMode('heat')}
+              aria-pressed={sortMode === 'heat'}
+              title="Sort by overall heat within the ranking"
+            >
+              🔥 HEAT
+            </button>
+            <button
+              className={'seg-btn' + (sortMode === 'risers' ? ' active' : '')}
+              onClick={() => setSortMode('risers')}
+              aria-pressed={sortMode === 'risers'}
+              title="Sort by 24h climb: new stars (GitHub) and HF momentum first"
+            >
+              ⚡ RISERS
             </button>
           </div>
           <div className="seg" role="group" aria-label="Time range">

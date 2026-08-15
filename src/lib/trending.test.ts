@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  climbScore,
   deltaText,
   fetchGhStarDelta,
   GH_STAR_FLOOR,
@@ -9,6 +10,7 @@ import {
   RANGE_DAYS,
   rankAll,
   signalToCand,
+  sortByRisers,
   withinWindow,
   type Cand,
   type RadarSignal,
@@ -178,6 +180,53 @@ describe('deltaText', () => {
 
   it('returns null when no climb signal is set', () => {
     expect(deltaText({})).toBeNull();
+  });
+});
+
+describe('climbScore / sortByRisers', () => {
+  const row = (id: string, over: Partial<TrendingRow> = {}): TrendingRow => ({
+    kind: 'gh',
+    id,
+    name: id,
+    sub: '',
+    metric: '',
+    value: 1,
+    href: null,
+    heat: 50,
+    global: 40,
+    ...over,
+  });
+
+  it('prefers star deltas, then HF momentum, then raw trendingScore', () => {
+    expect(climbScore(row('a', { delta: { stars: 10 } }))).toBe(10);
+    expect(climbScore(row('a', { delta: { score: 500 } }))).toBe(500);
+    expect(climbScore(row('a', { kind: 'hf', trendingScore: 300 }))).toBe(300);
+    expect(climbScore(row('a'))).toBe(0);
+  });
+
+  it('sorts by climb desc, heat as the tiebreak', () => {
+    const rows = [
+      row('cold', { heat: 90 }),
+      row('hot', { delta: { stars: 42 } }),
+      row('warm', { delta: { score: 99 }, heat: 80 }),
+      row('tie-a', { heat: 70 }),
+      row('tie-b', { heat: 95 }),
+    ];
+    expect(sortByRisers(rows).map((r) => r.id)).toEqual(['warm', 'hot', 'tie-b', 'cold', 'tie-a']);
+  });
+
+  it('keeps rows without a climb signal at the bottom by heat', () => {
+    const rows = [
+      row('low', { heat: 20 }),
+      row('high', { heat: 90 }),
+    ];
+    expect(sortByRisers(rows).map((r) => r.id)).toEqual(['high', 'low']);
+  });
+
+  it('does not mutate the input', () => {
+    const rows = [row('b', { delta: { stars: 5 } }), row('a', { delta: { stars: 9 } })];
+    sortByRisers(rows);
+    expect(rows.map((r) => r.id)).toEqual(['b', 'a']);
   });
 });
 

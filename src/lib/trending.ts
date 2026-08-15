@@ -146,6 +146,24 @@ export function deltaText(delta: RowDelta): string | null {
 }
 
 /**
+ * Numeric climb signal for sorting the "fastest risers" view: GH star deltas
+ * win, then HF momentum (explicit delta or the raw trendingScore), else 0.
+ */
+export function climbScore(row: TrendingRow): number {
+  return row.delta?.stars ?? row.delta?.score ?? row.trendingScore ?? 0;
+}
+
+/** Sort merged rows by 24h climb (risers first), heat as the tiebreak. */
+export function sortByRisers(rows: TrendingRow[]): TrendingRow[] {
+  return [...rows].sort((a, b) => {
+    const d = climbScore(b) - climbScore(a);
+    if (d !== 0) return d;
+    if (b.heat !== a.heat) return b.heat - a.heat;
+    return b.global - a.global;
+  });
+}
+
+/**
  * The merged movers ranking for a window, computed once per TTL and shared by
  * every consumer (brief Movers, watchlist movers status). Status-only radar
  * rows are dropped and the radar key is not passed, matching the /brief digest.

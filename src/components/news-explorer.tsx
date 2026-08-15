@@ -9,6 +9,8 @@ import { filterStories } from '@/lib/filter';
 import { fmtDate } from '@/lib/utils';
 import { formatCountdown, storyDiff } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
+import { coverageClusters, coverageMembers } from '@/lib/cluster';
+import { loadWatchTerms, saveWatchTerms, normalizeTerm, matchStories, MAX_WATCH_TERMS } from '@/lib/watch';
 
 type Sort = 'newest' | 'oldest';
 type Show = 'all' | 'models';
@@ -16,6 +18,11 @@ type Show = 'all' | 'models';
 interface SyncState {
   added: number;
   removed: number;
+}
+
+interface WatchAlert {
+  story: Story;
+  term: string;
 }
 
 /** Shape returned by GET /api/news/refresh (dates serialized as ISO strings). */
@@ -27,6 +34,7 @@ interface RefreshPayload {
 }
 
 const SYNC_TIMEOUT_MS = 20_000;
+const MAX_ALERTS = 24;
 
 export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; refreshSeconds?: number }) {
   const [feed, setFeed] = useState<NewsData>(data);
@@ -38,11 +46,49 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const [syncFailed, setSyncFailed] = useState(false);
   const [lastSync, setLastSync] = useState<SyncState | null>(null);
 
+  // Keyword watch: watched terms + alerts raised by new stories on sync.
+  const [watchTerms, setWatchTerms] = useState<string[]>([]);
+  const [watchInput, setWatchInput] = useState('');
+  const [alerts, setAlerts] = useState<WatchAlert[]>([]);
+
   const feedRef = useRef<NewsData>(data);
+  const watchTermsRef = useRef<string[]>([]);
 
   useEffect(() => {
     feedRef.current = feed;
   }, [feed]);
+
+  useEffect(() => {
+    watchTermsRef.current = watchTerms;
+  }, [watchTerms]);
+
+  // Restore watched terms on mount (client-only, no SSR mismatch).
+  useEffect(() => {
+    setWatchTerms(loadWatchTerms());
+  }, []);
+
+  const addWatchTerm = () => {
+    const t = normalizeTerm(watchInput);
+    if (!t) return;
+    setWatchTerms((prev) => {
+      if (prev.includes(t)) return prev;
+      const next = [...prev, t].slice(0, MAX_WATCH_TERMS);
+      saveWatchTerms(next);
+      return next;
+    });
+    setWatchInput('');
+  };
+
+  const removeWatchTerm = (t: string) => {
+    setWatchTerms((prev) => {
+      const next = prev.filter((x) => x !== t);
+      saveWatchTerms(next);
+      return next;
+    });
+  };
+
+  const dismissAlert = (i: number) => setAlerts((prev) => prev.filter((_, idx) => idx !== i));
+  const clearAlerts = () => setAlerts([]);
 
   /** Fetch the latest feed and swap it in, preserving the user's filters. */
   const doSync = useCallback(async () => {
@@ -59,6 +105,11 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
         fetchedAt: payload.fetchedAt,
       };
       const diff = storyDiff(feedRef.current.stories, next.stories);
+      // Raise alerts only for stories that are NEW since the last sync.
+      const prevIds = new Set(feedRef.current.stories.map((s) => s.id));
+      const added = next.stories.filter((s) => !prevIds.has(s.id));
+      const fresh = matchStories(added, watchTermsRef.current);
+      if (fresh.length) setAlerts((prev) => [...fresh, ...prev].slice(0, MAX_ALERTS));
       feedRef.current = next;
       setFeed(next);
       setLastSync(diff);
@@ -83,6 +134,11 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       sort === 'newest' ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
     );
   }, [feed.stories, q, sort, src, show]);
+
+  const byId = useMemo(() => new Map(feed.stories.map((s) => [s.id, s])), [feed.stories]);
+
+  // Coverage clusters over the current view: same story from several sources.
+  const clusters = useMemo(() => coverageClusters(filtered), [filtered]);
 
   const status =
     syncing
@@ -136,6 +192,59 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
         </div>
       </div>
       <div className="wrap">
+        <div className="watch-bar">
+          <span className="watch-label">🔔 WATCH</span>
+          <input
+            className="field watch-input"
+            placeholder="Alert me when a new story mentions…"
+            value={watchInput}
+            onChange={(e) => setWatchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') addWatchTerm();
+            }}
+            aria-label="Watch term"
+          />
+          <button className="btn" onClick={addWatchTerm} disabled={!normalizeTerm(watchInput)}>
+            + ADD
+          </button>
+          {watchTerms.map((t) => (
+            <span className="watch-chip" key={t}>
+              {t}
+              <button className="watch-x" onClick={() => removeWatchTerm(t)} aria-label={'Remove watch term ' + t}>
+                ✕
+              </button>
+            </span>
+          ))}
+          {watchTerms.length === 0 && <span className="watch-hint">no terms — add one to get pinged on new matches</span>}
+        </div>
+      </div>
+      {alerts.length > 0 && (
+        <div className="wrap">
+          <div className="alert-stack">
+            <div className="alert-head">
+              <span>
+                🔔 {alerts.length} new match{alerts.length === 1 ? '' : 'es'}
+              </span>
+              <button className="btn sync-btn" onClick={clearAlerts}>
+                CLEAR ALL
+              </button>
+            </div>
+            {alerts.slice(0, 8).map((a, i) => (
+              <div className="alert-row" key={a.story.id + ':' + i}>
+                <span className="alert-term">{a.term}</span>
+                <a href={a.story.link} target="_blank" rel="noopener noreferrer" className="alert-title">
+                  {a.story.title}
+                </a>
+                <button className="watch-x" onClick={() => dismissAlert(i)} aria-label="Dismiss alert">
+                  ✕
+                </button>
+              </div>
+            ))}
+            {alerts.length > 8 && <div className="alert-more">+ {alerts.length - 8} more</div>}
+          </div>
+        </div>
+      )}
+      <div className="wrap">
         <div className="meta-row">
           <span>
             {filtered.length} stories {feed.demo ? '· DEMO MODE (live feeds, no DB)' : '· persisted in Postgres'}
@@ -157,7 +266,13 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       </div>
       <div className="wrap grid">
         {filtered.map((s) => (
-          <NewsCard key={s.id} story={s} />
+          <NewsCard
+            key={s.id}
+            story={s}
+            coverage={coverageMembers(clusters, s.id)
+              .map((id) => byId.get(id))
+              .filter((x): x is Story => Boolean(x))}
+          />
         ))}
         {filtered.length === 0 && <p className="empty">No stories match. Try another search.</p>}
       </div>
