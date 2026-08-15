@@ -372,6 +372,37 @@ main { padding: 24px 0 60px; }
 .tl-row .when { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; color: var(--mut); flex: none; width: 76px; }
 .tl-row a:hover { color: var(--cyan-ink); }
 
+/* Watchlist 24h movers — compact per-entity spots in the shared ranking */
+.wm { margin-top: 2px; border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 6px; }
+.wm-head {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.6rem; letter-spacing: 0.14em;
+  color: var(--cyan-ink); text-transform: uppercase; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.wm-count { color: var(--mut); letter-spacing: 0.06em; font-weight: 500; }
+.wm-row {
+  display: grid; grid-template-columns: auto auto minmax(0, 1fr) 44px auto;
+  gap: 8px; align-items: center; min-width: 0; padding: 6px 9px; border-radius: 9px;
+  border: 1px solid var(--line); background: var(--field); transition: 0.2s; color: inherit;
+}
+.wm-row:hover { border-color: rgba(79, 124, 255, 0.5); box-shadow: 0 0 12px rgba(79, 124, 255, 0.12); }
+.wm-kind {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.52rem; font-weight: 700;
+  padding: 2px 6px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.04em;
+}
+.wm-kind.gh { color: #0e1526; background: linear-gradient(135deg, #22d3ee, #67e8f9); }
+.wm-kind.hf { color: #0e1526; background: linear-gradient(135deg, #ffd21e, #ff9d0b); }
+.wm-kind.radar { color: #fff; background: linear-gradient(135deg, #3b63f0, #274bcc); }
+.wm-rank {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; font-weight: 700;
+  color: var(--cyan-ink); white-space: nowrap; min-width: 26px;
+}
+.wm-name { font-weight: 600; font-size: 0.74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wm-row:hover .wm-name { color: var(--cyan-ink); }
+.wm-heat { height: 5px; border-radius: 99px; background: var(--lb-bar); overflow: hidden; }
+.wm-heat i { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), var(--cyan)); border-radius: 99px; }
+.wm-pct { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.58rem; color: var(--global-ink); white-space: nowrap; }
+.wm-note { color: var(--cyan-ink); }
+
 /* Leaderboard */
 .lb-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .lb-scroll .lb-table { min-width: 560px; }

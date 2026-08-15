@@ -3,12 +3,14 @@ import {
   GH_STAR_FLOOR,
   hfSortFor,
   liveSignalCands,
+  matchMovers,
   RANGE_DAYS,
   rankAll,
   signalToCand,
   withinWindow,
   type Cand,
   type RadarSignal,
+  type TrendingRow,
 } from './trending';
 
 const cand = (id: string, value: number): Cand => ({
@@ -117,6 +119,64 @@ describe('signalToCand', () => {
     const c = signalToCand(signal('climate', null));
     expect(c.value).toBe(0);
     expect(c.metric).toBe('—');
+  });
+});
+
+describe('matchMovers', () => {
+  const row = (kind: TrendingRow['kind'], id: string, name: string): TrendingRow => ({
+    kind,
+    id,
+    name,
+    sub: '',
+    metric: '',
+    value: 1,
+    href: null,
+    heat: 50,
+    global: 40,
+  });
+
+  it('matches an entity by canonical name substring', () => {
+    const rows = [
+      row('gh', 'openai/whisper', 'openai/whisper'),
+      row('gh', 'llm-arena', 'llm-arena'),
+      row('hf', 'm', 'meta-llama/llama-3'),
+    ];
+    expect(matchMovers({ name: 'OpenAI' }, rows).map((m) => m.row.id)).toEqual(['openai/whisper']);
+  });
+
+  it('matches via aliases (Mistral AI -> mistralai models)', () => {
+    const rows = [
+      row('hf', 'mistralai/mistral-7b', 'mistralai/mistral-7b'),
+      row('gh', 'llm-arena', 'llm-arena'),
+    ];
+    const matches = matchMovers({ name: 'Mistral AI', aliases: ['mistral'] }, rows);
+    expect(matches.map((m) => m.row.id)).toEqual(['mistralai/mistral-7b']);
+  });
+
+  it('is case-insensitive and reports the real rank position', () => {
+    const rows = [
+      row('gh', 'x', 'X-Corp'),
+      row('hf', 'openai/gpt-5', 'openai/gpt-5'),
+      row('gh', 'y', 'Y-Corp'),
+    ];
+    const matches = matchMovers({ name: 'GPT-5', aliases: ['gpt-5'] }, rows);
+    expect(matches).toHaveLength(1);
+    expect(matches[0].rank).toBe(2);
+  });
+
+  it('returns matches in ranking order with multiple hits', () => {
+    const rows = [
+      row('gh', 'meta/llama-1', 'meta/llama-1'),
+      row('gh', 'other', 'other'),
+      row('hf', 'meta-llama/llama-3', 'meta-llama/llama-3'),
+    ];
+    const matches = matchMovers({ name: 'Meta', aliases: ['meta ai', 'meta'] }, rows);
+    expect(matches.map((m) => m.row.id)).toEqual(['meta/llama-1', 'meta-llama/llama-3']);
+    expect(matches.map((m) => m.rank)).toEqual([1, 3]);
+  });
+
+  it('returns no matches for entities absent from the ranking', () => {
+    expect(matchMovers({ name: 'Jensen Huang', aliases: ['jensen huang'] }, [row('gh', 'a', 'A-Corp')])).toEqual([]);
   });
 });
 

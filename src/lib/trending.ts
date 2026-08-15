@@ -85,6 +85,61 @@ export function withinWindow(createdMs: number, days: number, now = Date.now()):
   return createdMs >= now - days * 86_400_000;
 }
 
+/* ---------- Shared movers ranking (module-cached, one computation for all consumers) ---------- */
+
+const MOVERS_TTL = 3 * 60 * 1000;
+let moversCache: { range: TimeRange; rows: TrendingRow[]; at: number } | null = null;
+
+/**
+ * The merged movers ranking for a window, computed once per TTL and shared by
+ * every consumer (brief Movers, watchlist movers status). Status-only radar
+ * rows are dropped and the radar key is not passed, matching the /brief digest.
+ */
+export async function getMoversRows(range: TimeRange = '24h'): Promise<TrendingRow[]> {
+  if (!moversCache || moversCache.range !== range || Date.now() - moversCache.at > MOVERS_TTL) {
+    const [ghRes, hfRes, radarRes] = await Promise.allSettled([
+      fetchGhTrending(range),
+      fetchHfTrending(range),
+      fetchRadarSignals(''),
+    ]);
+    const groups: { kind: TrendingKind; items: Cand[] }[] = [];
+    if (ghRes.status === 'fulfilled') groups.push({ kind: 'gh', items: ghRes.value });
+    if (hfRes.status === 'fulfilled') groups.push({ kind: 'hf', items: hfRes.value });
+    if (radarRes.status === 'fulfilled') groups.push({ kind: 'radar', items: liveSignalCands(radarRes.value) });
+    moversCache = { range, rows: rankAll(groups), at: Date.now() };
+  }
+  return moversCache.rows;
+}
+
+/** A followed entity's spot in the movers ranking. */
+export interface MoversMatch {
+  row: TrendingRow;
+  /** 1-based position in the merged ranking. */
+  rank: number;
+}
+
+/**
+ * Match a followed entity (canonical name + aliases) against the movers
+ * ranking by case-insensitive substring on row names — so "NVIDIA" matches
+ * `NVIDIA/…` repos, "Mistral AI" matches `mistralai/…` models, and "Claude"
+ * matches `anthropic/claude-…`. Returns matches in ranking order with their
+ * actual rank, so the UI can show a real "position in the 24h ranking".
+ */
+export function matchMovers(
+  entity: { name: string; aliases?: string[] },
+  rows: TrendingRow[],
+): MoversMatch[] {
+  const terms = [entity.name, ...(entity.aliases || [])]
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
+  const out: MoversMatch[] = [];
+  rows.forEach((row, i) => {
+    const hay = row.name.toLowerCase();
+    if (terms.some((t) => hay.includes(t))) out.push({ row, rank: i + 1 });
+  });
+  return out;
+}
+
 /* ---------- Shared row mapping ---------- */
 
 /** Radar signal -> ranking candidate (null-value signals rank at the bottom). */
