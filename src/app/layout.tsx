@@ -6,6 +6,7 @@ import { Nav } from '@/components/nav';
 import { Shortcuts } from '@/components/shortcuts';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SignOutButton } from '@/components/sign-out-button';
+import { Footer } from '@/components/footer';
 import { createClient } from '@/lib/supabase/server';
 
 const spaceGrotesk = Space_Grotesk({
@@ -78,14 +79,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </header>
         <main>{children}</main>
         <Shortcuts />
-        <footer className="foot">
-          <div className="wrap">
-            <span>
-              ⚡ NEURAL<em>WIRE</em> — intelligence desk. Data pulled live from 15 sources · no cookies, no tracking.
-            </span>
-            <span className="dim">neuralwire · v2.0</span>
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

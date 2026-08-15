@@ -14,6 +14,7 @@ export const NAV = [
   { href: '/radar', label: '🌍 Radar' },
   { href: '/watchlist', label: '👀 Watchlist' },
   { href: '/saved', label: '💾 Saved' },
+  { href: '/glossary', label: '📖 Glossary' },
 ];
 
 export function Nav() {

@@ -3,6 +3,7 @@ import { getNewsData } from '@/lib/data';
 import { srcById } from '@/lib/sources';
 import { NewsCard } from '@/components/news-card';
 import { Movers } from '@/components/movers';
+import { PageHead } from '@/components/page-head';
 import { ago } from '@/lib/utils';
 
 export const revalidate = 180;
@@ -16,11 +17,12 @@ export default async function BriefPage() {
   return (
     <section className="page">
       <div className="wrap">
-        <div className="page-head">
-          <h2>
-            ⚡ TODAY IN AI <span className="mini">the last 24h of the wire, distilled</span>
-          </h2>
-        </div>
+        <PageHead
+          kicker="⚡ Daily digest"
+          title="TODAY IN AI"
+          desc="The last 24h of the wire, distilled into topics, movers and fresh stories."
+          index="02"
+        />
       </div>
 
       <div className="wrap">

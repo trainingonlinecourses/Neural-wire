@@ -1,4 +1,5 @@
 import { TrendingView } from '@/components/trending-view';
+import { PageHead } from '@/components/page-head';
 
 export const metadata = { title: 'Trending Today — NEURALWIRE' };
 
@@ -6,11 +7,12 @@ export default function TrendingPage() {
   return (
     <section className="page">
       <div className="wrap">
-        <div className="page-head">
-          <h2>
-            📈 TRENDING TODAY <span className="mini">GitHub · Hugging Face · radar — one unified ranking</span>
-          </h2>
-        </div>
+        <PageHead
+          kicker="📈 Unified ranking"
+          title="TRENDING TODAY"
+          desc="GitHub repos, Hugging Face models and radar signals — merged into one ranking on one scale."
+          index="03"
+        />
       </div>
       <TrendingView />
     </section>

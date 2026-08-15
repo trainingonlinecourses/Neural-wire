@@ -1,4 +1,5 @@
 import { LeaderboardView } from '@/components/leaderboard-view';
+import { PageHead } from '@/components/page-head';
 
 export const metadata = { title: 'Model Leaderboard — NEURALWIRE' };
 
@@ -6,11 +7,12 @@ export default function LeaderboardPage() {
   return (
     <section className="page">
       <div className="wrap">
-        <div className="page-head">
-          <h2>
-            🏆 MODEL LEADERBOARD <span className="mini">benchmark scores extracted live from the wire</span>
-          </h2>
-        </div>
+        <PageHead
+          kicker="🏆 Benchmarks"
+          title="MODEL LEADERBOARD"
+          desc="Benchmark scores extracted live from the wire — one sortable table."
+          index="05"
+        />
       </div>
       <LeaderboardView />
     </section>
