@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { ago } from '@/lib/utils';
+import { formatCountdown } from '@/lib/refresh';
+import { useAutoSync } from '@/lib/use-auto-sync';
 
 interface RadarEp {
   id: string;
@@ -167,56 +169,53 @@ function radarCardHTML(ep: RadarEp, state: RadarState): string {
   );
 }
 
+const RADAR_REFRESH_SECONDS = 180;
+
 export function RadarView() {
   const [key, setKey] = useState('');
   const [states, setStates] = useState<Record<string, RadarState>>({});
-  const [busy, setBusy] = useState(false);
   const [liveCount, setLiveCount] = useState(0);
 
-  const load = useCallback(() => {
-    if (busy) return;
-    setBusy(true);
+  /** Re-run all WorldMonitor endpoints and swap in fresh readings. */
+  const load = useCallback(async () => {
     const k = (typeof window !== 'undefined' ? window.localStorage.getItem('nw_wmkey') : '') || '';
     setKey(k);
     setStates(Object.fromEntries(RADAR_EPS.map((ep) => [ep.id, { status: 'wait', html: '<div class="sh" style="height:60px"></div>' }])));
     let live = 0;
-    Promise.all(
+    await Promise.all(
       RADAR_EPS.map((ep) =>
-        fetchWM(ep.path, k)
-          .then((res) => {
-            let state: RadarState;
-            if (res.ok) {
-              live++;
-              state = { status: 'live', html: RENDERERS[ep.id](res.data) };
-            } else if (res.needKey) state = { status: 'key', html: keyNeededHTML() };
-            else
-              state = {
-                status: 'off',
-                html:
-                  '<div style="font-size:.78rem;color:var(--mut);padding:8px 0">Endpoint unreachable (' +
-                  (res.err || 'HTTP ' + res.status) +
-                  '). It may require an API key or the server declined the request.</div>',
-              };
-            setStates((s) => ({ ...s, [ep.id]: state }));
-          }),
+        fetchWM(ep.path, k).then((res) => {
+          let state: RadarState;
+          if (res.ok) {
+            live++;
+            state = { status: 'live', html: RENDERERS[ep.id](res.data) };
+          } else if (res.needKey) state = { status: 'key', html: keyNeededHTML() };
+          else
+            state = {
+              status: 'off',
+              html:
+                '<div style="font-size:.78rem;color:var(--mut);padding:8px 0">Endpoint unreachable (' +
+                (res.err || 'HTTP ' + res.status) +
+                '). It may require an API key or the server declined the request.</div>',
+            };
+          setStates((s) => ({ ...s, [ep.id]: state }));
+        }),
       ),
-    )
-      .then(() => {
-        setLiveCount(live);
-        setBusy(false);
-      })
-      .catch(() => setBusy(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    );
+    setLiveCount(live);
   }, []);
 
+  // Same countdown loop as the newsroom and /trending: signals re-run in place
+  // every 3 minutes without a reload; the deadline self-corrects after tab throttling.
+  const { remaining, syncing, sync } = useAutoSync(RADAR_REFRESH_SECONDS, load);
+
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    sync();
+  }, [sync]);
 
   const applyKey = () => {
     window.localStorage.setItem('nw_wmkey', key.trim());
-    load();
+    sync();
   };
 
   return (
@@ -229,20 +228,26 @@ export function RadarView() {
             value={key}
             onChange={(e) => setKey(e.target.value)}
           />
-          <button className="btn primary" onClick={applyKey} disabled={busy}>
+          <button className="btn primary" onClick={applyKey} disabled={syncing}>
             APPLY & RUN
           </button>
-          <button className="btn" onClick={() => load()} disabled={busy}>
-            ⟳ RE-RUN
-          </button>
-          <span className="dim" style={{ alignSelf: 'center' }}>
-            {liveCount}/{RADAR_EPS.length} LIVE
-          </span>
         </div>
       </div>
       <div className="wrap">
         <div className="meta-row">
           <span>World Radar — live signals from the open WorldMonitor API · github.com/koala73/worldmonitor</span>
+          <span className="meta-right">
+            <span className="sync">{syncing ? '⟳ syncing…' : `✓ ${liveCount}/${RADAR_EPS.length} live`}</span>
+            <span
+              className={'sync-count' + (remaining <= 10 && !syncing ? ' urgent' : '')}
+              title="Signals re-run automatically every 3 minutes"
+            >
+              ⟳ {syncing ? '…' : formatCountdown(remaining)}
+            </span>
+            <button className="btn sync-btn" onClick={sync} disabled={syncing}>
+              SYNC NOW
+            </button>
+          </span>
         </div>
       </div>
       <div className="wrap grid">

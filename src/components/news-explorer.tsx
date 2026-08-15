@@ -8,6 +8,7 @@ import { HeadlineTicker } from './headline-ticker';
 import { filterStories } from '@/lib/filter';
 import { fmtDate } from '@/lib/utils';
 import { formatCountdown, storyDiff } from '@/lib/refresh';
+import { useAutoSync } from '@/lib/use-auto-sync';
 
 type Sort = 'newest' | 'oldest';
 type Show = 'all' | 'models';
@@ -34,24 +35,17 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const [src, setSrc] = useState('all');
   const [show, setShow] = useState<Show>('all');
 
-  const [remaining, setRemaining] = useState(refreshSeconds);
-  const [syncing, setSyncing] = useState(false);
   const [syncFailed, setSyncFailed] = useState(false);
   const [lastSync, setLastSync] = useState<SyncState | null>(null);
 
   const feedRef = useRef<NewsData>(data);
-  const nextSyncAt = useRef(Date.now() + refreshSeconds * 1000);
-  const busy = useRef(false);
 
   useEffect(() => {
     feedRef.current = feed;
   }, [feed]);
 
   /** Fetch the latest feed and swap it in, preserving the user's filters. */
-  const sync = useCallback(async () => {
-    if (busy.current) return;
-    busy.current = true;
-    setSyncing(true);
+  const doSync = useCallback(async () => {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), SYNC_TIMEOUT_MS);
     try {
@@ -73,36 +67,12 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       setSyncFailed(true);
     } finally {
       clearTimeout(timer);
-      busy.current = false;
-      setSyncing(false);
-      nextSyncAt.current = Date.now() + refreshSeconds * 1000;
-      setRemaining(refreshSeconds);
     }
-  }, [refreshSeconds]);
+  }, []);
 
-  // Countdown ticker — timestamp-based so it self-corrects after tab throttling.
-  useEffect(() => {
-    nextSyncAt.current = Date.now() + refreshSeconds * 1000;
-    setRemaining(refreshSeconds);
-    const id = setInterval(() => {
-      const left = Math.max(0, Math.round((nextSyncAt.current - Date.now()) / 1000));
-      setRemaining(left);
-      if (left <= 0) sync();
-    }, 1000);
-    return () => clearInterval(id);
-  }, [refreshSeconds, sync]);
-
-  // When the tab becomes visible again, catch up immediately if a sync is due.
-  useEffect(() => {
-    const onVis = () => {
-      if (document.hidden) return;
-      const left = Math.max(0, Math.round((nextSyncAt.current - Date.now()) / 1000));
-      setRemaining(left);
-      if (left <= 0) sync();
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
-  }, [sync]);
+  // Shared timestamp-based countdown (same hook as /trending): self-corrects
+  // after tab throttling, catches up on visibility, re-arms after each sync.
+  const { remaining, syncing, sync } = useAutoSync(refreshSeconds, doSync);
 
   const filtered = useMemo(() => {
     let list = feed.stories;
