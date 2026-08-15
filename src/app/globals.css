@@ -921,3 +921,42 @@ html { -webkit-tap-highlight-color: transparent; }
 .alert-title { font-size: 0.78rem; color: var(--ink); text-decoration: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .alert-title:hover { color: var(--cyan-ink); }
 .alert-more { font-size: 0.68rem; color: var(--mut); margin-top: 6px; font-family: var(--font-mono), 'JetBrains Mono'; }
+
+/* ── Inline glossary tooltips (heat, global, star delta, trending score) ── */
+.termtip {
+  position: relative; display: inline-flex; align-items: center; gap: 3px;
+  border-bottom: 1px dotted currentColor; cursor: help; outline: none;
+}
+.termtip:hover { color: var(--cyan-ink); }
+.termtip:focus-visible { border-radius: 4px; box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.45); }
+.termtip-dot {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.55rem;
+  line-height: 1; opacity: 0.5; transform: translateY(-1px);
+}
+.termtip-bubble {
+  position: absolute; bottom: calc(100% + 8px); z-index: 30;
+  width: max-content; max-width: 250px; min-width: 190px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--panel2); border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  font-size: 0.72rem; line-height: 1.5; color: var(--muted-ink);
+  text-align: left; cursor: default;
+}
+.termtip-bubble.align-center { left: 50%; transform: translateX(-50%); }
+.termtip-bubble.align-start { left: 0; }
+.termtip-bubble.align-end { left: auto; right: 0; }
+.termtip-bubble b {
+  display: block; font-family: var(--font-mono), 'JetBrains Mono';
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cyan-ink); margin-bottom: 5px;
+}
+.termtip-bubble em {
+  display: block; margin-top: 7px; padding-top: 7px;
+  border-top: 1px dashed var(--line);
+  font-style: normal; color: var(--mut); font-size: 0.66rem;
+}
+@media (hover: none) {
+  /* Touch: no hover to trigger the bubble — drop the dead affordance. */
+  .termtip { border-bottom-style: solid; border-bottom-width: 0; }
+  .termtip-dot { display: none; }
+}

@@ -27,6 +27,11 @@ export const GLOSSARY_CATEGORIES: { id: GlossaryCategory | 'all'; label: string 
   { id: 'account', label: 'ACCOUNT & TOOLS' },
 ];
 
+/** Fast lookup by id for inline tooltips and other surfaces. */
+export function glossaryById(id: string): GlossaryEntry | undefined {
+  return GLOSSARY.find((e) => e.id === id);
+}
+
 export const GLOSSARY: GlossaryEntry[] = [
   // ── Ranking & signals ──────────────────────────────────────────────
   {

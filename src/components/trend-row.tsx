@@ -1,5 +1,6 @@
 import { deltaText } from '@/lib/trending';
 import type { TrendingKind, TrendingRow } from '@/lib/trending';
+import { TermTip } from './term-tip';
 
 export const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
 
@@ -25,19 +26,20 @@ export function TrendRow({ row, rank, isNew = false }: { row: TrendingRow; rank:
       <div className="trend-meta">
         <span className="trend-metric">{row.metric}</span>
         {delta && (
-          <span
-            className={'trend-delta' + (row.delta?.score != null ? ' hf' : '')}
-            title={row.delta?.score != null ? 'Hugging Face trending momentum' : 'new stars in the last 24h'}
-          >
-            {delta}
-          </span>
+          <TermTip entryId={row.delta?.score != null ? 'trending-score' : 'star-delta'} align="end">
+            <span className={'trend-delta' + (row.delta?.score != null ? ' hf' : '')}>{delta}</span>
+          </TermTip>
         )}
         <div className="trend-heat">
           <i style={{ width: row.heat + '%' }} />
         </div>
         <div className="trend-pcts">
-          <span className="trend-pct">{row.heat}% in-source</span>
-          <span className="trend-pct global">{row.global}% overall</span>
+          <TermTip entryId="heat" align="end">
+            <span className="trend-pct">{row.heat}% in-source</span>
+          </TermTip>
+          <TermTip entryId="global-percentile" align="end">
+            <span className="trend-pct global">{row.global}% overall</span>
+          </TermTip>
         </div>
       </div>
     </>
