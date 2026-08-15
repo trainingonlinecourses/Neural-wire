@@ -22,9 +22,32 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://neural-wire-nine.vercel.app'),
   title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
   description:
     'Live AI newsroom, model watch, benchmark leaderboard, GitHub trending, HuggingFace hub and a global AI radar — all in one desk.',
+  keywords: [
+    'AI news',
+    'machine learning',
+    'LLM benchmarks',
+    'HuggingFace trending',
+    'GitHub trending',
+    'AI radar',
+    'model watch',
+  ],
+  applicationName: 'NEURALWIRE',
+  openGraph: {
+    type: 'website',
+    siteName: 'NEURALWIRE',
+    title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
+    description: 'News · models · benchmarks · radar — one live desk. No reloads, no noise.',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
+    description: 'News · models · benchmarks · radar — one live desk. No reloads, no noise.',
+  },
+  robots: { index: true, follow: true },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

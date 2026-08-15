@@ -228,7 +228,17 @@ export function TrendingView() {
               isNew={newKeys.has(r.kind + ':' + r.id)}
             />
           ))}
-          {loading && !rows && <p className="empty">Pulling GitHub, Hugging Face & WorldMonitor live…</p>}
+          {loading && !rows && (
+            <div className="skel-rows" aria-hidden="true">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div className="skel-row" key={i}>
+                  <div className="sh" style={{ width: 46, height: 16 }} />
+                  <div className="sh" style={{ height: 18 }} />
+                  <div className="sh" style={{ width: 96, height: 16 }} />
+                </div>
+              ))}
+            </div>
+          )}
           {!rows && !loading && !error && <p className="empty">Loading…</p>}
           {!rows && error && (
             <p className="empty">

@@ -4,6 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { ago } from '@/lib/utils';
 import { formatCountdown } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
+import {
+  gaugeBarHTML,
+  rangeBarHTML,
+  sentimentLabel,
+  offlineNoteHTML,
+  SHAPE_FALLBACK_HTML,
+  updatedMetaHTML,
+} from '@/lib/radar';
 
 interface RadarEp {
   id: string;
@@ -15,6 +23,7 @@ interface RadarEp {
 interface RadarState {
   status: 'wait' | 'live' | 'key' | 'off';
   html: string;
+  updated?: number | null;
 }
 
 const RADAR_EPS: RadarEp[] = [
@@ -42,37 +51,34 @@ function deepFind(obj: unknown, pred: (k: string, v: unknown) => boolean, depth 
   return results;
 }
 
-function jsonPreview(d: unknown): string {
-  const s = JSON.stringify(d, null, 1);
-  return '<pre class="mono" style="font-size:.62rem;color:var(--mut);white-space:pre-wrap;max-height:180px;overflow:auto">' +
-    s.slice(0, 700).replace(/</g, '&lt;') + (s.length > 700 ? '…' : '') + '</pre>';
+function esc(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 }
 
 function rFgRender(data: unknown): string {
   const numHits = deepFind(data, (k, v) => /^(value|score|index|fgi)$/i.test(k) && typeof v === 'number');
-  const lblHits = deepFind(data, (k, v) => /classification|label|rating/i.test(k) && typeof v === 'string');
-  if (numHits.length) {
-    const v = numHits[0].v as number;
-    const lbl = lblHits.length ? (lblHits[0].v as string) : '—';
-    const col = v < 25 ? 'var(--hot-ink)' : v < 50 ? 'var(--warn-ink)' : 'var(--ok-ink)';
-    return (
-      '<div class="radar-big"><div class="num" style="color:' + col + '">' + v.toFixed(1) + '</div>' +
-      '<div class="lab" style="color:' + col + '">' + lbl.toUpperCase().replace(/</g, '&lt;') + '</div>' +
-      '<div class="mono" style="font-size:.6rem;color:var(--mut);margin-top:6px">0 = extreme fear · 100 = extreme greed</div></div>'
-    );
-  }
-  return jsonPreview(data);
+  if (!numHits.length) return SHAPE_FALLBACK_HTML;
+  const v = numHits[0].v as number;
+  const lbl = sentimentLabel(v);
+  const col = v < 25 ? 'var(--hot-ink)' : v < 50 ? 'var(--warn-ink)' : 'var(--ok-ink)';
+  return (
+    '<div class="radar-big">' +
+    '<div class="num" style="color:' + col + '">' + v.toFixed(1) + '</div>' +
+    '<div class="lab" style="color:' + col + '">' + lbl + '</div>' +
+    gaugeBarHTML(v) +
+    '</div>'
+  );
 }
 
 function rClimateRender(data: unknown): string {
   const hit = deepFind(data, (k, v) => k === 'items' && Array.isArray(v) && (v as unknown[]).length > 0)[0];
   const arr = hit ? (hit.v as Record<string, unknown>[]) : null;
-  if (!arr) return jsonPreview(data);
+  if (!arr) return SHAPE_FALLBACK_HTML;
   return arr
     .slice(0, 6)
     .map((it) => {
-      const t = String(it.title || it.name || '—').replace(/</g, '&lt;');
-      const src = String(it.sourceName || it.source || '').replace(/</g, '&lt;');
+      const t = esc(String(it.title || it.name || '—'));
+      const src = esc(String(it.sourceName || it.source || ''));
       const when = it.publishedAt ? ago(new Date(it.publishedAt as number)) : '';
       return '<div class="radar-row"><span>' + t + '<br><span class="l">' + src + (when ? ' · ' + when : '') + '</span></span></div>';
     })
@@ -82,13 +88,13 @@ function rClimateRender(data: unknown): string {
 function rAirRender(data: unknown): string {
   const hit = deepFind(data, (k, v) => k === 'alerts' && Array.isArray(v) && (v as unknown[]).length > 0)[0];
   const arr = hit ? (hit.v as Record<string, unknown>[]) : null;
-  if (!arr) return jsonPreview(data);
+  if (!arr) return SHAPE_FALLBACK_HTML;
   return arr
     .slice(0, 6)
     .map((a) => {
-      const city = String(a.city || '').replace(/</g, '&lt;');
-      const country = String(a.country || '').replace(/</g, '&lt;');
-      const delay = String(a.delayType || '').replace('FLIGHT_DELAY_TYPE_', '').replace(/</g, '&lt;');
+      const city = esc(String(a.city || ''));
+      const country = esc(String(a.country || ''));
+      const delay = esc(String(a.delayType || '').replace('FLIGHT_DELAY_TYPE_', ''));
       const left = (a.avgDelayMinutes != null ? Math.round(a.avgDelayMinutes as number) + 'm delay' : '') +
         (a.cancelledFlights ? ' · ' + a.cancelledFlights + ' cxl' : '');
       return '<div class="radar-row"><span>' + city + ' ' + country + ' — ' + delay + '</span><span class="l">' + left + '</span></div>';
@@ -104,14 +110,15 @@ function rCo2Render(data: unknown): string {
     return h ? (h.v as number) : null;
   };
   const ppm = g('currentPpm'), ch4 = g('methanePpb'), mo = g('monthlyAverage'), gr = g('annualGrowthRate');
-  if (ppm == null && ch4 == null) return jsonPreview(data);
+  if (ppm == null && ch4 == null) return SHAPE_FALLBACK_HTML;
   return (
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 0">' +
     (ppm != null ? '<div class="stat"><b>' + ppm + '</b>CO₂ ppm</div>' : '') +
     (ch4 != null ? '<div class="stat"><b>' + ch4 + '</b>methane ppb</div>' : '') +
     (mo != null ? '<div class="stat"><b>' + mo + '</b>monthly avg</div>' : '') +
     (gr != null ? '<div class="stat"><b>' + gr + '</b>annual growth</div>' : '') +
-    '</div>'
+    '</div>' +
+    (ppm != null ? rangeBarHTML(ppm, 300, 500, 350, 450) : '')
   );
 }
 
@@ -122,7 +129,7 @@ const RENDERERS: Record<string, (d: unknown) => string> = {
   co2: rCo2Render,
 };
 
-async function fetchWM(path: string, key: string): Promise<{ ok: boolean; needKey?: boolean; status?: number; data?: unknown; err?: string }> {
+async function fetchWM(path: string, key: string): Promise<{ ok: boolean; needKey?: boolean; data?: unknown; err?: boolean }> {
   const url = 'https://api.worldmonitor.app' + path;
   const opts: RequestInit = { signal: AbortSignal.timeout(12000) };
   if (key) opts.headers = { 'X-WorldMonitor-Key': key };
@@ -132,18 +139,11 @@ async function fetchWM(path: string, key: string): Promise<{ ok: boolean; needKe
     if (r.ok && j && !j.error) return { ok: true, data: j };
     if ((j && /key required|unauthenticated|api key/i.test(j.error || '')) || r.status === 401 || r.status === 403)
       return { ok: false, needKey: true };
-    return { ok: false, status: r.status };
-  } catch (e) {
-    return { ok: false, err: (e as Error).message };
+    return { ok: false, err: true };
+  } catch {
+    // Never surface the raw browser error — the card shows a clean note.
+    return { ok: false, err: true };
   }
-}
-
-function keyNeededHTML() {
-  return (
-    '<div style="font-size:.78rem;color:var(--mut);padding:8px 0">' +
-    'This endpoint requires a WorldMonitor API key (header <span class="mono" style="color:var(--cyan-ink)">X-WorldMonitor-Key</span>). ' +
-    'Get one at <a href="https://www.worldmonitor.app" target="_blank" rel="noopener" style="color:var(--gold-ink)">worldmonitor.app</a>.</div>'
-  );
 }
 
 function radarCardHTML(ep: RadarEp, state: RadarState): string {
@@ -159,11 +159,11 @@ function radarCardHTML(ep: RadarEp, state: RadarState): string {
     '<div class="card" style="cursor:default">' +
     '<div class="card-body">' +
     '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-    '<h3 style="font-size:.92rem">' + ep.icon + ' ' + ep.name.replace(/</g, '&lt;') + '</h3>' +
+    '<h3 style="font-size:.92rem">' + ep.icon + ' ' + esc(ep.name) + '</h3>' +
     '<span style="margin-left:auto">' + chip + '</span>' +
     '</div>' +
     '<div>' + state.html + '</div>' +
-    '<div class="card-meta"><span class="mono">api.worldmonitor.app' + ep.path.replace(/</g, '&lt;') + '</span></div>' +
+    (state.updated ? '<div class="card-meta"><span class="mono">' + updatedMetaHTML(state.updated) + '</span></div>' : '') +
     '</div>' +
     '</div>'
   );
@@ -180,7 +180,8 @@ export function RadarView() {
   const load = useCallback(async () => {
     const k = (typeof window !== 'undefined' ? window.localStorage.getItem('nw_wmkey') : '') || '';
     setKey(k);
-    setStates(Object.fromEntries(RADAR_EPS.map((ep) => [ep.id, { status: 'wait', html: '<div class="sh" style="height:60px"></div>' }])));
+    const now = Date.now();
+    setStates(Object.fromEntries(RADAR_EPS.map((ep) => [ep.id, { status: 'wait', html: '<div class="sh" style="height:64px"></div>' }])));
     let live = 0;
     await Promise.all(
       RADAR_EPS.map((ep) =>
@@ -188,16 +189,9 @@ export function RadarView() {
           let state: RadarState;
           if (res.ok) {
             live++;
-            state = { status: 'live', html: RENDERERS[ep.id](res.data) };
-          } else if (res.needKey) state = { status: 'key', html: keyNeededHTML() };
-          else
-            state = {
-              status: 'off',
-              html:
-                '<div style="font-size:.78rem;color:var(--mut);padding:8px 0">Endpoint unreachable (' +
-                (res.err || 'HTTP ' + res.status) +
-                '). It may require an API key or the server declined the request.</div>',
-            };
+            state = { status: 'live', html: RENDERERS[ep.id](res.data), updated: now };
+          } else if (res.needKey) state = { status: 'key', html: offlineNoteHTML(true), updated: null };
+          else state = { status: 'off', html: offlineNoteHTML(false), updated: null };
           setStates((s) => ({ ...s, [ep.id]: state }));
         }),
       ),
@@ -252,7 +246,7 @@ export function RadarView() {
       </div>
       <div className="wrap grid">
         {RADAR_EPS.map((ep) => (
-          <div key={ep.id} dangerouslySetInnerHTML={{ __html: radarCardHTML(ep, states[ep.id] || { status: 'wait', html: '<div class="sh" style="height:60px"></div>' }) }} />
+          <div key={ep.id} dangerouslySetInnerHTML={{ __html: radarCardHTML(ep, states[ep.id] || { status: 'wait', html: '<div class="sh" style="height:64px"></div>' }) }} />
         ))}
       </div>
     </>
