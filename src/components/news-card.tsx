@@ -1,14 +1,17 @@
 import { srcById } from '@/lib/sources';
 import type { Story } from '@/lib/types';
 import { ago } from '@/lib/utils';
+import { storyStats } from '@/lib/story-meta';
 import { CopyLink } from './copy-link';
 import { SafeImage } from './safe-image';
 import { CoverageChip } from './coverage-chip';
 
 export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: Story[] }) {
   const s = srcById[story.sourceId];
+  const stats = storyStats(story);
   return (
     <article className="card">
+      <div className="card-accent" style={{ background: s?.color || '#4f7cff' }} aria-hidden="true" />
       <div
         className="thumb"
         data-short={s?.short || 'NW'}
@@ -30,6 +33,15 @@ export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: St
           </a>
         </h3>
         {story.description && <p className="snippet">{story.description}</p>}
+        {stats.benchmarks.length > 0 && (
+          <div className="models-row">
+            {stats.benchmarks.map((b) => (
+              <span className="bench-pill" key={b.label} title={b.title}>
+                {b.label}
+              </span>
+            ))}
+          </div>
+        )}
         {story.models.length > 0 && (
           <div className="models-row">
             {story.models.slice(0, 4).map((m) => (
@@ -49,8 +61,23 @@ export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: St
           </div>
         )}
         <div className="card-meta">
-          <span>⏱ {ago(story.date)}</span>
+          <span className="sig time">⏱ {ago(story.date)}</span>
+          {stats.pointsLabel && (
+            <span className="sig points" title="Points / score">
+              ▲ {stats.pointsLabel}
+            </span>
+          )}
+          {stats.commentsLabel && (
+            <span className="sig comments" title="Comments">
+              💬 {stats.commentsLabel}
+            </span>
+          )}
           <CopyLink href={story.link} />
+          {stats.hasDiscussion && story.discussion && (
+            <a className="open" href={story.discussion} target="_blank" rel="noopener noreferrer">
+              DISCUSS ↗
+            </a>
+          )}
           <a className="open" href={story.link} target="_blank" rel="noopener noreferrer">
             READ ↗
           </a>
