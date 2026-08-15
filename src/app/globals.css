@@ -448,6 +448,41 @@ main { min-height: 60vh; padding: 26px 0 60px; }
 .ph-title { font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01em; line-height: 1.08; text-transform: uppercase; }
 .ph-desc { font-size: 0.86rem; color: var(--mut); max-width: 760px; line-height: 1.5; }
 
+/* Newsroom hero — front door of the desk (home page only) */
+.hero { position: relative; padding: 44px 0 30px; overflow: hidden; }
+.hero::before {
+  content: ''; position: absolute; inset: -40% -20% auto; height: 95%; pointer-events: none;
+  background:
+    radial-gradient(640px 280px at 20% 0%, rgba(79, 124, 255, 0.2), transparent 62%),
+    radial-gradient(520px 260px at 82% 0%, rgba(34, 211, 238, 0.12), transparent 62%);
+}
+.hero .wrap { position: relative; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; letter-spacing: 0.2em;
+  color: var(--ok-ink); text-transform: uppercase; font-weight: 600;
+  border: 1px solid rgba(45, 212, 167, 0.35); background: rgba(45, 212, 167, 0.06);
+  padding: 7px 14px; border-radius: 999px; margin-bottom: 22px;
+}
+.hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: pulse 1.6s infinite; }
+.hero-title {
+  font-size: clamp(2.1rem, 5.6vw, 3.5rem); font-weight: 700; letter-spacing: -0.02em;
+  line-height: 1.02; max-width: 780px; text-transform: uppercase;
+}
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(120deg, var(--cyan), var(--acc));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero-sub { margin-top: 14px; font-size: 1rem; color: var(--mut); max-width: 560px; line-height: 1.55; }
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.hero-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.hero-stats .stat { flex: 0 0 auto; }
+@media (max-width: 720px) {
+  .hero { padding: 28px 0 20px; }
+  .hero-stats .stat { flex: 1 1 42%; }
+}
+
 /* Cards and sections ease in on navigation (reduced-motion safe) */
 .page > * { animation: rise 0.45s ease both; }
 .page > *:nth-child(2) { animation-delay: 0.05s; }
