@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BENCHMARKS, benchById, modelsForBench } from '@/lib/benchmarks';
+import { BENCHMARKS, benchById, modelsForBench, vendorFlag } from '@/lib/benchmarks';
 
 /** Compare flagship models on genuinely-sourced benchmark scores. */
 export function LeaderboardView() {
@@ -55,7 +55,12 @@ export function LeaderboardView() {
               <div className={'bench-row' + (i === 0 ? ' top' : '')} role="row" key={m.model}>
                 <span className="bench-rank">{i + 1}</span>
                 <span className="bench-model">{m.model}</span>
-                <span className="bench-vendor">{m.vendor}</span>
+                <span className="bench-vendor" title={m.vendor}>
+                  <span className="bench-flag" aria-hidden="true">
+                    {vendorFlag(m.vendor)}
+                  </span>{' '}
+                  {m.vendor}
+                </span>
                 <span className="bench-date">{m.released}</span>
                 <span className="bench-score">
                   <span className="bench-num">{v != null ? v.toFixed(1) : '—'}{v != null ? bench.unit : ''}</span>

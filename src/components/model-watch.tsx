@@ -3,9 +3,11 @@
 import { useMemo, useState } from 'react';
 import type { NewsData } from '@/lib/data';
 import { NewsCard } from './news-card';
+import { rosterByNewest, vendorFlag } from '@/lib/benchmarks';
 
 export function ModelWatch({ data }: { data: NewsData }) {
   const [q, setQ] = useState('');
+  const roster = useMemo(() => rosterByNewest(), []);
 
   const models = useMemo(() => {
     const list = data.stories.filter((s) => s.isModel);
@@ -37,6 +39,45 @@ export function ModelWatch({ data }: { data: NewsData }) {
           <span className="dim" style={{ alignSelf: 'center' }}>
             {models.length} model stories
           </span>
+        </div>
+      </div>
+      <div className="wrap">
+        <div className="meta-row">
+          <span>
+            MODEL ROSTER · {roster.length} VERIFIED FLAGSHIPS — newest first
+          </span>
+          <span className="meta-right">
+            <a className="open" href="/leaderboard" target="_blank" rel="noopener noreferrer">
+              COMPARE ON LEADERBOARD ↗
+            </a>
+          </span>
+        </div>
+        <div className="roster">
+          {roster.map((m) => (
+            <div className="roster-row" key={m.model}>
+              <span className="roster-flag" title={m.vendor} aria-hidden="true">
+                {vendorFlag(m.vendor)}
+              </span>
+              <span className="roster-name">{m.model}</span>
+              <span className="roster-vendor">{m.vendor}</span>
+              <span className="roster-date">{m.released}</span>
+              <span className="roster-scores">
+                {Object.entries(m.scores)
+                  .filter(([, v]) => v != null)
+                  .map(([bid, v]) => bid.toUpperCase() + ' ' + (v as number).toFixed(1))
+                  .join(' · ')}
+              </span>
+              <a
+                className="open roster-src"
+                href={m.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={'Official: ' + m.source}
+              >
+                CARD ↗
+              </a>
+            </div>
+          ))}
         </div>
       </div>
       <div className="wrap">

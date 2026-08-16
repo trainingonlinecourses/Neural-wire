@@ -73,7 +73,7 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     vendor: 'Meta',
     released: 'Dec 2024',
     scores: { mmlu: 86.0, humaneval: 88.4, gsm8k: 91.6 },
-    source: 'https://ai.meta.com/blog/llama-3-3/',
+    source: 'https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct',
   },
   {
     model: 'Mistral Large 2',
@@ -152,7 +152,72 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     scores: { swebench: 64.2 },
     source: 'https://z.ai/blog/glm-4.5',
   },
+  {
+    model: 'Qwen3-235B-A22B-Instruct',
+    vendor: 'Alibaba',
+    released: 'Apr 2025',
+    scores: { mmlu: 89.3 },
+    source: 'https://arxiv.org/abs/2505.09388',
+  },
+  {
+    model: 'Qwen3-30B-A3B-Instruct',
+    vendor: 'Alibaba',
+    released: 'Apr 2025',
+    scores: { mmlu: 86.6 },
+    source: 'https://arxiv.org/abs/2505.09388',
+  },
+  {
+    model: 'MiniMax-M1-80K',
+    vendor: 'MiniMax',
+    released: 'Jun 2025',
+    scores: { swebench: 56.0 },
+    source: 'https://github.com/MiniMax-AI/MiniMax-M1',
+  },
+  {
+    model: 'GLM-4.6',
+    vendor: 'Zhipu',
+    released: 'Jul 2025',
+    scores: { swebench: 68.0 },
+    source: 'https://z.ai/blog/glm-4.6',
+  },
 ];
+
+const VENDOR_FLAGS: Record<string, string> = {
+  Alibaba: '🇨🇳',
+  MiniMax: '🇨🇳',
+  Zhipu: '🇨🇳',
+  Moonshot: '🇨🇳',
+  DeepSeek: '🇨🇳',
+  Baidu: '🇨🇳',
+  Tencent: '🇨🇳',
+  '01.AI': '🇨🇳',
+  'Shanghai AI Lab': '🇨🇳',
+  ByteDance: '🇨🇳',
+  OpenAI: '🇺🇸',
+  Anthropic: '🇺🇸',
+  Google: '🇺🇸',
+  Meta: '🇺🇸',
+  Microsoft: '🇺🇸',
+  Amazon: '🇺🇸',
+  NVIDIA: '🇺🇸',
+  Mistral: '🇫🇷',
+  Cohere: '🇨🇦',
+};
+
+export function vendorFlag(vendor: string): string {
+  return VENDOR_FLAGS[vendor] ?? '🌐';
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** The full roster newest-first (by release date), for roster views. */
+export function rosterByNewest(): ModelBenchEntry[] {
+  return [...BENCH_MODELS].sort((a, b) => {
+    const am = MONTHS.indexOf(a.released.slice(0, 3)) + (parseInt(a.released.slice(4), 10) * 12);
+    const bm = MONTHS.indexOf(b.released.slice(0, 3)) + (parseInt(b.released.slice(4), 10) * 12);
+    return bm - am;
+  });
+}
 
 export function benchById(id: string): BenchmarkDef | undefined {
   return BENCHMARKS.find((b) => b.id === id);

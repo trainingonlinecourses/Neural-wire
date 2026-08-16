@@ -1178,6 +1178,24 @@ html { -webkit-tap-highlight-color: transparent; }
 .bench-desc { font-size: 0.72rem; color: var(--mut); flex: 1; }
 .bench-honesty { color: var(--ok-ink); }
 .bench-note { font-size: 0.7rem; margin-top: 14px; padding: 14px; }
+/* Model roster — verified flagships, newest first (model-watch page). */
+.roster { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.roster-row {
+  display: grid; grid-template-columns: 26px 1.5fr 0.9fr 0.7fr 1.2fr 56px; gap: 10px; align-items: center;
+  padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 0.78rem;
+}
+.roster-row:last-child { border-bottom: none; }
+.roster-flag { font-size: 1rem; text-align: center; }
+.roster-name { font-weight: 600; color: var(--ink); }
+.roster-vendor { color: var(--muted-ink); font-size: 0.72rem; }
+.roster-date { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.64rem; color: var(--mut); }
+.roster-scores { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.64rem; color: var(--cyan-ink); }
+.roster-src { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; letter-spacing: 0.06em; justify-self: end; }
+.roster-src:hover { text-decoration: underline; }
+@media (max-width: 720px) {
+  .roster-row { grid-template-columns: 22px 1.4fr 1fr 52px; }
+  .roster-row .roster-date, .roster-row .roster-vendor { display: none; }
+}
 @media (max-width: 720px) {
   .bench-row { grid-template-columns: 26px 1.2fr 0.8fr 1fr 52px; }
   .bench-row .bench-date, .bench-row.head span:nth-child(4) { display: none; }

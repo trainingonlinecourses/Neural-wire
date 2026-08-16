@@ -52,7 +52,7 @@ describe('benchmark dataset integrity', () => {
 
   it('includes the full Chinese ecosystem in the roster', () => {
     const names = BENCH_MODELS.map((m) => m.model);
-    for (const cn of ['DeepSeek-V3', 'DeepSeek-R1', 'Qwen2.5-72B', 'Kimi K2', 'GLM-4.5']) {
+    for (const cn of ['DeepSeek-V3', 'DeepSeek-R1', 'Qwen2.5-72B', 'Kimi K2', 'GLM-4.5', 'Qwen3-235B-A22B-Instruct', 'Qwen3-30B-A3B-Instruct', 'MiniMax-M1-80K', 'GLM-4.6']) {
       expect(names).toContain(cn);
     }
   });
