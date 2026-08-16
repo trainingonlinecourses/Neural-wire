@@ -28,7 +28,19 @@ insert into public.sources (id, name, short, color, grad, kind, url) values
   ('importai', 'Import AI', 'IAI', '#a78bfa', 'linear-gradient(135deg,#2e2154,#130c26)', 'rss', 'https://importai.substack.com/feed'),
   ('lillog', "Lil'Log", 'LL', '#f472b6', 'linear-gradient(135deg,#431f34,#1d0b16)', 'rss', 'https://lilianweng.github.io/index.xml'),
   ('arxiv', 'arXiv cs.AI', 'AXV', '#b91c1c', 'linear-gradient(135deg,#3f0d0d,#1a0404)', 'rss', 'https://export.arxiv.org/rss/cs.AI'),
-  ('kaggle', 'Kaggle Blog', 'KGL', '#20beff', 'linear-gradient(135deg,#0c3a52,#051a25)', 'rss', 'https://medium.com/feed/kaggle-blog')
+  ('kaggle', 'Kaggle Blog', 'KGL', '#20beff', 'linear-gradient(135deg,#0c3a52,#051a25)', 'rss', 'https://medium.com/feed/kaggle-blog'),
+  ('latent', 'Latent Space', 'LT', '#818cf8', 'linear-gradient(135deg,#23205e,#0f0d2b)', 'rss', 'https://www.latent.space/feed'),
+  ('mlmastery', 'ML Mastery', 'MLM', '#f97316', 'linear-gradient(135deg,#4a2405,#201002)', 'rss', 'https://machinelearningmastery.com/feed/'),
+  ('kdnuggets', 'KDnuggets', 'KDN', '#f8e71c', 'linear-gradient(135deg,#4a4306,#211c02)', 'rss', 'https://www.kdnuggets.com/feed'),
+  ('chiphuyen', 'Chip Huyen', 'CH', '#5eead4', 'linear-gradient(135deg,#12443c,#071c18)', 'rss', 'https://huyenchip.com/feed.xml'),
+  ('raschka', 'Ahead of AI', 'AAI', '#f472b6', 'linear-gradient(135deg,#43204a,#1d0b21)', 'rss', 'https://magazine.sebastianraschka.com/feed'),
+  ('sequence', 'The Sequence', 'SEQ', '#4ade80', 'linear-gradient(135deg,#0f3d23,#051a0d)', 'rss', 'https://thesequence.substack.com/feed'),
+  ('interconnects', 'Interconnects', 'INT', '#a78bfa', 'linear-gradient(135deg,#2e1f5e,#130c28)', 'rss', 'https://www.interconnects.ai/feed'),
+  ('decoder', 'The Decoder', 'DEC', '#60a5fa', 'linear-gradient(135deg,#122c55,#071229)', 'rss', 'https://the-decoder.com/feed/'),
+  ('techmeme', 'Techmeme', 'TM', '#e2e8f0', 'linear-gradient(135deg,#2d3442,#12151d)', 'rss', 'https://techmeme.com/feed.xml'),
+  ('uniteai', 'Unite AI', 'UAI', '#22c55e', 'linear-gradient(135deg,#0e3a1f,#051a0c)', 'rss', 'https://www.unite.ai/feed/'),
+  ('marktechpost', 'MarkTechPost', 'MTP', '#fb923c', 'linear-gradient(135deg,#452708,#1d0f03)', 'rss', 'https://www.marktechpost.com/feed/'),
+  ('snorkel', 'Snorkel', 'SNK', '#7dd3fc', 'linear-gradient(135deg,#123d55,#071a26)', 'rss', 'https://snorkel.ai/feed/')
 on conflict (id) do nothing;
 
 insert into public.benchmarks (id, name, unit, higher_is_better) values
