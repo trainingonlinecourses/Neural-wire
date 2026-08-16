@@ -1108,7 +1108,7 @@ html { -webkit-tap-highlight-color: transparent; }
   line-height: 1; opacity: 0.5; transform: translateY(-1px);
 }
 .termtip-bubble {
-  position: absolute; bottom: calc(100% + 8px); z-index: 30;
+  position: fixed; z-index: 300;
   width: max-content; max-width: 250px; min-width: 190px;
   padding: 10px 12px; border-radius: 10px;
   background: var(--panel2); border: 1px solid var(--line);
@@ -1116,9 +1116,12 @@ html { -webkit-tap-highlight-color: transparent; }
   font-size: 0.72rem; line-height: 1.5; color: var(--muted-ink);
   text-align: left; cursor: default;
 }
-.termtip-bubble.align-center { left: 50%; transform: translateX(-50%); }
-.termtip-bubble.align-start { left: 0; }
-.termtip-bubble.align-end { left: auto; right: 0; }
+.termtip-bubble.align-center { transform: translateX(-50%); }
+.termtip-bubble.align-start { transform: none; }
+.termtip-bubble.align-end { transform: translateX(-100%); }
+/* Inside chip rows the tiny ? dots would be noise — keep the dotted underline only. */
+.chips .termtip-dot { display: none; }
+.coverage .termtip-dot { display: none; }
 .termtip-bubble b {
   display: block; font-family: var(--font-mono), 'JetBrains Mono';
   font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;

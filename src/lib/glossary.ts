@@ -165,6 +165,20 @@ export const GLOSSARY: GlossaryEntry[] = [
     long: 'Entity extraction normalizes “DeepMind” → “Google DeepMind” and similar, so following one canonical entity surfaces every mention across the wire.',
   },
   {
+    id: 'source',
+    term: 'Source',
+    category: 'data',
+    short: 'One of the desk’s curated feeds — an official lab blog, a press outlet or a community wire — identified by its short code on the filter chips.',
+    long: 'Every story keeps its origin: hover a chip like OAI or HN to see which feed it came from, and click it to filter the wire to that source alone.',
+  },
+  {
+    id: 'coverage',
+    term: 'Coverage',
+    category: 'desk',
+    short: 'When the same story arrives from more than one source, the desk clusters the near-duplicates and shows a “N SOURCES COVERING” chip.',
+    long: 'Clicking the chip expands the other versions side by side, so you can read the same story from different outlets and compare angles at a glance.',
+  },
+  {
     id: 'watchlist',
     term: 'Watchlist',
     category: 'data',

@@ -5,6 +5,7 @@ import type { SourceRow, NewsData } from '@/lib/data';
 import type { Story } from '@/lib/types';
 import { NewsCard } from './news-card';
 import { HeadlineTicker } from './headline-ticker';
+import { TermTip } from './term-tip';
 import { filterStories } from '@/lib/filter';
 import { fmtDate } from '@/lib/utils';
 import { formatCountdown, storyDiff } from '@/lib/refresh';
@@ -186,7 +187,9 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
                 style={src === s.id ? { background: s.color, borderColor: s.color } : undefined}
                 onClick={() => setSrc(s.id)}
               >
-                {s.short} · {s.count}
+                <TermTip entryId="source" plain>
+                  {s.short} · {s.count}
+                </TermTip>
               </button>
             ))}
         </div>
@@ -247,7 +250,14 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       <div className="wrap">
         <div className="meta-row">
           <span>
-            {filtered.length} stories {feed.demo ? '· DEMO MODE (live feeds, no DB)' : '· persisted in Postgres'}
+            {filtered.length} stories{' '}
+            {feed.demo ? (
+              <>
+                · <TermTip entryId="demo-mode">DEMO MODE</TermTip> (live feeds, no DB)
+              </>
+            ) : (
+              '· persisted in Postgres'
+            )}
           </span>
           <span className="meta-right">
             {lastSync !== null && <span className={'sync' + (syncFailed ? ' err' : '')}>{status}</span>}

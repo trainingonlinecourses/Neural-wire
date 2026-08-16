@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Story } from '@/lib/types';
 import { srcById } from '@/lib/sources';
 import { ago } from '@/lib/utils';
+import { TermTip } from './term-tip';
 
 /**
  * "Same story, N sources" chip. Renders the coverage count; expanding lists
@@ -15,7 +16,10 @@ export function CoverageChip({ members }: { members: Story[] }) {
   return (
     <div className={'coverage' + (open ? ' open' : '')}>
       <button className="coverage-chip" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span className="coverage-icon">⌘</span> {members.length} {members.length === 1 ? 'SOURCE' : 'SOURCES'} COVERING
+        <span className="coverage-icon">⌘</span>{' '}
+        <TermTip entryId="coverage" plain>
+          {members.length} {members.length === 1 ? 'SOURCE' : 'SOURCES'} COVERING
+        </TermTip>
         <span className={'coverage-caret' + (open ? ' up' : '')}>▾</span>
       </button>
       {open && (
