@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { NewsData } from '@/lib/data';
 import { NewsCard } from './news-card';
+import { LiveModelsView } from './live-models-view';
 import { rosterByNewest, vendorFlag } from '@/lib/benchmarks';
 
 export function ModelWatch({ data }: { data: NewsData }) {
@@ -28,6 +29,7 @@ export function ModelWatch({ data }: { data: NewsData }) {
 
   return (
     <>
+      <LiveModelsView />
       <div className="wrap">
         <div className="searchbar">
           <input

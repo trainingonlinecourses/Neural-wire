@@ -1196,6 +1196,28 @@ html { -webkit-tap-highlight-color: transparent; }
   .roster-row { grid-template-columns: 22px 1.4fr 1fr 52px; }
   .roster-row .roster-date, .roster-row .roster-vendor { display: none; }
 }
+/* Live model radar — newest models pulled from HF + OpenRouter. */
+.live-models { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.live-model {
+  background: linear-gradient(180deg, var(--panel), var(--card));
+  border: 1px solid var(--line); border-radius: var(--rad); padding: 13px 15px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.live-model:hover { transform: translateY(-2px); border-color: rgba(79, 124, 255, 0.5); }
+.live-model-head { display: flex; align-items: flex-start; gap: 9px; }
+.live-flag { font-size: 1.05rem; line-height: 1.2; }
+.live-model-titles { flex: 1; min-width: 0; }
+.live-model h4 { font-size: 0.84rem; font-weight: 700; color: var(--ink); line-height: 1.25; overflow-wrap: anywhere; }
+.live-vendor { font-size: 0.66rem; color: var(--mut); }
+.live-model-links { display: flex; gap: 8px; }
+.live-model-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.live-stat {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; color: var(--cyan-ink);
+  background: var(--field); border: 1px solid var(--line); border-radius: 99px; padding: 2px 8px;
+}
+.bench-card-link { font-size: 0.62rem; color: var(--mut); text-decoration: none; align-self: center; }
+.bench-card-link:hover { text-decoration: underline; }
 @media (max-width: 720px) {
   .bench-row { grid-template-columns: 26px 1.2fr 0.8fr 1fr 52px; }
   .bench-row .bench-date, .bench-row.head span:nth-child(4) { display: none; }
