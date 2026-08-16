@@ -8,7 +8,11 @@ export default async function Home() {
   const data = await getNewsData();
   return (
     <section className="page">
-      <Hero stories={data.stories.length} sources={data.sources.length} />
+      <Hero
+        stories={data.stories.length}
+        sources={data.sources.length}
+        models={data.stories.filter((s) => s.isModel).length}
+      />
       <NewsExplorer data={data} />
     </section>
   );

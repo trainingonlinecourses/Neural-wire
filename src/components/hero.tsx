@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 /**
  * Front-door hero for the newsroom — replaces the generic page header on the
- * home page only. Shows live desk stats and the two main journeys (brief,
- * trending) above the wire.
+ * home page only. Big headline, a live stat-card strip, and the main journeys
+ * (brief, trending, radar) sitting directly above the wire ticker.
  */
 
 function useCountUp(target: number, duration = 900): number {
@@ -39,16 +39,25 @@ function useCountUp(target: number, duration = 900): number {
   return value;
 }
 
-export function Hero({ stories, sources }: { stories: number; sources: number }) {
+export function Hero({
+  stories,
+  sources,
+  models,
+}: {
+  stories: number;
+  sources: number;
+  models: number;
+}) {
   const storiesShown = useCountUp(stories);
   const sourcesShown = useCountUp(sources);
+  const modelsShown = useCountUp(models);
 
   return (
     <section className="hero">
       <div className="wrap">
         <div className="hero-eyebrow">
           <span className="hero-dot" />
-          LIVE — {sources} SOURCES · REFRESHED EVERY 3 MIN
+          LIVE WIRE — {sources} SOURCES · REFRESHES EVERY 3 MIN
         </div>
         <h1 className="hero-title">
           The AI wire, <em>live.</em>
@@ -63,21 +72,31 @@ export function Hero({ stories, sources }: { stories: number; sources: number })
           <Link className="btn" href="/trending">
             VIEW TRENDING ↗
           </Link>
+          <Link className="btn ghost" href="/radar">
+            OPEN RADAR
+          </Link>
         </div>
         <div className="hero-stats">
           <div className="stat">
-            <b>{storiesShown.toLocaleString()}</b> stories live
+            <b>{storiesShown.toLocaleString()}</b>
+            <span>stories live</span>
           </div>
           <div className="stat">
-            <b>{sourcesShown}</b> curated sources
+            <b>{sourcesShown}</b>
+            <span>curated sources</span>
           </div>
           <div className="stat">
-            <b>24h</b> brief window
+            <b>{modelsShown}</b>
+            <span>model releases</span>
           </div>
           <div className="stat">
-            <b>3m</b> auto-refresh
+            <b>3m</b>
+            <span>auto-refresh</span>
           </div>
         </div>
+        <a className="hero-scroll" href="#wire" aria-label="Scroll to the live wire">
+          <span className="hero-scroll-arrow" /> THE WIRE
+        </a>
       </div>
     </section>
   );

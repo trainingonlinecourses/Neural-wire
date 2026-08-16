@@ -151,7 +151,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   return (
     <>
-      <div className="wrap">
+      <div className="wrap" id="wire">
         <HeadlineTicker stories={feed.stories} />
       </div>
       <div className="wrap">
