@@ -103,6 +103,55 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     scores: { mmlu: 86.4, humaneval: 67.0, gsm8k: 92.0 },
     source: 'https://openai.com/index/gpt-4-research/',
   },
+  {
+    model: 'DeepSeek-R1',
+    vendor: 'DeepSeek',
+    released: 'Jan 2025',
+    scores: { mmlu: 90.8 },
+    source: 'https://arxiv.org/abs/2501.12948',
+  },
+  {
+    model: 'Kimi K2',
+    vendor: 'Moonshot',
+    released: 'Jul 2025',
+    scores: { mmlu: 89.5, swebench: 65.8 },
+    source: 'https://github.com/moonshotai/kimi-k2',
+  },
+  {
+    model: 'GPT-4.1',
+    vendor: 'OpenAI',
+    released: 'Apr 2025',
+    scores: { swebench: 54.6 },
+    source: 'https://openai.com/index/gpt-4-1/',
+  },
+  {
+    model: 'Claude 3.7 Sonnet',
+    vendor: 'Anthropic',
+    released: 'Feb 2025',
+    scores: { swebench: 70.3 },
+    source: 'https://www.anthropic.com/news/claude-3-7-sonnet',
+  },
+  {
+    model: 'Phi-4',
+    vendor: 'Microsoft',
+    released: 'Dec 2024',
+    scores: { mmlu: 84.8, humaneval: 82.6 },
+    source: 'https://arxiv.org/abs/2412.08905',
+  },
+  {
+    model: 'Amazon Nova Pro',
+    vendor: 'Amazon',
+    released: 'Dec 2024',
+    scores: { mmlu: 85.9, humaneval: 89.0, gsm8k: 94.8 },
+    source: 'https://aws.amazon.com/blogs/aws/introducing-amazon-nova-frontier-intelligence-and-industry-leading-price-performance/',
+  },
+  {
+    model: 'GLM-4.5',
+    vendor: 'Zhipu',
+    released: 'Jul 2025',
+    scores: { swebench: 64.2 },
+    source: 'https://z.ai/blog/glm-4.5',
+  },
 ];
 
 export function benchById(id: string): BenchmarkDef | undefined {

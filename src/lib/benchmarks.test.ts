@@ -37,7 +37,7 @@ describe('benchmark dataset integrity', () => {
     for (const m of BENCH_MODELS) expect(m.released).toMatch(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}$/);
   });
 
-  it('covers every benchmark with at least two models (SWE-bench is the sparsest — only Anthropic reports it broadly)', () => {
+  it('covers every benchmark with at least two models (SWE-bench is the sparsest)', () => {
     for (const b of BENCHMARKS) {
       expect(modelsForBench(b.id).length, b.name).toBeGreaterThanOrEqual(2);
     }
@@ -47,7 +47,18 @@ describe('benchmark dataset integrity', () => {
     const rows = modelsForBench('swebench');
     const vals = rows.map((m) => m.scores.swebench!);
     expect([...vals].sort((a, b) => b - a)).toEqual(vals);
-    expect(rows.length).toBeLessThan(BENCH_MODELS.length); // only Anthropic reported it
+    expect(rows.length).toBeLessThan(BENCH_MODELS.length); // not every model reports SWE-bench
+  });
+
+  it('includes the full Chinese ecosystem in the roster', () => {
+    const names = BENCH_MODELS.map((m) => m.model);
+    for (const cn of ['DeepSeek-V3', 'DeepSeek-R1', 'Qwen2.5-72B', 'Kimi K2', 'GLM-4.5']) {
+      expect(names).toContain(cn);
+    }
+  });
+
+  it('has a roster of at least 15 models', () => {
+    expect(BENCH_MODELS.length).toBeGreaterThanOrEqual(15);
   });
 
   it('resolves benchmark ids', () => {
