@@ -4,6 +4,7 @@ import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { Nav } from '@/components/nav';
 import { Shortcuts } from '@/components/shortcuts';
+import { DeskButton } from '@/components/desk-button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SignOutButton } from '@/components/sign-out-button';
 import { Footer } from '@/components/footer';
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <span className="dot" />
                 LIVE
               </div>
+              <DeskButton />
               <ThemeToggle />
               {email ? (
                 <SignOutButton email={email} />
