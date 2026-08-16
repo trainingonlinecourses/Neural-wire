@@ -443,6 +443,24 @@ footer { border-top: 1px solid var(--line); padding: 44px 0 40px; background: va
 .foot ul a:hover { color: var(--cyan-ink); }
 .foot-bottom { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--mut); }
 
+/* About the desk — sources, cadence and scoring explainer */
+.about-desk {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px;
+  margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line);
+}
+.about-desk h4 {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; letter-spacing: 0.22em;
+  color: var(--mut); text-transform: uppercase; margin-bottom: 12px;
+}
+.about-desk p { font-size: 0.76rem; color: var(--mut); line-height: 1.65; max-width: 48ch; margin: 0; }
+.about-link {
+  display: inline-block; margin-top: 12px;
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.14em; color: var(--cyan-ink); text-transform: uppercase; text-decoration: none;
+}
+.about-link:hover { text-decoration: underline; }
+@media (max-width: 900px) { .about-desk { grid-template-columns: 1fr; gap: 22px; } }
+
 @media (max-width: 1180px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr; } }
 @media (max-width: 960px) { .clock { display: none; } }
 @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 24px; } .foot-brand { grid-column: 1 / -1; } }
