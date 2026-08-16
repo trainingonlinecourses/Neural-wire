@@ -13,7 +13,7 @@ import { useAutoSync } from '@/lib/use-auto-sync';
 import { coverageClusters, coverageMembers } from '@/lib/cluster';
 import { loadWatchTerms, saveWatchTerms, normalizeTerm, matchStories, MAX_WATCH_TERMS } from '@/lib/watch';
 
-type Sort = 'newest' | 'oldest';
+type Sort = 'newest' | 'oldest' | 'top';
 type Show = 'all' | 'models';
 
 interface SyncState {
@@ -43,6 +43,11 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const [sort, setSort] = useState<Sort>('newest');
   const [src, setSrc] = useState('all');
   const [show, setShow] = useState<Show>('all');
+  const [todayOnly, setTodayOnly] = useState(false);
+
+  // Story ids that arrived on the most recent sync — flash a NEW badge then fade.
+  const [newIds, setNewIds] = useState<ReadonlySet<string>>(new Set());
+  const newTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [syncFailed, setSyncFailed] = useState(false);
   const [lastSync, setLastSync] = useState<SyncState | null>(null);
@@ -62,6 +67,13 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   useEffect(() => {
     watchTermsRef.current = watchTerms;
   }, [watchTerms]);
+
+  // Clear the NEW-badge flash timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (newTimer.current) clearTimeout(newTimer.current);
+    };
+  }, []);
 
   // Restore watched terms on mount (client-only, no SSR mismatch).
   useEffect(() => {
@@ -111,6 +123,11 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       const added = next.stories.filter((s) => !prevIds.has(s.id));
       const fresh = matchStories(added, watchTermsRef.current);
       if (fresh.length) setAlerts((prev) => [...fresh, ...prev].slice(0, MAX_ALERTS));
+      if (added.length) {
+        setNewIds(new Set(added.map((s) => s.id)));
+        if (newTimer.current) clearTimeout(newTimer.current);
+        newTimer.current = setTimeout(() => setNewIds(new Set()), 25_000);
+      }
       feedRef.current = next;
       setFeed(next);
       setLastSync(diff);
@@ -128,13 +145,26 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   const filtered = useMemo(() => {
     let list = feed.stories;
+    if (todayOnly) {
+      const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+      list = list.filter((s) => s.date.getTime() >= cutoff);
+    }
     if (src !== 'all') list = list.filter((s) => s.sourceId === src);
     if (show === 'models') list = list.filter((s) => s.isModel);
     list = filterStories(list, q);
+    if (sort === 'top') {
+      const size = new Map<string, number>();
+      for (const g of coverageClusters(list).values()) {
+        for (const id of g.members) size.set(id, g.members.length);
+      }
+      return [...list].sort(
+        (a, b) => (size.get(b.id) ?? 1) - (size.get(a.id) ?? 1) || b.date.getTime() - a.date.getTime(),
+      );
+    }
     return [...list].sort((a, b) =>
       sort === 'newest' ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
     );
-  }, [feed.stories, q, sort, src, show]);
+  }, [feed.stories, q, sort, src, show, todayOnly]);
 
   const byId = useMemo(() => new Map(feed.stories.map((s) => [s.id, s])), [feed.stories]);
 
@@ -170,7 +200,15 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
           <select className="field" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
             <option value="newest">NEWEST FIRST</option>
             <option value="oldest">OLDEST FIRST</option>
+            <option value="top">TOP COVERAGE</option>
           </select>
+          <button
+            className={'chip' + (todayOnly ? ' on' : '')}
+            onClick={() => setTodayOnly((v) => !v)}
+            title="Only stories from the last 24 hours"
+          >
+            LAST 24H
+          </button>
         </div>
       </div>
       <div className="wrap">
@@ -279,6 +317,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
           <NewsCard
             key={s.id}
             story={s}
+            isNew={newIds.has(s.id)}
             coverage={coverageMembers(clusters, s.id)
               .map((id) => byId.get(id))
               .filter((x): x is Story => Boolean(x))}

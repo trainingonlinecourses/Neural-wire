@@ -239,6 +239,7 @@ main { padding: 24px 0 60px; }
 .grid.compact { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
 
 .card {
+  position: relative;
   background: linear-gradient(180deg, var(--panel), var(--card));
   border: 1px solid var(--line); border-radius: var(--rad); overflow: hidden;
   display: flex; flex-direction: column; transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s; cursor: pointer;
@@ -765,8 +766,20 @@ main { min-height: 60vh; padding: 26px 0 60px; }
   0% { box-shadow: 0 0 0 0 rgba(255, 84, 112, 0.5), 0 0 26px rgba(255, 84, 112, 0.35); border-color: rgba(255, 84, 112, 0.8); }
   100% { box-shadow: 0 0 0 16px rgba(255, 84, 112, 0), 0 0 0 rgba(255, 84, 112, 0); }
 }
+/* NEW pill on cards that arrived on the latest sync (mirrors the trend-row flash). */
+.news-new {
+  position: absolute; top: 10px; right: 10px; z-index: 3;
+  font-family: var(--font-mono), 'JetBrains Mono';
+  font-size: 0.55rem; font-weight: 800; letter-spacing: 0.12em; line-height: 1.5;
+  color: #0e1526; background: linear-gradient(135deg, var(--hot), #ff9d0b);
+  padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+  box-shadow: 0 0 14px rgba(255, 84, 112, 0.55);
+  animation: new-badge-flash 2.4s ease-out both;
+}
+.card.new-card { animation: new-row-flash 2.4s ease-out; }
+.sig.read { color: var(--mut); }
 @media (prefers-reduced-motion: reduce) {
-  .trend-new, .trend-row.new-row { animation: none; }
+  .trend-new, .trend-row.new-row, .news-new, .card.new-card { animation: none; }
 }
 @media (max-width: 640px) {
   .trend-row { grid-template-columns: 40px 1fr; }

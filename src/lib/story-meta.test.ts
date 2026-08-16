@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { benchmarkLabel, storyStats } from './story-meta';
+import { benchmarkLabel, readMinutes, storyStats } from './story-meta';
 import type { Story } from '@/lib/types';
 
 function story(over: Partial<Story> = {}): Story {
@@ -55,6 +55,13 @@ describe('storyStats', () => {
     const st = storyStats(story({ points: 1320, comments: 4100 }));
     expect(st.pointsLabel).toBe('1.3k');
     expect(st.commentsLabel).toBe('4.1k');
+  });
+
+  it('estimates reading time from title + description length', () => {
+    expect(readMinutes(story({ title: 'A headline' }))).toBe(1);
+    expect(readMinutes(story({ title: 'T', description: Array(400).fill('word').join(' ') }))).toBe(2);
+    expect(readMinutes(story({ title: '', description: '' }))).toBe(1);
+    expect(storyStats(story({ description: Array(800).fill('word').join(' ') })).readMinutes).toBe(4);
   });
 
   it('builds benchmark chips capped at three', () => {

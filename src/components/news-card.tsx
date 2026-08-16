@@ -6,12 +6,13 @@ import { CopyLink } from './copy-link';
 import { SafeImage } from './safe-image';
 import { CoverageChip } from './coverage-chip';
 
-export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: Story[] }) {
+export function NewsCard({ story, coverage = [], isNew = false }: { story: Story; coverage?: Story[]; isNew?: boolean }) {
   const s = srcById[story.sourceId];
   const stats = storyStats(story);
   return (
-    <article className="card">
+    <article className={'card' + (isNew ? ' new-card' : '')}>
       <div className="card-accent" style={{ background: s?.color || '#4f7cff' }} aria-hidden="true" />
+      {isNew && <span className="news-new">NEW</span>}
       <div
         className="thumb"
         data-short={s?.short || 'NW'}
@@ -62,6 +63,9 @@ export function NewsCard({ story, coverage = [] }: { story: Story; coverage?: St
         )}
         <div className="card-meta">
           <span className="sig time">⏱ {ago(story.date)}</span>
+          <span className="sig read" title="Estimated reading time">
+            ☕ {stats.readMinutes} min read
+          </span>
           {stats.pointsLabel && (
             <span className="sig points" title="Points / score">
               ▲ {stats.pointsLabel}
