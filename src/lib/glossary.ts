@@ -38,8 +38,8 @@ export const GLOSSARY: GlossaryEntry[] = [
     id: 'movers',
     term: 'Movers',
     category: 'ranking',
-    short: 'The unified 24h ranking of GitHub repos, Hugging Face models and radar signals, scored on one scale.',
-    long: 'Every source contributes candidates with their own raw metric (stars, likes, index readings); each is normalized to a 0–100 heat against the top of its own category, then merged into one list. Movers appears on the Today in AI brief and on the watchlist.',
+    short: 'The unified 24h ranking of GitHub repos, Hugging Face models and AI pulse signals, scored on one scale.',
+    long: 'Every source contributes candidates with their own raw metric (stars, likes, pulse readings); each is normalized to a 0–100 heat against the top of its own category, then merged into one list. Movers appears on the Today in AI brief and on the watchlist.',
     see: [
       { label: 'Full ranking', href: '/trending' },
       { label: 'On the brief', href: '/brief' },
@@ -100,7 +100,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     id: 'newsroom',
     term: 'Newsroom',
     category: 'desk',
-    short: 'The live feed of curated AI stories from 15 sources, refreshed in place every few minutes.',
+    short: 'The live feed of curated AI stories from 28 sources, refreshed in place every few minutes.',
     see: [{ label: 'Open the desk', href: '/' }],
   },
   {
@@ -114,7 +114,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     term: 'Auto-refresh countdown',
     category: 'desk',
     short: 'The ⟳ M:SS pill — when it hits zero the page re-syncs in place, no reload, filters preserved.',
-    long: 'Timestamp-based, so it self-corrects after browser tab throttling and catches up the moment the tab regains focus. The newsroom, trending and radar all run on the same loop.',
+    long: 'Timestamp-based, so it self-corrects after browser tab throttling and catches up the moment the tab regains focus. The newsroom, trending and pulse all run on the same loop.',
   },
   {
     id: 'sync-diff',
@@ -144,18 +144,12 @@ export const GLOSSARY: GlossaryEntry[] = [
 
   // ── Sources & entities ─────────────────────────────────────────────
   {
-    id: 'radar',
-    term: 'World Radar',
+    id: 'pulse',
+    term: 'AI Pulse',
     category: 'data',
-    short: 'Live WorldMonitor signals — fear & greed, climate, air travel and CO₂ — re-run every 3 minutes.',
-    long: 'Each endpoint is fetched straight from the browser and honestly reports FETCHING, LIVE, OFFLINE or API KEY REQUIRED per card; an optional key unlocks gated endpoints.',
-    see: [{ label: 'Open the radar', href: '/radar' }],
-  },
-  {
-    id: 'fear-greed',
-    term: 'Fear & Greed Index',
-    category: 'data',
-    short: 'A 0–100 market-sentiment reading: 0 is extreme fear, 100 is extreme greed.',
+    short: 'Six live signals derived from the current wire — velocity, model buzz, hottest model, story heat, busiest source and feed health — re-run every 3 minutes.',
+    long: 'No third-party keys: every reading is computed from the stories the desk already carries, so the panel stays on-topic and honest wherever the data comes from. Status-only signals (no numeric reading) are kept out of the unified ranking.',
+    see: [{ label: 'Open the pulse', href: '/pulse' }],
   },
   {
     id: 'entity',
@@ -168,7 +162,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     id: 'source',
     term: 'Source',
     category: 'data',
-    short: 'One of the desk’s curated feeds — an official lab blog, a press outlet or a community wire — identified by its short code on the filter chips.',
+    short: 'One of the desk’s curated feeds — an official lab blog, a press outlet, a research wire or a community source — identified by its short code on the filter chips.',
     long: 'Every story keeps its origin: hover a chip like OAI or HN to see which feed it came from, and click it to filter the wire to that source alone.',
   },
   {

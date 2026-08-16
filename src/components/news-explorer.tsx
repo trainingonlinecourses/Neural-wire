@@ -37,6 +37,11 @@ interface RefreshPayload {
 const SYNC_TIMEOUT_MS = 20_000;
 const MAX_ALERTS = 24;
 
+const HIDDEN_KEY = 'nw_hidden';
+const MYFEED_KEY = 'nw_myfeed';
+const HISTORY_KEY = 'nw_history';
+const MAX_HISTORY = 20;
+
 export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; refreshSeconds?: number }) {
   const [feed, setFeed] = useState<NewsData>(data);
   const [q, setQ] = useState('');
@@ -44,6 +49,12 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const [src, setSrc] = useState('all');
   const [show, setShow] = useState<Show>('all');
   const [todayOnly, setTodayOnly] = useState(false);
+
+  // Persisted personalization: hidden stories (dismissed from the wire) and
+  // the My Feed mode (only stories matching your watch terms).
+  const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set());
+  const [showHidden, setShowHidden] = useState(false);
+  const [myFeed, setMyFeed] = useState(false);
 
   // Story ids that arrived on the most recent sync — flash a NEW badge then fade.
   const [newIds, setNewIds] = useState<ReadonlySet<string>>(new Set());
@@ -75,10 +86,72 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
     };
   }, []);
 
-  // Restore watched terms on mount (client-only, no SSR mismatch).
+  // Restore watched terms + personalization on mount (client-only, no SSR mismatch).
   useEffect(() => {
     setWatchTerms(loadWatchTerms());
+    try {
+      const raw = window.localStorage.getItem(HIDDEN_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as unknown;
+        if (Array.isArray(parsed)) setHidden(new Set(parsed.filter((x): x is string => typeof x === 'string')));
+      }
+      setMyFeed(window.localStorage.getItem(MYFEED_KEY) === '1');
+    } catch {
+      /* storage unavailable — defaults */
+    }
   }, []);
+
+  /** Persist the hidden set and update the toggle state. */
+  const dismissStory = (id: string) => {
+    setHidden((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      try {
+        window.localStorage.setItem(HIDDEN_KEY, JSON.stringify([...next]));
+      } catch {
+        /* storage unavailable */
+      }
+      return next;
+    });
+  };
+
+  const restoreStory = (id: string) => {
+    setHidden((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      try {
+        window.localStorage.setItem(HIDDEN_KEY, JSON.stringify([...next]));
+      } catch {
+        /* storage unavailable */
+      }
+      return next;
+    });
+  };
+
+  /** Record an opened story in the device-local reading history. */
+  const recordRead = (story: Story) => {
+    try {
+      const raw = window.localStorage.getItem(HISTORY_KEY);
+      const prev = raw ? (JSON.parse(raw) as unknown[]) : [];
+      const rest = Array.isArray(prev) ? prev.filter((x) => (x as { id?: string }).id !== story.id) : [];
+      const next = [{ id: story.id, title: story.title, link: story.link, sourceId: story.sourceId, at: Date.now() }, ...rest].slice(0, MAX_HISTORY);
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    } catch {
+      /* storage unavailable — skip history */
+    }
+  };
+
+  const toggleMyFeed = () => {
+    setMyFeed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(MYFEED_KEY, next ? '1' : '0');
+      } catch {
+        /* storage unavailable */
+      }
+      return next;
+    });
+  };
 
   const addWatchTerm = () => {
     const t = normalizeTerm(watchInput);
@@ -145,6 +218,17 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   const filtered = useMemo(() => {
     let list = feed.stories;
+    // Hidden stories stay off the wire unless the HIDDEN drawer is open.
+    if (!showHidden && hidden.size > 0) list = list.filter((s) => !hidden.has(s.id));
+    if (myFeed) {
+      const terms = watchTerms;
+      if (terms.length > 0) {
+        const matched = new Set(matchStories(list, terms).map((m) => m.story.id));
+        list = list.filter((s) => matched.has(s.id));
+      } else {
+        list = []; // My Feed with no terms: nothing can match
+      }
+    }
     if (todayOnly) {
       const cutoff = Date.now() - 24 * 60 * 60 * 1000;
       list = list.filter((s) => s.date.getTime() >= cutoff);
@@ -164,7 +248,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
     return [...list].sort((a, b) =>
       sort === 'newest' ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
     );
-  }, [feed.stories, q, sort, src, show, todayOnly]);
+  }, [feed.stories, q, sort, src, show, todayOnly, hidden, showHidden, myFeed, watchTerms]);
 
   const byId = useMemo(() => new Map(feed.stories.map((s) => [s.id, s])), [feed.stories]);
 
@@ -209,8 +293,66 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
           >
             LAST 24H
           </button>
+          <button
+            className={'chip' + (myFeed ? ' on' : '')}
+            onClick={toggleMyFeed}
+            title="Only stories that match your watch terms — persists across visits"
+          >
+            MY FEED
+          </button>
+          <button
+            className={'chip' + (showHidden ? ' on' : '')}
+            onClick={() => setShowHidden((v) => !v)}
+            title={hidden.size ? 'Show the ' + hidden.size + ' hidden stories' : 'No hidden stories yet — use the ✕ on a card to hide it'}
+          >
+            HIDDEN ({hidden.size})
+          </button>
         </div>
       </div>
+      {showHidden && (
+        <div className="wrap">
+          <div className="hidden-drawer">
+            <div className="hidden-head">
+              <span>🚫 HIDDEN STORIES ({hidden.size}) — hidden on this device, persists across visits</span>
+              {hidden.size > 0 && (
+                <button
+                  className="btn sync-btn"
+                  onClick={() => {
+                    setHidden(new Set());
+                    try {
+                      window.localStorage.removeItem(HIDDEN_KEY);
+                    } catch {
+                      /* storage unavailable */
+                    }
+                  }}
+                >
+                  UNHIDE ALL
+                </button>
+              )}
+            </div>
+            {hidden.size === 0 && <p className="dim">Nothing hidden — the ✕ button on any card tucks it away here.</p>}
+            {feed.stories
+              .filter((s) => hidden.has(s.id))
+              .slice(0, 12)
+              .map((s) => (
+                <div className="hidden-row" key={s.id}>
+                  <a href={s.link} target="_blank" rel="noopener noreferrer">
+                    {s.title}
+                  </a>
+                  <span className="l">
+                    <button className="btn sync-btn" onClick={() => restoreStory(s.id)}>
+                      RESTORE
+                    </button>
+                    <button className="watch-x" onClick={() => restoreStory(s.id)} aria-label={'Restore ' + s.title}>
+                      ✕
+                    </button>
+                  </span>
+                </div>
+              ))}
+            {hidden.size > 12 && <div className="alert-more">+ {hidden.size - 12} more</div>}
+          </div>
+        </div>
+      )}
       <div className="wrap">
         <div className="chips">
           <button className={'chip' + (src === 'all' ? ' on' : '')} onClick={() => setSrc('all')}>
@@ -318,12 +460,22 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
             key={s.id}
             story={s}
             isNew={newIds.has(s.id)}
+            onDismiss={() => dismissStory(s.id)}
+            onRead={() => recordRead(s)}
             coverage={coverageMembers(clusters, s.id)
               .map((id) => byId.get(id))
               .filter((x): x is Story => Boolean(x))}
           />
         ))}
-        {filtered.length === 0 && <p className="empty">No stories match. Try another search.</p>}
+        {filtered.length === 0 && myFeed && watchTerms.length === 0 && (
+          <p className="empty">
+            <b>My Feed is on</b> — add a watch term above to fill it. Stories matching your terms appear here;
+            the preference persists across visits.
+          </p>
+        )}
+        {filtered.length === 0 && !(myFeed && watchTerms.length === 0) && (
+          <p className="empty">No stories match. Try another search.</p>
+        )}
       </div>
     </>
   );

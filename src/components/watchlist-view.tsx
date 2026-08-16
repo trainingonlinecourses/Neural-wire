@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ago } from '@/lib/utils';
 import { ENTITY_DEFS, isKnownEntity } from '@/lib/extract/entities';
 import { KIND_LABEL } from './trend-row';
-import type { MoversMatch } from '@/lib/trending';
+import type { MoversMatch } from '@/lib/movers';
 
 interface WatchItem {
   entity: { name: string; kind: string } | null;

@@ -1,15 +1,8 @@
 import { fmtStars, isoDaysAgo } from './utils';
+import type { PulseSignal } from './pulse';
 
-export type TrendingKind = 'gh' | 'hf' | 'radar';
+export type TrendingKind = 'gh' | 'hf' | 'pulse';
 
-export interface RadarSignal {
-  id: string;
-  name: string;
-  icon: string;
-  value: number | null;
-  detail: string;
-  href: string | null;
-}
 
 /** One ranked entry before/after normalization. */
 export interface Cand {
@@ -42,13 +35,13 @@ export interface TrendingRow extends Cand {
   delta?: RowDelta;
 }
 
-const KIND_PRIORITY: Record<TrendingKind, number> = { gh: 0, hf: 1, radar: 2 };
+const KIND_PRIORITY: Record<TrendingKind, number> = { gh: 0, hf: 1, pulse: 2 };
 
 /**
  * Merge per-category candidates into a single ranking. Each item's heat is
  * normalized to 0-100 against the top value of its own category, so a star
- * leader can rank beside a liked model and a fear/greed reading. Radar
- * signals without a numeric reading rank at the bottom with heat 0.
+ * leader can rank beside a liked model and a pulse reading. Pulse signals
+ * without a numeric reading rank at the bottom with heat 0.
  */
 export function rankAll(groups: { kind: TrendingKind; items: Cand[] }[]): TrendingRow[] {
   const maxByKind: Partial<Record<TrendingKind, number>> = {};
@@ -96,14 +89,7 @@ export function withinWindow(createdMs: number, days: number, now = Date.now()):
   return createdMs >= now - days * 86_400_000;
 }
 
-/* ---------- Shared movers ranking (module-cached, one computation for all consumers) ---------- */
-
-const MOVERS_TTL = 3 * 60 * 1000;
-let moversCache: { range: TimeRange; rows: TrendingRow[]; at: number } | null = null;
-
-/* 24h climb signal (GH star deltas). Each repo needs its own events call, so a
-   rate-limit backoff keeps us from hammering the GitHub API. */
-let deltaCooldownUntil = 0;
+/* ---------- Climb signals ---------- */
 
 /**
  * Stars gained by one repo in the last 24h, counted from its public event
@@ -163,87 +149,10 @@ export function sortByRisers(rows: TrendingRow[]): TrendingRow[] {
   });
 }
 
-/**
- * The merged movers ranking for a window, computed once per TTL and shared by
- * every consumer (brief Movers, watchlist movers status). Status-only radar
- * rows are dropped and the radar key is not passed, matching the /brief digest.
- * Each row also gets its 24h climb signal: star deltas for the top GH repos
- * (events API, per-repo call) and HF trendingScore for models.
- */
-export async function getMoversRows(range: TimeRange = '24h'): Promise<TrendingRow[]> {
-  if (!moversCache || moversCache.range !== range || Date.now() - moversCache.at > MOVERS_TTL) {
-    const [ghRes, hfRes, radarRes] = await Promise.allSettled([
-      fetchGhTrending(range),
-      fetchHfTrending(range),
-      fetchRadarSignals(''),
-    ]);
-    const groups: { kind: TrendingKind; items: Cand[] }[] = [];
-    if (ghRes.status === 'fulfilled') groups.push({ kind: 'gh', items: ghRes.value });
-    if (hfRes.status === 'fulfilled') groups.push({ kind: 'hf', items: hfRes.value });
-    if (radarRes.status === 'fulfilled') groups.push({ kind: 'radar', items: liveSignalCands(radarRes.value) });
-    const rows = rankAll(groups);
-
-    // 24h climb signal — GH star deltas (only the rendered top repos; bounded
-    // per-repo calls with a cooldown after a rate limit).
-    if (Date.now() >= deltaCooldownUntil) {
-      const ghTop = rows.filter((r) => r.kind === 'gh').slice(0, 10);
-      const deltas = await Promise.all(ghTop.map((r) => fetchGhStarDelta(r.id)));
-      let limited = false;
-      ghTop.forEach((r, i) => {
-        const d = deltas[i];
-        if (d.rateLimited) {
-          limited = true;
-          return;
-        }
-        if (d.stars != null) r.delta = { ...(r.delta || {}), stars: d.stars };
-      });
-      if (limited) deltaCooldownUntil = Date.now() + 10 * 60 * 1000;
-    }
-    // HF momentum — no extra call needed, trendingScore rides the fetch above.
-    for (const r of rows) {
-      if (r.kind === 'hf' && r.trendingScore != null) {
-        r.delta = { ...(r.delta || {}), score: r.trendingScore };
-      }
-    }
-
-    moversCache = { range, rows, at: Date.now() };
-  }
-  return moversCache.rows;
-}
-
-/** A followed entity's spot in the movers ranking. */
-export interface MoversMatch {
-  row: TrendingRow;
-  /** 1-based position in the merged ranking. */
-  rank: number;
-}
-
-/**
- * Match a followed entity (canonical name + aliases) against the movers
- * ranking by case-insensitive substring on row names — so "NVIDIA" matches
- * `NVIDIA/…` repos, "Mistral AI" matches `mistralai/…` models, and "Claude"
- * matches `anthropic/claude-…`. Returns matches in ranking order with their
- * actual rank, so the UI can show a real "position in the 24h ranking".
- */
-export function matchMovers(
-  entity: { name: string; aliases?: string[] },
-  rows: TrendingRow[],
-): MoversMatch[] {
-  const terms = [entity.name, ...(entity.aliases || [])]
-    .map((t) => t.trim().toLowerCase())
-    .filter(Boolean);
-  const out: MoversMatch[] = [];
-  rows.forEach((row, i) => {
-    const hay = row.name.toLowerCase();
-    if (terms.some((t) => hay.includes(t))) out.push({ row, rank: i + 1 });
-  });
-  return out;
-}
-
 /* ---------- Shared row mapping ---------- */
 
-/** Radar signal -> ranking candidate (null-value signals rank at the bottom). */
-export function signalToCand(s: RadarSignal): Cand {
+/** Pulse signal -> ranking candidate (null-value signals rank at the bottom). */
+export function signalToCand(s: PulseSignal): Cand {
   return {
     id: s.id,
     name: s.name,
@@ -255,11 +164,9 @@ export function signalToCand(s: RadarSignal): Cand {
   };
 }
 
-/** Radar signals -> candidates, dropping pure status rows (key required / unreachable). */
-export function liveSignalCands(signals: RadarSignal[]): Cand[] {
-  return signals
-    .filter((s) => s.value != null || !/(key required|unreachable)/i.test(s.detail))
-    .map(signalToCand);
+/** Pulse signals -> candidates, dropping pure status rows (no numeric reading). */
+export function pulseSignalCands(signals: PulseSignal[]): Cand[] {
+  return signals.filter((s) => s.value != null).map(signalToCand);
 }
 
 /* ---------- GitHub (same queries as the GitHub page, rising mode) ---------- */
@@ -376,121 +283,4 @@ export async function fetchHfTrending(range: TimeRange = '7d'): Promise<Cand[]> 
   }));
 }
 
-/* ---------- WorldMonitor radar signals ---------- */
 
-function deepFind(
-  obj: unknown,
-  pred: (k: string, v: unknown) => boolean,
-  depth = 0,
-  out: { k: string; v: unknown }[] = [],
-): { k: string; v: unknown }[] {
-  if (depth > 6 || out.length >= 3 || obj == null || typeof obj !== 'object') return out;
-  if (Array.isArray(obj)) {
-    obj.slice(0, 8).forEach((v) => deepFind(v, pred, depth + 1, out));
-    return out;
-  }
-  const o = obj as Record<string, unknown>;
-  for (const k of Object.keys(o)) {
-    const v = o[k];
-    if (pred(k, v)) {
-      out.push({ k, v });
-      if (out.length >= 3) return out;
-    }
-    if (v && typeof v === 'object') deepFind(v, pred, depth + 1, out);
-  }
-  return out;
-}
-
-async function fetchWM(path: string, key: string): Promise<{ ok: boolean; data?: unknown; needKey?: boolean }> {
-  const url = 'https://api.worldmonitor.app' + path;
-  const opts: RequestInit = { signal: AbortSignal.timeout(12000) };
-  if (key) opts.headers = { 'X-WorldMonitor-Key': key };
-  try {
-    const r = await fetch(url, opts);
-    const j = await r.json().catch(() => null);
-    if (r.ok && j && !j.error) return { ok: true, data: j };
-    if ((j && /key required|unauthenticated|api key/i.test(j.error || '')) || r.status === 401 || r.status === 403)
-      return { ok: false, needKey: true };
-    return { ok: false };
-  } catch {
-    return { ok: false };
-  }
-}
-
-const RADAR_EPS = [
-  { id: 'fg', icon: '📉', name: 'Fear & Greed Index', path: '/api/market/v1/get-fear-greed-index' },
-  { id: 'climate', icon: '🌦', name: 'Climate Intelligence', path: '/api/climate/v1/list-climate-news' },
-  { id: 'air', icon: '🛫', name: 'Airport Delays', path: '/api/aviation/v1/list-airport-delays' },
-  { id: 'co2', icon: '🧪', name: 'CO₂ Monitor', path: '/api/climate/v1/get-co2-monitoring' },
-];
-
-export async function fetchRadarSignals(key: string): Promise<RadarSignal[]> {
-  const results = await Promise.all(
-    RADAR_EPS.map((ep) => fetchWM(ep.path, key).then((res) => ({ ep, res }))),
-  );
-  const signals: RadarSignal[] = [];
-  for (const { ep, res } of results) {
-    if (!res.ok) {
-      signals.push({
-        id: ep.id,
-        name: ep.name,
-        icon: ep.icon,
-        value: null,
-        detail: res.needKey ? 'WorldMonitor API key required' : 'endpoint unreachable',
-        href: 'https://www.worldmonitor.app',
-      });
-      continue;
-    }
-    const d = res.data;
-    if (ep.id === 'fg') {
-      const hit = deepFind(d, (k, v) => /^(value|score|index|fgi)$/i.test(k) && typeof v === 'number')[0];
-      const lbl = deepFind(d, (k, v) => /classification|label|rating/i.test(k) && typeof v === 'string')[0];
-      const value = hit ? Math.round((hit.v as number) * 10) / 10 : null;
-      signals.push({
-        id: ep.id,
-        name: ep.name,
-        icon: ep.icon,
-        value,
-        detail: lbl ? String(lbl.v) : value == null ? 'no reading' : '0 fear · 100 greed',
-        href: 'https://www.worldmonitor.app',
-      });
-    } else if (ep.id === 'climate') {
-      const hit = deepFind(d, (k, v) => k === 'items' && Array.isArray(v) && (v as unknown[]).length > 0)[0];
-      const arr = hit ? (hit.v as Record<string, unknown>[]) : [];
-      const top = arr[0];
-      signals.push({
-        id: ep.id,
-        name: ep.name,
-        icon: ep.icon,
-        value: null,
-        detail: top ? String(top.title || top.name || '—') : 'no climate signals',
-        href: top && (top.url || top.link) ? String(top.url || top.link) : 'https://www.worldmonitor.app',
-      });
-    } else if (ep.id === 'air') {
-      const hit = deepFind(d, (k, v) => k === 'alerts' && Array.isArray(v) && (v as unknown[]).length > 0)[0];
-      const arr = hit ? (hit.v as Record<string, unknown>[]) : [];
-      const top = arr[0];
-      signals.push({
-        id: ep.id,
-        name: ep.name,
-        icon: ep.icon,
-        value: null,
-        detail: top
-          ? String(top.city || '') + ' ' + String(top.country || '') + ' — ' + String(top.delayType || 'delay').replace('FLIGHT_DELAY_TYPE_', '')
-          : 'no delay alerts',
-        href: 'https://www.worldmonitor.app',
-      });
-    } else {
-      const hit = deepFind(d, (k, v) => k === 'currentPpm' && typeof v === 'number')[0];
-      signals.push({
-        id: ep.id,
-        name: ep.name,
-        icon: ep.icon,
-        value: null,
-        detail: hit ? Math.round(hit.v as number) + ' ppm CO₂' : 'no CO₂ reading',
-        href: 'https://www.worldmonitor.app',
-      });
-    }
-  }
-  return signals;
-}

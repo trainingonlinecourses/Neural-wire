@@ -21,7 +21,14 @@ insert into public.sources (id, name, short, color, grad, kind, url) values
   ('mistral', 'Mistral AI', 'MIS', '#ff7000', 'linear-gradient(135deg,#4a2500,#1f0f00)', 'rss', 'https://mistral.ai/news/rss/'),
   ('apple', 'Apple ML Research', 'APL', '#a1a1aa', 'linear-gradient(135deg,#2d2d35,#101014)', 'rss', 'https://machinelearning.apple.com/rss.xml'),
   ('bair', 'BAIR', 'BAI', '#f5c518', 'linear-gradient(135deg,#4a3d05,#201a02)', 'rss', 'https://bair.berkeley.edu/blog/feed.xml'),
-  ('mitnews', 'MIT News AI', 'MITN', '#ff5a36', 'linear-gradient(135deg,#4a1a0d,#200b04)', 'rss', 'https://news.mit.edu/rss/topic/artificial-intelligence2')
+  ('mitnews', 'MIT News AI', 'MITN', '#ff5a36', 'linear-gradient(135deg,#4a1a0d,#200b04)', 'rss', 'https://news.mit.edu/rss/topic/artificial-intelligence2'),
+  ('gradient', 'The Gradient', 'GRD', '#6ee7b7', 'linear-gradient(135deg,#0d3a2c,#051a12)', 'rss', 'https://thegradient.pub/rss/'),
+  ('simonw', 'Simon Willison', 'SW', '#fbbf24', 'linear-gradient(135deg,#45330a,#1e1503)', 'rss', 'https://simonwillison.net/atom/everything/'),
+  ('oneusefulthing', 'One Useful Thing', 'OUT', '#fb7185', 'linear-gradient(135deg,#43222a,#1d0c10)', 'rss', 'https://www.oneusefulthing.org/feed'),
+  ('importai', 'Import AI', 'IAI', '#a78bfa', 'linear-gradient(135deg,#2e2154,#130c26)', 'rss', 'https://importai.substack.com/feed'),
+  ('lillog', "Lil'Log", 'LL', '#f472b6', 'linear-gradient(135deg,#431f34,#1d0b16)', 'rss', 'https://lilianweng.github.io/index.xml'),
+  ('arxiv', 'arXiv cs.AI', 'AXV', '#b91c1c', 'linear-gradient(135deg,#3f0d0d,#1a0404)', 'rss', 'https://export.arxiv.org/rss/cs.AI'),
+  ('kaggle', 'Kaggle Blog', 'KGL', '#20beff', 'linear-gradient(135deg,#0c3a52,#051a25)', 'rss', 'https://medium.com/feed/kaggle-blog')
 on conflict (id) do nothing;
 
 insert into public.benchmarks (id, name, unit, higher_is_better) values

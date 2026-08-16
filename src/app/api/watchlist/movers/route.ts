@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { tryClient } from '@/lib/supabase/server';
 import { entityDef } from '@/lib/extract/entities';
-import { getMoversRows, matchMovers, type MoversMatch } from '@/lib/trending';
+import { getMoversRows, matchMovers, type MoversMatch } from '@/lib/movers';
 
 export const runtime = 'nodejs';
 
@@ -13,7 +13,7 @@ interface FollowedEntity {
 /**
  * GET /api/watchlist/movers — the current user's followed entities, each with
  * its current 24h movers status: which rows of the shared /trending ranking
- * (GitHub repos, HF models, radar) match the entity, in ranking order with
+ * (GitHub repos, HF models, AI pulse) match the entity, in ranking order with
  * real rank positions. Reads the same module-cached ranking as /brief Movers.
  */
 export async function GET() {

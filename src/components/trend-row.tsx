@@ -2,7 +2,7 @@ import { deltaText } from '@/lib/trending';
 import type { TrendingKind, TrendingRow } from '@/lib/trending';
 import { TermTip } from './term-tip';
 
-export const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', radar: '🌍 RADAR' };
+export const KIND_LABEL: Record<TrendingKind, string> = { gh: '🔥 GH', hf: '🤗 HF', pulse: '⚡ PULSE' };
 
 /** One ranked row — rank badge, source tag, name, tags, metric and heat bar. */
 export function TrendRow({ row, rank, isNew = false }: { row: TrendingRow; rank: number; isNew?: boolean }) {

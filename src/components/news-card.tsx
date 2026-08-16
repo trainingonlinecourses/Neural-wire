@@ -1,3 +1,5 @@
+'use client';
+
 import { srcById } from '@/lib/sources';
 import type { Story } from '@/lib/types';
 import { ago } from '@/lib/utils';
@@ -6,13 +8,43 @@ import { CopyLink } from './copy-link';
 import { SafeImage } from './safe-image';
 import { CoverageChip } from './coverage-chip';
 
-export function NewsCard({ story, coverage = [], isNew = false }: { story: Story; coverage?: Story[]; isNew?: boolean }) {
+export function NewsCard({
+  story,
+  coverage = [],
+  isNew = false,
+  onDismiss,
+  onRead,
+}: {
+  story: Story;
+  coverage?: Story[];
+  isNew?: boolean;
+  /** Hide this story (persisted by the caller). */
+  onDismiss?: () => void;
+  /** Record that the user opened this story. */
+  onRead?: () => void;
+}) {
   const s = srcById[story.sourceId];
   const stats = storyStats(story);
+  const open = (e: React.MouseEvent) => {
+    onRead?.();
+  };
   return (
     <article className={'card' + (isNew ? ' new-card' : '')}>
       <div className="card-accent" style={{ background: s?.color || '#4f7cff' }} aria-hidden="true" />
       {isNew && <span className="news-new">NEW</span>}
+      {onDismiss && (
+        <button
+          className="card-x"
+          onClick={(e) => {
+            e.preventDefault();
+            onDismiss();
+          }}
+          title="Hide this story"
+          aria-label={'Hide story: ' + story.title}
+        >
+          ✕
+        </button>
+      )}
       <div
         className="thumb"
         data-short={s?.short || 'NW'}
@@ -29,7 +61,7 @@ export function NewsCard({ story, coverage = [], isNew = false }: { story: Story
       </div>
       <div className="card-body">
         <h3>
-          <a href={story.link} target="_blank" rel="noopener noreferrer">
+          <a href={story.link} target="_blank" rel="noopener noreferrer" onClick={open}>
             {story.title}
           </a>
         </h3>
@@ -82,7 +114,7 @@ export function NewsCard({ story, coverage = [], isNew = false }: { story: Story
               DISCUSS ↗
             </a>
           )}
-          <a className="open" href={story.link} target="_blank" rel="noopener noreferrer">
+          <a className="open" href={story.link} target="_blank" rel="noopener noreferrer" onClick={open}>
             READ ↗
           </a>
         </div>

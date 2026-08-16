@@ -5,17 +5,17 @@ import {
   fetchGhStarDelta,
   GH_STAR_FLOOR,
   hfSortFor,
-  liveSignalCands,
-  matchMovers,
+  pulseSignalCands,
   RANGE_DAYS,
   rankAll,
   signalToCand,
   sortByRisers,
   withinWindow,
   type Cand,
-  type RadarSignal,
   type TrendingRow,
 } from './trending';
+import { matchMovers } from './movers';
+import type { PulseSignal } from './pulse';
 
 const cand = (id: string, value: number): Cand => ({
   id,
@@ -53,14 +53,14 @@ describe('rankAll', () => {
     expect(rows.map((r) => r.kind)).toEqual(['gh', 'hf']);
   });
 
-  it('ranks radar signals without a numeric value at the bottom with heat 0', () => {
+  it('ranks pulse signals without a numeric value at the bottom with heat 0', () => {
     const rows = rankAll([
-      { kind: 'radar', items: [{ ...cand('climate', 0), name: 'Climate Intelligence' }, cand('fear-greed', 45)] },
+      { kind: 'pulse', items: [{ ...cand('story-heat', 0), name: 'Story heat' }, cand('velocity', 45)] },
       { kind: 'gh', items: [cand('r', 1000)] },
     ]);
-    expect(rows.find((r) => r.id === 'fear-greed')?.heat).toBe(100);
-    expect(rows.find((r) => r.id === 'climate')?.heat).toBe(0);
-    expect(rows[rows.length - 1].id).toBe('climate');
+    expect(rows.find((r) => r.id === 'velocity')?.heat).toBe(100);
+    expect(rows.find((r) => r.id === 'story-heat')?.heat).toBe(0);
+    expect(rows[rows.length - 1].id).toBe('story-heat');
   });
 
   it('assigns a cross-category global percentile (100 top, 0 bottom)', () => {
@@ -106,13 +106,13 @@ describe('time ranges', () => {
 });
 
 describe('signalToCand', () => {
-  const signal = (id: string, value: number | null): RadarSignal => ({
+  const signal = (id: string, value: number | null): PulseSignal => ({
     id,
     name: id,
-    icon: '📡',
+    icon: '⚡',
     value,
     detail: 'reading',
-    href: 'https://www.worldmonitor.app',
+    href: 'https://example.com/' + id,
   });
 
   it('maps a numeric signal to a scored candidate', () => {
@@ -288,26 +288,22 @@ describe('matchMovers', () => {
   });
 });
 
-describe('liveSignalCands', () => {
-  const signal = (id: string, value: number | null, detail: string): RadarSignal => ({
+describe('pulseSignalCands', () => {
+  const signal = (id: string, value: number | null): PulseSignal => ({
     id,
     name: id,
-    icon: '📡',
+    icon: '⚡',
     value,
-    detail,
-    href: 'https://www.worldmonitor.app',
+    detail: 'reading',
+    href: 'https://example.com/' + id,
   });
 
-  it('drops pure status rows and keeps real readings', () => {
-    const cands = liveSignalCands([
-      signal('fg', 55, 'greed'),
-      signal('climate', null, 'WorldMonitor API key required'),
-      signal('co2', null, 'endpoint unreachable'),
+  it('drops status-only signals and keeps real readings', () => {
+    const cands = pulseSignalCands([
+      signal('velocity', 55),
+      signal('hot-model', null),
+      signal('story-heat', null),
     ]);
-    expect(cands.map((c) => c.id)).toEqual(['fg']);
-  });
-  it('keeps informational rows with a real detail even without a number', () => {
-    const cands = liveSignalCands([signal('air', null, 'JFK — Ground Stop')]);
-    expect(cands.map((c) => c.id)).toEqual(['air']);
+    expect(cands.map((c) => c.id)).toEqual(['velocity']);
   });
 });

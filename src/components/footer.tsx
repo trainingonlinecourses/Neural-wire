@@ -17,7 +17,7 @@ const FOOT_COLS: { h: string; links: [string, string][] }[] = [
     links: [
       ['/github', 'GitHub Trending'],
       ['/huggingface', 'HF Hub'],
-      ['/radar', 'World Radar'],
+      ['/pulse', 'AI Pulse'],
       ['/glossary', 'Glossary'],
     ],
   },
@@ -46,7 +46,7 @@ export function Footer() {
             </div>
           </Link>
           <p>
-            Curated AI intelligence from {SOURCES.length} sources — news, models, benchmarks and live radar
+            Curated AI intelligence from {SOURCES.length} sources — news, models, benchmarks and live pulse
             signals, all on one desk. No cookies, no tracking.
           </p>
         </div>
@@ -68,10 +68,11 @@ export function Footer() {
           <h4>DATA SOURCES</h4>
           <p>
             Stories stream live from {SOURCES.length} public feeds — official lab blogs (OpenAI, Google
-            DeepMind, Google Research, Microsoft, NVIDIA, AWS), press (TechCrunch, The Verge, MIT Tech
-            Review, Ars Technica, IEEE Spectrum) and community wires (Hacker News, DEV, Lobsters) — plus the
-            GitHub Trending API, the Hugging Face Hub API and WorldMonitor radar signals. Everything is
-            public data, linked back to its origin.
+            DeepMind, Google Research, Microsoft, NVIDIA, AWS, Anthropic-adjacent analysts like The
+            Gradient and Simon Willison), press (TechCrunch, The Verge, MIT Tech Review, Ars Technica,
+            IEEE Spectrum), research (arXiv cs.AI, Lil'Log) and community wires (Hacker News, DEV,
+            Lobsters, Import AI) — plus the GitHub Trending API, the Hugging Face Hub API and the desk's
+            own AI Pulse signals. Everything is public data, linked back to its origin.
           </p>
         </div>
         <div>

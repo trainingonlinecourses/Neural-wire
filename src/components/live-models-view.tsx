@@ -26,7 +26,7 @@ export function LiveModelsView() {
         <span>NEW MODELS — LIVE · pulled fresh from Hugging Face + OpenRouter</span>
         <span className="meta-right dim">benchmarks extracted from each model&apos;s official card</span>
       </div>
-      {failed && <p className="empty">Live model radar unavailable right now — try again in a moment.</p>}
+      {failed && <p className="empty">Live model feed unavailable right now — try again in a moment.</p>}
       {!models && !failed && <p className="empty">⟳ polling Hugging Face + OpenRouter…</p>}
       {models && models.length === 0 && <p className="empty">No new models reported by the registries right now.</p>}
       {models && models.length > 0 && (

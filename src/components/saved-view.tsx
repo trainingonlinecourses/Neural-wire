@@ -20,6 +20,31 @@ interface SavedStory {
   source_id?: string;
 }
 
+interface HistoryItem {
+  id: string;
+  title: string;
+  link: string;
+  sourceId: string;
+  at: number;
+}
+
+const HISTORY_KEY = 'nw_history';
+const MAX_HISTORY = 20;
+
+function loadHistory(): HistoryItem[] {
+  try {
+    const raw = window.localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((x): x is HistoryItem => Boolean((x as HistoryItem).title && (x as HistoryItem).link))
+      .slice(0, MAX_HISTORY);
+  } catch {
+    return [];
+  }
+}
+
 export function SavedView() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [items, setItems] = useState<Record<string, SavedStory[]>>({});
@@ -28,6 +53,7 @@ export function SavedView() {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(true);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -43,6 +69,7 @@ export function SavedView() {
 
   useEffect(() => {
     load();
+    setHistory(loadHistory());
   }, [load]);
 
   async function create(e: React.FormEvent) {
@@ -135,6 +162,42 @@ export function SavedView() {
           <p className="empty">
             <b>No collections yet.</b> Create one to save stories you want to come back to.
           </p>
+        )}
+      </div>
+      <div className="wrap">
+        <div className="meta-row">
+          <span>💾 RECENTLY READ — last {history.length} stories you opened, remembered on this device</span>
+          <span className="meta-right">
+            {history.length > 0 && (
+              <button
+                className="btn sync-btn"
+                onClick={() => {
+                  setHistory([]);
+                  try {
+                    window.localStorage.removeItem(HISTORY_KEY);
+                  } catch {
+                    /* storage unavailable */
+                  }
+                }}
+              >
+                CLEAR HISTORY
+              </button>
+            )}
+          </span>
+        </div>
+        {history.length === 0 ? (
+          <p className="empty">Stories you open across the desk show up here automatically.</p>
+        ) : (
+          <div className="timeline">
+            {history.map((h) => (
+              <div key={h.id + h.at} className="tl-row">
+                <a href={h.link} target="_blank" rel="noopener noreferrer">
+                  {h.title}
+                </a>
+                <span className="l">{ago(new Date(h.at))}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       {msg && <div className="wrap"><div className="banner show"><span>{msg}</span></div></div>}

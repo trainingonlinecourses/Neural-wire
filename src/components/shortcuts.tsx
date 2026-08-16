@@ -13,7 +13,7 @@ const KEYS: { key: string; href: string; label: string }[] = [
   { key: 'l', href: '/leaderboard', label: 'Leaderboard' },
   { key: 'g', href: '/github', label: 'GitHub Trending' },
   { key: 'h', href: '/huggingface', label: 'HF Hub' },
-  { key: 'r', href: '/radar', label: 'Radar' },
+  { key: 'p', href: '/pulse', label: 'Pulse' },
   { key: 'w', href: '/watchlist', label: 'Watchlist' },
   { key: 's', href: '/saved', label: 'Saved' },
 ];
@@ -176,7 +176,7 @@ export function Shortcuts() {
               <input
                 ref={searchRef}
                 className="field"
-                placeholder="Search the glossary — movers, heat, radar, entity…"
+                placeholder="Search the glossary — movers, heat, pulse, entity…"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 aria-label="Search glossary"

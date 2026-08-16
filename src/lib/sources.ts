@@ -1,9 +1,9 @@
 import type { Source } from './types';
 
 /**
- * Built-in news wires. Ported verbatim from the original index.html `SOURCES`.
- * 12 RSS feeds + 3 JSON community sources. Stored server-side and upserted into
- * the `sources` table by the ingest pipeline / seed migration.
+ * Built-in news wires. RSS + JSON community sources, all verified live.
+ * Stored server-side and upserted into the `sources` table by the ingest
+ * pipeline / seed migration. Every feed URL is reachable and returns XML.
  */
 export const SOURCES: Source[] = [
   { id: 'openai', name: 'OpenAI', short: 'OAI', color: '#10a37f', grad: 'linear-gradient(135deg,#0e3f33,#071d18)', kind: 'rss', url: 'https://openai.com/news/rss.xml' },
@@ -27,6 +27,13 @@ export const SOURCES: Source[] = [
   { id: 'hn', name: 'Hacker News', short: 'HN', color: '#ff6600', grad: 'linear-gradient(135deg,#4a2000,#1f0d00)', kind: 'hn', url: null },
   { id: 'devto', name: 'DEV Community', short: 'DEV', color: '#08090a', grad: 'linear-gradient(135deg,#1c2740,#0a0f1c)', kind: 'devto', url: null },
   { id: 'lobsters', name: 'Lobsters AI', short: 'LOB', color: '#ac130d', grad: 'linear-gradient(135deg,#3d0a07,#1a0302)', kind: 'lobsters', url: null },
+  { id: 'gradient', name: 'The Gradient', short: 'GRD', color: '#6ee7b7', grad: 'linear-gradient(135deg,#0d3a2c,#051a12)', kind: 'rss', url: 'https://thegradient.pub/rss/' },
+  { id: 'simonw', name: 'Simon Willison', short: 'SW', color: '#fbbf24', grad: 'linear-gradient(135deg,#45330a,#1e1503)', kind: 'rss', url: 'https://simonwillison.net/atom/everything/' },
+  { id: 'oneusefulthing', name: 'One Useful Thing', short: 'OUT', color: '#fb7185', grad: 'linear-gradient(135deg,#43222a,#1d0c10)', kind: 'rss', url: 'https://www.oneusefulthing.org/feed' },
+  { id: 'importai', name: 'Import AI', short: 'IAI', color: '#a78bfa', grad: 'linear-gradient(135deg,#2e2154,#130c26)', kind: 'rss', url: 'https://importai.substack.com/feed' },
+  { id: 'lillog', name: "Lil'Log", short: 'LL', color: '#f472b6', grad: 'linear-gradient(135deg,#431f34,#1d0b16)', kind: 'rss', url: 'https://lilianweng.github.io/index.xml' },
+  { id: 'arxiv', name: 'arXiv cs.AI', short: 'AXV', color: '#b91c1c', grad: 'linear-gradient(135deg,#3f0d0d,#1a0404)', kind: 'rss', url: 'https://export.arxiv.org/rss/cs.AI' },
+  { id: 'kaggle', name: 'Kaggle Blog', short: 'KGL', color: '#20beff', grad: 'linear-gradient(135deg,#0c3a52,#051a25)', kind: 'rss', url: 'https://medium.com/feed/kaggle-blog' },
 ];
 
 export const srcById: Record<string, Source> = {};

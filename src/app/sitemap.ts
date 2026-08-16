@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/leaderboard',
     '/github',
     '/huggingface',
-    '/radar',
+    '/pulse',
     '/watchlist',
     '/saved',
     '/glossary',

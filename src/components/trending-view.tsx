@@ -5,16 +5,15 @@ import {
   fetchGhStarDelta,
   fetchGhTrending,
   fetchHfTrending,
-  fetchRadarSignals,
   rankAll,
   signalToCand,
   sortByRisers,
   type Cand,
-  type RadarSignal,
   type TimeRange,
   type TrendingKind,
   type TrendingRow,
 } from '@/lib/trending';
+import type { PulseSignal } from '@/lib/pulse';
 import { addedKeys, formatCountdown, idDiff, parseRefreshInterval, refreshIntervalLabel, REFRESH_INTERVALS } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
 import { ago } from '@/lib/utils';
@@ -102,15 +101,20 @@ export function TrendingView() {
     }
     setLoading(true);
     setError(null);
-    const key = (typeof window !== 'undefined' ? window.localStorage.getItem('nw_wmkey') : '') || '';
-    Promise.allSettled([fetchGhTrending(r), fetchHfTrending(r), fetchRadarSignals(key)]).then((results) => {
-      const kinds: TrendingKind[] = ['gh', 'hf', 'radar'];
+    const fetchPulse = async (): Promise<PulseSignal[]> => {
+      const res = await fetch('/api/pulse', { cache: 'no-store' });
+      if (!res.ok) throw new Error('pulse ' + res.status);
+      const j = (await res.json()) as { signals: PulseSignal[] };
+      return j.signals;
+    };
+    Promise.allSettled([fetchGhTrending(r), fetchHfTrending(r), fetchPulse()]).then((results) => {
+      const kinds: TrendingKind[] = ['gh', 'hf', 'pulse'];
       const groups: { kind: TrendingKind; items: Cand[] }[] = [];
       const errs: string[] = [];
       results.forEach((res, i) => {
         if (res.status === 'fulfilled') {
-          const value = res.value as Cand[] | RadarSignal[];
-          const items: Cand[] = kinds[i] === 'radar' ? (value as RadarSignal[]).map(signalToCand) : (value as Cand[]);
+          const value = res.value as Cand[] | PulseSignal[];
+          const items: Cand[] = kinds[i] === 'pulse' ? (value as PulseSignal[]).map(signalToCand) : (value as Cand[]);
           groups.push({ kind: kinds[i], items });
         } else errs.push(kinds[i] + ': ' + (res.reason as Error).message);
       });
@@ -202,7 +206,7 @@ export function TrendingView() {
     ? {
         gh: rows.filter((r) => r.kind === 'gh').length,
         hf: rows.filter((r) => r.kind === 'hf').length,
-        radar: rows.filter((r) => r.kind === 'radar').length,
+        pulse: rows.filter((r) => r.kind === 'pulse').length,
       }
     : null;
 
@@ -220,8 +224,8 @@ export function TrendingView() {
             <button className={'seg-btn' + (filter === 'hf' ? ' active' : '')} onClick={() => setFilter('hf')}>
               🤗 HF
             </button>
-            <button className={'seg-btn' + (filter === 'radar' ? ' active' : '')} onClick={() => setFilter('radar')}>
-              🌍 RADAR
+            <button className={'seg-btn' + (filter === 'pulse' ? ' active' : '')} onClick={() => setFilter('pulse')}>
+              ⚡ PULSE
             </button>
           </div>
           <div className="seg" role="group" aria-label="Sort mode">
@@ -285,14 +289,14 @@ export function TrendingView() {
             <b>{counts?.hf ?? '—'}</b>hf models
           </div>
           <div className="stat">
-            <b>{counts?.radar ?? '—'}</b>radar signals
+            <b>{counts?.pulse ?? '—'}</b>pulse signals
           </div>
           <div className="stat">
             <b>{at ? ago(new Date(at)) : '—'}</b>last fetched
           </div>
         </div>
         <div className="meta-row">
-          <span>UNIFIED RANKING — LAST {range.toUpperCase()} · heat = position within its own source (★ stars · ❤ likes · 🌍 index), normalized to 100</span>
+          <span>UNIFIED RANKING — LAST {range.toUpperCase()} · heat = position within its own source (★ stars · ❤ likes · ⚡ pulse), normalized to 100</span>
           <span className="meta-right">
             {lastSync !== null && (
               <span className={'sync' + (syncFailed ? ' err' : '')}>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 /**
  * Front-door hero for the newsroom — replaces the generic page header on the
  * home page only. Big headline, a live stat-card strip, and the main journeys
- * (brief, trending, radar) sitting directly above the wire ticker.
+ * (brief, trending, pulse) sitting directly above the wire ticker.
  */
 
 function useCountUp(target: number, duration = 900): number {
@@ -63,7 +63,7 @@ export function Hero({
           The AI wire, <em>live.</em>
         </h1>
         <p className="hero-sub">
-          News · models · benchmarks · radar — one desk, one ranking, refreshed in place. No reloads, no noise.
+          News · models · benchmarks · pulse — one desk, one ranking, refreshed in place. No reloads, no noise.
         </p>
         <div className="hero-cta">
           <Link className="btn primary" href="/brief">
@@ -72,8 +72,8 @@ export function Hero({
           <Link className="btn" href="/trending">
             VIEW TRENDING ↗
           </Link>
-          <Link className="btn ghost" href="/radar">
-            OPEN RADAR
+          <Link className="btn ghost" href="/pulse">
+            OPEN PULSE
           </Link>
         </div>
         <div className="hero-stats">

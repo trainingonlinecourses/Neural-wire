@@ -11,7 +11,7 @@ export const NAV = [
   { href: '/leaderboard', label: '🏆 Leaderboard' },
   { href: '/github', label: '🔥 GitHub' },
   { href: '/huggingface', label: '🤗 HF Hub' },
-  { href: '/radar', label: '🌍 Radar' },
+  { href: '/pulse', label: '⚡ Pulse' },
   { href: '/watchlist', label: '👀 Watchlist' },
   { href: '/saved', label: '💾 Saved' },
   { href: '/glossary', label: '📖 Glossary' },

@@ -1,20 +1,8 @@
-import { RadarView } from '@/components/radar-view';
-import { PageHead } from '@/components/page-head';
+import { redirect } from 'next/navigation';
 
-export const metadata = { title: 'World Radar — NEURALWIRE' };
+export const metadata = { title: 'AI Pulse — NEURALWIRE' };
 
+/** The WorldMonitor radar was replaced by the desk's own AI Pulse panel. */
 export default function RadarPage() {
-  return (
-    <section className="page">
-      <div className="wrap">
-        <PageHead
-          kicker="🌍 WorldMonitor"
-          title="WORLD RADAR"
-          desc="Fear & greed, climate, air travel and CO₂ — live signals, re-run every 3 minutes."
-          index="08"
-        />
-      </div>
-      <RadarView />
-    </section>
-  );
+  redirect('/pulse');
 }

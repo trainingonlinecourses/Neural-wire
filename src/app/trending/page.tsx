@@ -10,7 +10,7 @@ export default function TrendingPage() {
         <PageHead
           kicker="📈 Unified ranking"
           title="TRENDING TODAY"
-          desc="GitHub repos, Hugging Face models and radar signals — merged into one ranking on one scale."
+          desc="GitHub repos, Hugging Face models and AI pulse signals — merged into one ranking on one scale."
           index="03"
         />
       </div>

@@ -33,7 +33,7 @@ export function GlossaryView() {
       <div className="gloss-toolbar">
         <input
           className="field"
-          placeholder="Search terms — movers, heat, radar, entity…"
+          placeholder="Search terms — movers, heat, pulse, entity…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search glossary"

@@ -26,14 +26,14 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://neural-wire-nine.vercel.app'),
   title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
   description:
-    'Live AI newsroom, model watch, benchmark leaderboard, GitHub trending, HuggingFace hub and a global AI radar — all in one desk.',
+    'Live AI newsroom, model watch, benchmark leaderboard, GitHub trending, HuggingFace hub and a live AI pulse — all in one desk.',
   keywords: [
     'AI news',
     'machine learning',
     'LLM benchmarks',
     'HuggingFace trending',
     'GitHub trending',
-    'AI radar',
+    'AI pulse',
     'model watch',
   ],
   applicationName: 'NEURALWIRE',
@@ -41,12 +41,12 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'NEURALWIRE',
     title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
-    description: 'News · models · benchmarks · radar — one live desk. No reloads, no noise.',
+    description: 'News · models · benchmarks · pulse — one live desk. No reloads, no noise.',
   },
   twitter: {
     card: 'summary',
     title: 'NEURALWIRE — Real-Time AI Intelligence Desk',
-    description: 'News · models · benchmarks · radar — one live desk. No reloads, no noise.',
+    description: 'News · models · benchmarks · pulse — one live desk. No reloads, no noise.',
   },
   robots: { index: true, follow: true },
 };

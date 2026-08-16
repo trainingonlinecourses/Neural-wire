@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getMoversRows } from '@/lib/trending';
+import { getMoversRows } from '@/lib/movers';
 import { TrendRow } from './trend-row';
 
 /**
@@ -13,7 +13,7 @@ export async function Movers() {
   return (
     <div className="wrap">
       <div className="section-note">
-        Movers — GitHub · Hugging Face · radar, last 24h
+        Movers — GitHub · Hugging Face · AI pulse, last 24h
         <Link href="/trending">FULL RANKING ↗</Link>
       </div>
       <div className="trend">
