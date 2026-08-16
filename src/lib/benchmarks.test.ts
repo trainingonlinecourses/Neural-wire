@@ -68,8 +68,8 @@ describe('benchmark dataset integrity', () => {
     }
   });
 
-  it('has a roster of at least 15 models', () => {
-    expect(BENCH_MODELS.length).toBeGreaterThanOrEqual(15);
+  it('has a roster of at least 12 current models', () => {
+    expect(BENCH_MODELS.length).toBeGreaterThanOrEqual(12);
   });
 
   it('resolves benchmark ids', () => {

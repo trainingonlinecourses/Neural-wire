@@ -49,20 +49,6 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     source: 'https://github.com/moonshotai/kimi-k2',
   },
   {
-    model: 'GPT-4.1',
-    vendor: 'OpenAI',
-    released: 'Apr 2025',
-    scores: { swebench: 54.6 },
-    source: 'https://openai.com/index/gpt-4-1/',
-  },
-  {
-    model: 'Claude 3.7 Sonnet',
-    vendor: 'Anthropic',
-    released: 'Feb 2025',
-    scores: { swebench: 70.3 },
-    source: 'https://www.anthropic.com/news/claude-3-7-sonnet',
-  },
-  {
     model: 'GLM-4.5',
     vendor: 'Zhipu',
     released: 'Jul 2025',
