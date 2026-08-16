@@ -37,9 +37,20 @@ describe('benchmark dataset integrity', () => {
     for (const m of BENCH_MODELS) expect(m.released).toMatch(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}$/);
   });
 
-  it('covers every benchmark with at least two models (SWE-bench is the sparsest)', () => {
-    for (const b of BENCHMARKS) {
-      expect(modelsForBench(b.id).length, b.name).toBeGreaterThanOrEqual(2);
+  it('offers only benchmarks current models report (MMLU + SWE-bench)', () => {
+    expect(modelsForBench('mmlu').length).toBeGreaterThanOrEqual(2);
+    expect(modelsForBench('swebench').length).toBeGreaterThanOrEqual(2);
+    // HumanEval/GSM8K are 2024-era — the 2025+ roster doesn't report them.
+    expect(modelsForBench('humaneval').length).toBe(0);
+    expect(modelsForBench('gsm8k').length).toBe(0);
+  });
+
+  it('keeps the roster to 2025+ releases only', () => {
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (const m of BENCH_MODELS) {
+      const month = MONTHS.indexOf(m.released.slice(0, 3));
+      const year = parseInt(m.released.slice(4), 10);
+      expect(year * 12 + month, m.model + ' (' + m.released + ')').toBeGreaterThanOrEqual(2025 * 12);
     }
   });
 
@@ -52,7 +63,7 @@ describe('benchmark dataset integrity', () => {
 
   it('includes the full Chinese ecosystem in the roster', () => {
     const names = BENCH_MODELS.map((m) => m.model);
-    for (const cn of ['DeepSeek-V3', 'DeepSeek-R1', 'Qwen2.5-72B', 'Kimi K2', 'GLM-4.5', 'Qwen3-235B-A22B-Instruct', 'Qwen3-30B-A3B-Instruct', 'MiniMax-M1-80K', 'GLM-4.6']) {
+    for (const cn of ['DeepSeek-R1', 'Kimi K2', 'GLM-4.5', 'Qwen3-235B-A22B-Instruct', 'Qwen3-30B-A3B-Instruct', 'MiniMax-M1-80K', 'GLM-4.6']) {
       expect(names).toContain(cn);
     }
   });

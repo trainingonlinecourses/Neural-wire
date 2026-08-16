@@ -15,7 +15,10 @@ const BENCH_NAME: Record<string, string> = {
 /** Newest-first roster with each model's own reported benchmarks. */
 export function LeaderboardView() {
   const [tab, setTab] = useState<Tab>('latest');
-  const [benchId, setBenchId] = useState(BENCHMARKS[0].id);
+  // Only offer benchmarks the current (2025+) roster actually reports.
+  const available = BENCHMARKS.filter((b) => modelsForBench(b.id).length >= 2);
+  const defaultBench = available.find((b) => b.id === 'swebench')?.id ?? available[0]?.id ?? BENCHMARKS[0].id;
+  const [benchId, setBenchId] = useState(defaultBench);
   const bench = benchById(benchId) ?? BENCHMARKS[0];
   const compareRows = modelsForBench(benchId);
   const latest = rosterByNewest();
@@ -49,7 +52,7 @@ export function LeaderboardView() {
               onChange={(e) => setBenchId(e.target.value)}
               aria-label="Benchmark"
             >
-              {BENCHMARKS.map((b) => (
+              {available.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name}
                 </option>
@@ -64,7 +67,7 @@ export function LeaderboardView() {
         <div className="wrap">
           <div className="meta-row">
             <span>
-              {latest.length} MODELS · newest first — every score links to the official source
+              {latest.length} MODELS · 2025+ releases, newest first — every score links to the official source
             </span>
             <span className="meta-right bench-honesty" title="Every number links to the vendor's official model card / announcement">
               ✓ GENUINE — from official model cards
@@ -118,7 +121,7 @@ export function LeaderboardView() {
         <div className="wrap">
           <div className="meta-row">
             <span>
-              {compareRows.length} MODELS · {bench.name} — best-first
+              {compareRows.length} MODELS · {bench.name} (2025+ releases) — best-first
             </span>
             <span className="meta-right bench-honesty" title="Every number links to the vendor's official model card / announcement">
               ✓ GENUINE — from official model cards
@@ -163,9 +166,9 @@ export function LeaderboardView() {
             })}
           </div>
           <p className="empty bench-note">
-            Scores are exactly as reported by each vendor at release — the SOURCE link opens the official model card or
-            announcement for every row. Labs use different harnesses (5-shot vs CoT, etc.), so treat cross-model deltas as
-            directional, not exact.
+            Only 2025+ flagships are listed — the newest models report modern benchmarks (SWE-bench, HLE, Terminal Bench)
+            instead of HumanEval/GSM8K, so those comparisons were dropped. Every score is exactly as reported by the vendor
+            at release and links to the official card.
           </p>
         </div>
       )}

@@ -33,76 +33,7 @@ export interface ModelBenchEntry {
 }
 
 export const BENCH_MODELS: ModelBenchEntry[] = [
-  {
-    model: 'GPT-4o',
-    vendor: 'OpenAI',
-    released: 'May 2024',
-    scores: { mmlu: 88.7, humaneval: 90.2, gsm8k: 90.5 },
-    source: 'https://openai.com/index/hello-gpt-4o/',
-  },
-  {
-    model: 'Claude 3.5 Sonnet',
-    vendor: 'Anthropic',
-    released: 'Jun 2024',
-    scores: { mmlu: 88.7, humaneval: 92.0, gsm8k: 96.4, swebench: 49.0 },
-    source: 'https://www.anthropic.com/news/claude-3-5-sonnet',
-  },
-  {
-    model: 'Claude 3 Opus',
-    vendor: 'Anthropic',
-    released: 'Mar 2024',
-    scores: { mmlu: 86.8, humaneval: 84.9, gsm8k: 95.0, swebench: 38.0 },
-    source: 'https://www.anthropic.com/news/claude-3-family',
-  },
-  {
-    model: 'Gemini 1.5 Pro',
-    vendor: 'Google',
-    released: 'Feb 2024',
-    scores: { mmlu: 85.9, humaneval: 84.1, gsm8k: 91.7 },
-    source: 'https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024/',
-  },
-  {
-    model: 'Llama 3.1 405B',
-    vendor: 'Meta',
-    released: 'Jul 2024',
-    scores: { mmlu: 88.6, humaneval: 89.0, gsm8k: 96.8 },
-    source: 'https://ai.meta.com/blog/meta-llama-3-1/',
-  },
-  {
-    model: 'Llama 3.3 70B',
-    vendor: 'Meta',
-    released: 'Dec 2024',
-    scores: { mmlu: 86.0, humaneval: 88.4, gsm8k: 91.6 },
-    source: 'https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct',
-  },
-  {
-    model: 'Mistral Large 2',
-    vendor: 'Mistral',
-    released: 'Jul 2024',
-    scores: { mmlu: 84.0, humaneval: 92.0, gsm8k: 93.0 },
-    source: 'https://mistral.ai/news/mistral-large-2407/',
-  },
-  {
-    model: 'Qwen2.5-72B',
-    vendor: 'Alibaba',
-    released: 'Sep 2024',
-    scores: { mmlu: 86.1, humaneval: 84.2, gsm8k: 91.0 },
-    source: 'https://qwenlm.github.io/blog/qwen2.5/',
-  },
-  {
-    model: 'DeepSeek-V3',
-    vendor: 'DeepSeek',
-    released: 'Dec 2024',
-    scores: { mmlu: 88.5, humaneval: 82.6, gsm8k: 89.3 },
-    source: 'https://api-docs.deepseek.com/news/news250120',
-  },
-  {
-    model: 'GPT-4',
-    vendor: 'OpenAI',
-    released: 'Mar 2023',
-    scores: { mmlu: 86.4, humaneval: 67.0, gsm8k: 92.0 },
-    source: 'https://openai.com/index/gpt-4-research/',
-  },
+  /** 2025+ releases only — the newest flagships don't report the old benchmarks. */
   {
     model: 'DeepSeek-R1',
     vendor: 'DeepSeek',
@@ -130,20 +61,6 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     released: 'Feb 2025',
     scores: { swebench: 70.3 },
     source: 'https://www.anthropic.com/news/claude-3-7-sonnet',
-  },
-  {
-    model: 'Phi-4',
-    vendor: 'Microsoft',
-    released: 'Dec 2024',
-    scores: { mmlu: 84.8, humaneval: 82.6 },
-    source: 'https://arxiv.org/abs/2412.08905',
-  },
-  {
-    model: 'Amazon Nova Pro',
-    vendor: 'Amazon',
-    released: 'Dec 2024',
-    scores: { mmlu: 85.9, humaneval: 89.0, gsm8k: 94.8 },
-    source: 'https://aws.amazon.com/blogs/aws/introducing-amazon-nova-frontier-intelligence-and-industry-leading-price-performance/',
   },
   {
     model: 'GLM-4.5',
