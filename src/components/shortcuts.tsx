@@ -167,6 +167,12 @@ export function Shortcuts() {
               <kbd>?</kbd> Toggle this panel
             </div>
             <div>
+              <kbd>⌘K</kbd> Command palette
+            </div>
+            <div>
+              <kbd>/</kbd> Quick search
+            </div>
+            <div>
               <kbd>ESC</kbd> Close
             </div>
           </div>

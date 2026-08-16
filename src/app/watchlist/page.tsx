@@ -1,7 +1,10 @@
 import { WatchlistView } from '@/components/watchlist-view';
 import { PageHead } from '@/components/page-head';
 
-export const metadata = { title: 'Watchlist — NEURALWIRE' };
+export const metadata = {
+  title: 'Watchlist — NEURALWIRE',
+  robots: { index: false, follow: false },
+};
 
 export default function WatchlistPage() {
   return (

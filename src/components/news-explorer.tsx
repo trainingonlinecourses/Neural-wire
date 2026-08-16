@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import type { SourceRow, NewsData } from '@/lib/data';
 import type { Story } from '@/lib/types';
 import { NewsCard } from './news-card';
@@ -12,6 +13,7 @@ import { formatCountdown, storyDiff } from '@/lib/refresh';
 import { useAutoSync } from '@/lib/use-auto-sync';
 import { coverageClusters, coverageMembers } from '@/lib/cluster';
 import { loadWatchTerms, saveWatchTerms, normalizeTerm, matchStories, MAX_WATCH_TERMS } from '@/lib/watch';
+import type { PulseSignal } from '@/lib/pulse';
 
 type Sort = 'newest' | 'oldest' | 'top';
 type Show = 'all' | 'models';
@@ -56,6 +58,9 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const [showHidden, setShowHidden] = useState(false);
   const [myFeed, setMyFeed] = useState(false);
 
+  // AI Pulse strip — the desk's live signals, refreshed with every feed sync.
+  const [pulse, setPulse] = useState<PulseSignal[] | null>(null);
+
   // Story ids that arrived on the most recent sync — flash a NEW badge then fade.
   const [newIds, setNewIds] = useState<ReadonlySet<string>>(new Set());
   const newTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -88,6 +93,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   // Restore watched terms + personalization on mount (client-only, no SSR mismatch).
   useEffect(() => {
+    void loadPulse();
     setWatchTerms(loadWatchTerms());
     try {
       const raw = window.localStorage.getItem(HIDDEN_KEY);
@@ -177,6 +183,18 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
   const clearAlerts = () => setAlerts([]);
 
   /** Fetch the latest feed and swap it in, preserving the user's filters. */
+  /** Refresh the AI Pulse strip alongside the feed. */
+  const loadPulse = useCallback(async () => {
+    try {
+      const res = await fetch('/api/pulse', { cache: 'no-store' });
+      if (!res.ok) return;
+      const j = (await res.json()) as { signals: PulseSignal[] };
+      setPulse(j.signals);
+    } catch {
+      /* strip stays hidden if the signal API is down */
+    }
+  }, []);
+
   const doSync = useCallback(async () => {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), SYNC_TIMEOUT_MS);
@@ -205,6 +223,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       setFeed(next);
       setLastSync(diff);
       setSyncFailed(false);
+      void loadPulse();
     } catch {
       setSyncFailed(true);
     } finally {
@@ -268,6 +287,28 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
     <>
       <div className="wrap" id="wire">
         <HeadlineTicker stories={feed.stories} />
+        {pulse && pulse.length > 0 && (
+          <div className="pulse-strip">
+            <span className="pulse-strip-tag">
+              <Link href="/pulse">⚡ AI PULSE</Link>
+            </span>
+            {pulse.map((s) => (
+              <span className="pulse-chip" key={s.id} title={s.detail}>
+                <span className="pulse-chip-top">
+                  <b>{s.icon}</b>
+                  <span className="pulse-name">{s.name}</span>
+                  {s.value != null && <span className="pulse-num">{s.value}</span>}
+                </span>
+                <span className="pulse-bar">
+                  <i style={{ width: Math.max(2, Math.min(100, s.value ?? 0)) + '%' }} />
+                </span>
+              </span>
+            ))}
+            <Link className="pulse-strip-open" href="/pulse">
+              OPEN ↗
+            </Link>
+          </div>
+        )}
       </div>
       <div className="wrap">
         <div className="searchbar">

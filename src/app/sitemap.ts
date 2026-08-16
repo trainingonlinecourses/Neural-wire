@@ -11,8 +11,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/github',
     '/huggingface',
     '/pulse',
-    '/watchlist',
-    '/saved',
     '/glossary',
   ];
   return pages.map((p) => ({

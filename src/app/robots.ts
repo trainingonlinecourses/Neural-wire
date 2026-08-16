@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/login', '/signup'],
+        disallow: ['/api/', '/login', '/signup', '/watchlist', '/saved'],
       },
     ],
     sitemap: 'https://neural-wire-nine.vercel.app/sitemap.xml',

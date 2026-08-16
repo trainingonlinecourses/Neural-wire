@@ -1,7 +1,10 @@
 import { SavedView } from '@/components/saved-view';
 import { PageHead } from '@/components/page-head';
 
-export const metadata = { title: 'Saved — NEURALWIRE' };
+export const metadata = {
+  title: 'Saved — NEURALWIRE',
+  robots: { index: false, follow: false },
+};
 
 export default function SavedPage() {
   return (
