@@ -219,4 +219,5 @@ create table public.user_prefs (
 );
 alter table public.user_prefs enable row level security;
 create policy "user_prefs_select_own" on public.user_prefs for select using (auth.uid() = user_id);
-create policy "user_prefs_upsert_own" on public.user_prefs for upsert using (auth.uid() = user_id) with check (auth.uid() = user_id);
+-- Postgres has no FOR UPSERT policy clause; FOR ALL covers insert/update for the owner.
+create policy "user_prefs_upsert_own" on public.user_prefs for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
