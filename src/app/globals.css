@@ -1178,6 +1178,23 @@ html { -webkit-tap-highlight-color: transparent; }
 .bench-desc { font-size: 0.72rem; color: var(--mut); flex: 1; }
 .bench-honesty { color: var(--ok-ink); }
 .bench-note { font-size: 0.7rem; margin-top: 14px; padding: 14px; }
+/* Leaderboard tabs + per-model score chips (LATEST view). */
+.tabbar { display: flex; gap: 6px; align-items: center; }
+.tab {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--mut); background: var(--field); border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+.tab:hover { color: var(--ink); }
+.tab.on { color: #0e1526; background: linear-gradient(135deg, var(--cyan-ink), #38bdf8); border-color: transparent; }
+.bench-scores-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+.bench-chip {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; font-weight: 700;
+  color: var(--cyan-ink); background: var(--field); border: 1px solid var(--line);
+  border-radius: 99px; padding: 2px 8px; white-space: nowrap;
+}
+.roster-chip { text-decoration: none; }
+.brief-roster-note { font-size: 0.68rem; margin-top: 10px; }
 /* Model roster — verified flagships, newest first (model-watch page). */
 .roster { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .roster-row {

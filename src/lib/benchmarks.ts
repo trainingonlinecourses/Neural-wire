@@ -180,6 +180,55 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     scores: { swebench: 68.0 },
     source: 'https://z.ai/blog/glm-4.6',
   },
+  {
+    model: 'Claude Sonnet 4',
+    vendor: 'Anthropic',
+    released: 'May 2025',
+    scores: { swebench: 72.7 },
+    source: 'https://www.anthropic.com/news/claude-4',
+  },
+  {
+    model: 'Claude Opus 4',
+    vendor: 'Anthropic',
+    released: 'May 2025',
+    scores: { swebench: 72.5 },
+    source: 'https://www.anthropic.com/news/claude-4',
+  },
+  {
+    model: 'GPT-5',
+    vendor: 'OpenAI',
+    released: 'Aug 2025',
+    scores: { swebench: 74.9 },
+    source: 'https://openai.com/index/introducing-gpt-5/',
+  },
+  {
+    model: 'Claude Sonnet 4.5',
+    vendor: 'Anthropic',
+    released: 'Sep 2025',
+    scores: { swebench: 77.2 },
+    source: 'https://www.anthropic.com/news/claude-sonnet-4-5',
+  },
+  {
+    model: 'Gemini 3 Pro',
+    vendor: 'Google',
+    released: 'Nov 2025',
+    scores: { swebench: 69.6 },
+    source: 'https://www.swebench.com/',
+  },
+  {
+    model: 'Claude Opus 4.5',
+    vendor: 'Anthropic',
+    released: 'Nov 2025',
+    scores: { swebench: 80.9 },
+    source: 'https://www.anthropic.com/news/claude-opus-4-5',
+  },
+  {
+    model: 'Claude Opus 4.7',
+    vendor: 'Anthropic',
+    released: 'Apr 2026',
+    scores: { swebench: 87.6 },
+    source: 'https://www.anthropic.com/news/claude-opus-4-7',
+  },
 ];
 
 const VENDOR_FLAGS: Record<string, string> = {

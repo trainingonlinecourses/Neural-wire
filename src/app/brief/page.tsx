@@ -5,6 +5,7 @@ import { NewsCard } from '@/components/news-card';
 import { Movers } from '@/components/movers';
 import { PageHead } from '@/components/page-head';
 import { ago } from '@/lib/utils';
+import { rosterByNewest, vendorFlag } from '@/lib/benchmarks';
 
 export const revalidate = 180;
 
@@ -40,6 +41,23 @@ export default async function BriefPage() {
             <b>{brief.sources.length}</b> sources active
           </div>
         </div>
+      </div>
+
+      <div className="wrap">
+        <div className="section-note">Newest flagships on the leaderboard</div>
+        <div className="chips">
+          {rosterByNewest()
+            .slice(0, 8)
+            .map((m) => (
+              <a className="chip roster-chip" href={m.source} target="_blank" rel="noopener noreferrer" key={m.model}>
+                <span aria-hidden="true">{vendorFlag(m.vendor)}</span> {m.model} · {m.released}
+              </a>
+            ))}
+        </div>
+        <p className="dim brief-roster-note">
+          Official release-date order — every score links to the vendor&apos;s model card. Full table on the{' '}
+          <a className="open" href="/leaderboard">leaderboard ↗</a>.
+        </p>
       </div>
 
       <div className="wrap">
