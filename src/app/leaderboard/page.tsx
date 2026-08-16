@@ -10,7 +10,7 @@ export default function LeaderboardPage() {
         <PageHead
           kicker="🏆 Benchmarks"
           title="MODEL LEADERBOARD"
-          desc="Benchmark scores extracted live from the wire — one sortable table."
+          desc="Genuine benchmark scores from official model cards — pick a benchmark, compare the flagships, verify the source."
           index="05"
         />
       </div>

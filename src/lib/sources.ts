@@ -10,6 +10,8 @@ export const SOURCES: Source[] = [
   { id: 'googleai', name: 'Google AI', short: 'GAI', color: '#4285F4', grad: 'linear-gradient(135deg,#122a5e,#0a1630)', kind: 'rss', url: 'https://blog.google/technology/ai/rss/' },
   { id: 'deepmind', name: 'Google DeepMind', short: 'GDM', color: '#7c6cf0', grad: 'linear-gradient(135deg,#2b2160,#120e30)', kind: 'rss', url: 'https://deepmind.google/blog/rss.xml' },
   { id: 'huggingface', name: 'Hugging Face', short: 'HF', color: '#ffd21e', grad: 'linear-gradient(135deg,#4d3f06,#211b02)', kind: 'rss', url: 'https://huggingface.co/blog/feed.xml' },
+  { id: 'googleresearch', name: 'Google Research', short: 'GR', color: '#34a853', grad: 'linear-gradient(135deg,#0e3a22,#051d10)', kind: 'rss', url: 'https://research.google/blog/rss/' },
+  { id: 'spectrum', name: 'IEEE Spectrum AI', short: 'SP', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss' },
   { id: 'microsoft', name: 'Microsoft AI', short: 'MS', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://blogs.microsoft.com/ai/feed/' },
   { id: 'nvidia', name: 'NVIDIA', short: 'NV', color: '#76b900', grad: 'linear-gradient(135deg,#25400a,#0f1c03)', kind: 'rss', url: 'https://blogs.nvidia.com/feed/' },
   { id: 'awsml', name: 'AWS ML', short: 'AWS', color: '#ff9900', grad: 'linear-gradient(135deg,#4a2f06,#201402)', kind: 'rss', url: 'https://aws.amazon.com/blogs/machine-learning/feed/' },

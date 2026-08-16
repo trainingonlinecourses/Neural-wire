@@ -977,3 +977,36 @@ html { -webkit-tap-highlight-color: transparent; }
   .termtip { border-bottom-style: solid; border-bottom-width: 0; }
   .termtip-dot { display: none; }
 }
+
+/* ── Model leaderboard: benchmark compare table ─────────────────────────── */
+.bench-table { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.bench-row {
+  display: grid; grid-template-columns: 34px 1.4fr 0.9fr 0.8fr 1fr 64px; gap: 10px; align-items: center;
+  padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 0.8rem;
+}
+.bench-row:last-child { border-bottom: none; }
+.bench-row.head {
+  font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.58rem; letter-spacing: 0.12em;
+  color: var(--mut); background: var(--panel2); padding-top: 9px; padding-bottom: 9px;
+}
+.bench-row.top { background: rgba(250, 204, 21, 0.05); }
+.bench-rank { font-family: var(--font-mono), 'JetBrains Mono'; font-weight: 700; color: var(--mut); }
+.bench-row.top .bench-rank { color: var(--gold-ink); }
+.bench-model { font-weight: 600; color: var(--ink); }
+.bench-vendor { color: var(--muted-ink); font-size: 0.74rem; }
+.bench-date { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.66rem; color: var(--mut); }
+.bench-score { display: flex; align-items: center; gap: 8px; }
+.bench-num { font-family: var(--font-mono), 'JetBrains Mono'; font-weight: 700; color: var(--cyan-ink); min-width: 58px; }
+.bench-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--field); overflow: hidden; }
+.bench-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan-ink), #38bdf8); border-radius: 99px; }
+.bench-row.top .bench-bar i { background: linear-gradient(90deg, var(--gold-ink), #f59e0b); }
+.bench-src a { font-family: var(--font-mono), 'JetBrains Mono'; font-size: 0.62rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; letter-spacing: 0.06em; }
+.bench-src a:hover { text-decoration: underline; }
+.bench-desc { font-size: 0.72rem; color: var(--mut); flex: 1; }
+.bench-honesty { color: var(--ok-ink); }
+.bench-note { font-size: 0.7rem; margin-top: 14px; padding: 14px; }
+@media (max-width: 720px) {
+  .bench-row { grid-template-columns: 26px 1.2fr 0.8fr 1fr 52px; }
+  .bench-row .bench-date, .bench-row.head span:nth-child(4) { display: none; }
+  .bench-desc { display: none; }
+}

@@ -29,7 +29,34 @@ let cache: Partial<Record<TimeRange, { rows: TrendingRow[]; at: number }>> = {};
 const RANGES: TimeRange[] = ['24h', '7d', '30d'];
 
 const REFRESH_KEY = 'nw_trend_refresh';
+/** localStorage snapshot of the last fetched ranking, so data survives reloads. */
+const TREND_CACHE_KEY = 'nw_trend_cache';
 const DEFAULT_REFRESH_SECONDS = 180;
+
+function readTrendCache(range: TimeRange): { rows: TrendingRow[]; at: number } | null {
+  try {
+    const raw = window.localStorage.getItem(TREND_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Record<string, { rows: TrendingRow[]; at: number } | undefined>;
+    const hit = parsed[range];
+    if (!hit || !Array.isArray(hit.rows)) return null;
+    if (Date.now() - hit.at > CACHE_TTL) return null;
+    return hit;
+  } catch {
+    return null;
+  }
+}
+
+function writeTrendCache(range: TimeRange, rows: TrendingRow[], at: number): void {
+  try {
+    const raw = window.localStorage.getItem(TREND_CACHE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    parsed[range] = { rows, at };
+    window.localStorage.setItem(TREND_CACHE_KEY, JSON.stringify(parsed));
+  } catch {
+    /* storage unavailable — in-memory cache only */
+  }
+}
 
 export function TrendingView() {
   const [filter, setFilter] = useState<Filter>('all');
@@ -52,6 +79,17 @@ export function TrendingView() {
   // Restore the persisted refresh interval on mount (client-only, avoids SSR mismatch).
   useEffect(() => {
     setIntervalSec(parseRefreshInterval(window.localStorage.getItem(REFRESH_KEY)));
+  }, []);
+
+  // Hydrate the ranking from the last session so the page isn't empty on reload.
+  useEffect(() => {
+    const hit = readTrendCache('7d');
+    if (hit) {
+      rowsRef.current = hit.rows;
+      setRows(hit.rows);
+      setAt(hit.at);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const load = useCallback((force = false) => {
@@ -93,6 +131,7 @@ export function TrendingView() {
       }
       rowsRef.current = ranked;
       cache[r] = { rows: ranked, at: Date.now() };
+      writeTrendCache(r, ranked, Date.now());
       setRows(ranked);
       setAt(Date.now());
       setLoading(false);

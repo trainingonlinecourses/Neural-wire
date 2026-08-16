@@ -1,111 +1,82 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { BENCH_RULES } from '@/lib/extract/benchmarks';
+import { useState } from 'react';
+import { BENCHMARKS, benchById, modelsForBench } from '@/lib/benchmarks';
 
-interface Row {
-  model: string;
-  score: number;
-  unit: string;
-  reported_at: string;
-}
-
-const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
+/** Compare flagship models on genuinely-sourced benchmark scores. */
 export function LeaderboardView() {
-  const [bench, setBench] = useState(slug(BENCH_RULES[0].name));
-  const [rows, setRows] = useState<Row[]>([]);
-  const [demo, setDemo] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState('');
-
-  const load = useCallback((b: string) => {
-    setLoading(true);
-    setErr('');
-    fetch('/api/leaderboard?benchmark=' + encodeURIComponent(b))
-      .then((r) => r.json())
-      .then((j) => {
-        if (j.demo) setDemo(true);
-        setRows(j.rows || []);
-      })
-      .catch((e: Error) => setErr(e.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    load(bench);
-  }, [bench, load]);
-
-  const maxScore = rows.length ? rows[0].score : 0;
+  const [benchId, setBenchId] = useState(BENCHMARKS[0].id);
+  const bench = benchById(benchId) ?? BENCHMARKS[0];
+  const rows = modelsForBench(benchId);
 
   return (
     <>
       <div className="wrap">
         <div className="searchbar">
-          <select className="field" value={bench} onChange={(e) => setBench(e.target.value)}>
-            {BENCH_RULES.map((b) => (
-              <option key={slug(b.name)} value={slug(b.name)}>
+          <select
+            className="field"
+            value={benchId}
+            onChange={(e) => setBenchId(e.target.value)}
+            aria-label="Benchmark"
+          >
+            {BENCHMARKS.map((b) => (
+              <option key={b.id} value={b.id}>
                 {b.name}
               </option>
             ))}
           </select>
-          <button className="btn primary" onClick={() => load(bench)} disabled={loading}>
-            {loading ? '…' : '⟳ REFRESH'}
-          </button>
+          <span className="bench-desc">{bench.desc}</span>
         </div>
       </div>
       <div className="wrap">
         <div className="meta-row">
           <span>
-            {BENCH_RULES.find((b) => slug(b.name) === bench)?.name || bench} — latest reported score per model
-            {demo ? ' · DEMO (empty until Supabase ingest runs)' : ''}
+            {rows.length} MODELS · {bench.name} — best-first
           </span>
-          {err && <span className="err">{err}</span>}
+          <span className="meta-right bench-honesty" title="Every number links to the vendor's official model card / announcement">
+            ✓ GENUINE — from official model cards
+          </span>
         </div>
       </div>
       <div className="wrap">
-        <div className="card" style={{ cursor: 'default' }}>
-          <div className="card-body" style={{ padding: 0 }}>
-            <div className="lb-scroll">
-            <table className="lb-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>MODEL</th>
-                  <th>SCORE</th>
-                  <th>UNIT</th>
-                  <th>REPORTED</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr key={r.model + i}>
-                    <td className="rank">
-                      <span className="rk">
-                        <span className="bar" style={{ width: `${Math.max(8, (r.score / (maxScore || 1)) * 100)}%` }} />
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td className="model">{r.model}</td>
-                    <td className="score">
-                      {r.score.toLocaleString(undefined, { maximumFractionDigits: 1 })}
-                      <span className="unit">{r.unit}</span>
-                    </td>
-                    <td className="unit-cell">{r.unit}</td>
-                    <td className="date">{new Date(r.reported_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            </div>
-            {loading && <p className="empty" style={{ margin: 0 }}>Loading…</p>}
-            {!loading && rows.length === 0 && (
-              <p className="empty" style={{ margin: 0 }}>
-                No scores ingested for this benchmark yet. The hourly cron writes scores from model-release stories.
-              </p>
-            )}
+        <div className="bench-table" role="table" aria-label={bench.name + ' comparison'}>
+          <div className="bench-row head" role="row">
+            <span>#</span>
+            <span>MODEL</span>
+            <span>VENDOR</span>
+            <span>RELEASED</span>
+            <span className="bench-score-head">SCORE</span>
+            <span>SOURCE</span>
           </div>
+          {rows.map((m, i) => {
+            const v = m.scores[benchId as keyof typeof m.scores];
+            const max = rows[0]?.scores[benchId as keyof typeof rows[0]['scores']] ?? v ?? 1;
+            return (
+              <div className={'bench-row' + (i === 0 ? ' top' : '')} role="row" key={m.model}>
+                <span className="bench-rank">{i + 1}</span>
+                <span className="bench-model">{m.model}</span>
+                <span className="bench-vendor">{m.vendor}</span>
+                <span className="bench-date">{m.released}</span>
+                <span className="bench-score">
+                  <span className="bench-num">{v != null ? v.toFixed(1) : '—'}{v != null ? bench.unit : ''}</span>
+                  <span className="bench-bar">
+                    <i style={{ width: (v != null ? (100 * v) / max : 0) + '%' }} />
+                  </span>
+                </span>
+                <span className="bench-src">
+                  <a href={m.source} target="_blank" rel="noopener noreferrer" title={'Official: ' + m.source}>
+                    CARD ↗
+                  </a>
+                </span>
+              </div>
+            );
+          })}
         </div>
+        <p className="empty bench-note">
+          Scores are exactly as reported by each vendor at release — the SOURCE link opens the official model card or
+          announcement for every row. Labs use different harnesses (5-shot vs CoT, etc.), so treat cross-model deltas as
+          directional, not exact.
+        </p>
       </div>
     </>
   );

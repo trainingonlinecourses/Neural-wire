@@ -274,7 +274,7 @@ interface RawRepo {
   owner?: { login: string };
 }
 
-async function ghSearch(q: string, per = 30): Promise<RawRepo[]> {
+async function ghSearch(q: string, per = 100): Promise<RawRepo[]> {
   const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${per}&page=1`;
   const r = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
   if (!r.ok) throw new Error(`GitHub ${r.status}`);
@@ -302,7 +302,7 @@ export async function fetchGhTrending(range: TimeRange = '7d'): Promise<Cand[]> 
     }
   }
   items.sort((a, b) => b.stargazers_count - a.stargazers_count);
-  return items.slice(0, 15).map((r) => ({
+  return items.slice(0, 100).map((r) => ({
     id: r.full_name,
     name: r.full_name,
     sub: (r.owner?.login || '') + (r.language ? ' · ' + r.language : ''),
@@ -321,8 +321,9 @@ interface RawHF {
   downloads?: number;
   pipeline_tag?: string;
   library_name?: string;
-  createdAt?: number;
+  createdAt?: string | number;
   created_at?: number;
+  lastModified?: string;
   trendingScore?: number;
 }
 
@@ -350,9 +351,20 @@ export async function fetchHfTrending(range: TimeRange = '7d'): Promise<Cand[]> 
     }
   }
   if (j.length === 0) throw new Error('HF API unreachable');
-  const inWindow = j.filter((m) => withinWindow(m.createdAt ?? m.created_at ?? 0, days));
+  // The sort IS the window: trendingScore is HF's own short-window momentum,
+  // likes suit the 30d view. The createdAt field comes back as an ISO string,
+  // so never feed it to the numeric withinWindow — and never filter the
+  // trendingScore list by creation date (a model created 10 days ago can be
+  // trending today). Only the 30d likes view narrows to recently-created.
+  const inWindow =
+    sort === 'likes'
+      ? j.filter((m) => {
+          const t = m.createdAt ? Date.parse(String(m.createdAt)) : 0;
+          return t ? withinWindow(t, days) : true;
+        })
+      : j;
   if (sort === 'likes') inWindow.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
-  return inWindow.slice(0, 15).map((m) => ({
+  return inWindow.slice(0, 25).map((m) => ({
     id: m.id || '',
     name: m.id || '',
     sub: (m.pipeline_tag || m.library_name || 'model') + ' · ' + range,
