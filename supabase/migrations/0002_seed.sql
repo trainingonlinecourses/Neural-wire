@@ -5,7 +5,7 @@ insert into public.sources (id, name, short, color, grad, kind, url) values
   ('googleai', 'Google AI', 'GAI', '#4285F4', 'linear-gradient(135deg,#122a5e,#0a1630)', 'rss', 'https://blog.google/technology/ai/rss/'),
   ('deepmind', 'Google DeepMind', 'GDM', '#7c6cf0', 'linear-gradient(135deg,#2b2160,#120e30)', 'rss', 'https://deepmind.google/blog/rss.xml'),
   ('huggingface', 'Hugging Face', 'HF', '#ffd21e', 'linear-gradient(135deg,#4d3f06,#211b02)', 'rss', 'https://huggingface.co/blog/feed.xml'),
-  ('microsoft', 'Microsoft AI', 'MS', '#38bdf8', 'linear-gradient(135deg,#0c3a55,#061c2a)', 'rss', 'https://blogs.microsoft.com/ai/feed/'),
+  ('microsoft', 'Microsoft AI', 'MS', '#38bdf8', 'linear-gradient(135deg,#0c3a55,#061c2a)', 'rss', 'https://www.microsoft.com/en-us/ai/blog/feed/'),
   ('nvidia', 'NVIDIA', 'NV', '#76b900', 'linear-gradient(135deg,#25400a,#0f1c03)', 'rss', 'https://blogs.nvidia.com/feed/'),
   ('awsml', 'AWS ML', 'AWS', '#ff9900', 'linear-gradient(135deg,#4a2f06,#201402)', 'rss', 'https://aws.amazon.com/blogs/machine-learning/feed/'),
   ('techcrunch', 'TechCrunch AI', 'TC', '#22c55e', 'linear-gradient(135deg,#0d3a1e,#051a0c)', 'rss', 'https://techcrunch.com/category/artificial-intelligence/feed/'),
@@ -40,7 +40,17 @@ insert into public.sources (id, name, short, color, grad, kind, url) values
   ('techmeme', 'Techmeme', 'TM', '#e2e8f0', 'linear-gradient(135deg,#2d3442,#12151d)', 'rss', 'https://techmeme.com/feed.xml'),
   ('uniteai', 'Unite AI', 'UAI', '#22c55e', 'linear-gradient(135deg,#0e3a1f,#051a0c)', 'rss', 'https://www.unite.ai/feed/'),
   ('marktechpost', 'MarkTechPost', 'MTP', '#fb923c', 'linear-gradient(135deg,#452708,#1d0f03)', 'rss', 'https://www.marktechpost.com/feed/'),
-  ('snorkel', 'Snorkel', 'SNK', '#7dd3fc', 'linear-gradient(135deg,#123d55,#071a26)', 'rss', 'https://snorkel.ai/feed/')
+  ('snorkel', 'Snorkel', 'SNK', '#7dd3fc', 'linear-gradient(135deg,#123d55,#071a26)', 'rss', 'https://snorkel.ai/feed/'),
+  ('infoq', 'InfoQ AI/ML', 'IQ', '#2874a6', 'linear-gradient(135deg,#123550,#071a28)', 'rss', 'https://feed.infoq.com/ai-ml-data-eng'),
+  ('wired', 'Wired AI', 'WRD', '#ffffff', 'linear-gradient(135deg,#2d2d35,#101014)', 'rss', 'https://www.wired.com/feed/tag/ai/latest/rss'),
+  ('lastweekinai', 'Last Week in AI', 'LWAI', '#6366f1', 'linear-gradient(135deg,#1e1b4b,#0c0a24)', 'rss', 'https://lastweekin.ai/feed'),
+  ('semianalysis', 'SemiAnalysis', 'SA', '#eab308', 'linear-gradient(135deg,#422006,#1a0c02)', 'rss', 'https://www.semianalysis.com/feed'),
+  ('aiweekly', 'AI Weekly', 'AWK', '#14b8a6', 'linear-gradient(135deg,#134e4a,#062422)', 'rss', 'https://aiweekly.co/feed'),
+  ('allenai', 'Allen AI', 'AI2', '#f59e0b', 'linear-gradient(135deg,#451a03,#1c0a01)', 'rss', 'https://allenai.org/rss.xml'),
+  ('synced', 'Synced', 'SYN', '#0ea5e9', 'linear-gradient(135deg,#0c4a6e,#052035)', 'rss', 'https://syncedreview.com/feed'),
+  ('pytorch', 'PyTorch', 'PT', '#ee4c2c', 'linear-gradient(135deg,#4a1508,#1f0803)', 'rss', 'https://pytorch.org/blog/feed.xml'),
+  ('bloomberg', 'Bloomberg Tech', 'BBG', '#2800d7', 'linear-gradient(135deg,#150855,#08032a)', 'rss', 'https://feeds.bloomberg.com/technology/news.rss'),
+  ('ftai', 'Financial Times AI', 'FT', '#fff1e5', 'linear-gradient(135deg,#4a3020,#1f140c)', 'rss', 'https://www.ft.com/artificial-intelligence?format=rss')
 on conflict (id) do nothing;
 
 insert into public.benchmarks (id, name, unit, higher_is_better) values

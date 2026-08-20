@@ -16,7 +16,7 @@ export const SOURCES: Source[] = [
   { id: 'mitnews', name: 'MIT News AI', short: 'MITN', color: '#ff5a36', grad: 'linear-gradient(135deg,#4a1a0d,#200b04)', kind: 'rss', url: 'https://news.mit.edu/rss/topic/artificial-intelligence2' },
   { id: 'googleresearch', name: 'Google Research', short: 'GR', color: '#34a853', grad: 'linear-gradient(135deg,#0e3a22,#051d10)', kind: 'rss', url: 'https://research.google/blog/rss/' },
   { id: 'spectrum', name: 'IEEE Spectrum AI', short: 'SP', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss' },
-  { id: 'microsoft', name: 'Microsoft AI', short: 'MS', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://blogs.microsoft.com/ai/feed/' },
+  { id: 'microsoft', name: 'Microsoft AI', short: 'MS', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://www.microsoft.com/en-us/ai/blog/feed/' },
   { id: 'nvidia', name: 'NVIDIA', short: 'NV', color: '#76b900', grad: 'linear-gradient(135deg,#25400a,#0f1c03)', kind: 'rss', url: 'https://blogs.nvidia.com/feed/' },
   { id: 'awsml', name: 'AWS ML', short: 'AWS', color: '#ff9900', grad: 'linear-gradient(135deg,#4a2f06,#201402)', kind: 'rss', url: 'https://aws.amazon.com/blogs/machine-learning/feed/' },
   { id: 'techcrunch', name: 'TechCrunch AI', short: 'TC', color: '#22c55e', grad: 'linear-gradient(135deg,#0d3a1e,#051a0c)', kind: 'rss', url: 'https://techcrunch.com/category/artificial-intelligence/feed/' },
@@ -46,6 +46,16 @@ export const SOURCES: Source[] = [
   { id: 'uniteai', name: 'Unite AI', short: 'UAI', color: '#22c55e', grad: 'linear-gradient(135deg,#0e3a1f,#051a0c)', kind: 'rss', url: 'https://www.unite.ai/feed/' },
   { id: 'marktechpost', name: 'MarkTechPost', short: 'MTP', color: '#fb923c', grad: 'linear-gradient(135deg,#452708,#1d0f03)', kind: 'rss', url: 'https://www.marktechpost.com/feed/' },
   { id: 'snorkel', name: 'Snorkel', short: 'SNK', color: '#7dd3fc', grad: 'linear-gradient(135deg,#123d55,#071a26)', kind: 'rss', url: 'https://snorkel.ai/feed/' },
+  { id: 'infoq', name: 'InfoQ AI/ML', short: 'IQ', color: '#2874a6', grad: 'linear-gradient(135deg,#123550,#071a28)', kind: 'rss', url: 'https://feed.infoq.com/ai-ml-data-eng' },
+  { id: 'wired', name: 'Wired AI', short: 'WRD', color: '#ffffff', grad: 'linear-gradient(135deg,#2d2d35,#101014)', kind: 'rss', url: 'https://www.wired.com/feed/tag/ai/latest/rss' },
+  { id: 'lastweekinai', name: 'Last Week in AI', short: 'LWAI', color: '#6366f1', grad: 'linear-gradient(135deg,#1e1b4b,#0c0a24)', kind: 'rss', url: 'https://lastweekin.ai/feed' },
+  { id: 'semianalysis', name: 'SemiAnalysis', short: 'SA', color: '#eab308', grad: 'linear-gradient(135deg,#422006,#1a0c02)', kind: 'rss', url: 'https://www.semianalysis.com/feed' },
+  { id: 'aiweekly', name: 'AI Weekly', short: 'AWK', color: '#14b8a6', grad: 'linear-gradient(135deg,#134e4a,#062422)', kind: 'rss', url: 'https://aiweekly.co/feed' },
+  { id: 'allenai', name: 'Allen AI', short: 'AI2', color: '#f59e0b', grad: 'linear-gradient(135deg,#451a03,#1c0a01)', kind: 'rss', url: 'https://allenai.org/rss.xml' },
+  { id: 'synced', name: 'Synced', short: 'SYN', color: '#0ea5e9', grad: 'linear-gradient(135deg,#0c4a6e,#052035)', kind: 'rss', url: 'https://syncedreview.com/feed' },
+  { id: 'pytorch', name: 'PyTorch', short: 'PT', color: '#ee4c2c', grad: 'linear-gradient(135deg,#4a1508,#1f0803)', kind: 'rss', url: 'https://pytorch.org/blog/feed.xml' },
+  { id: 'bloomberg', name: 'Bloomberg Tech', short: 'BBG', color: '#2800d7', grad: 'linear-gradient(135deg,#150855,#08032a)', kind: 'rss', url: 'https://feeds.bloomberg.com/technology/news.rss' },
+  { id: 'ftai', name: 'Financial Times AI', short: 'FT', color: '#fff1e5', grad: 'linear-gradient(135deg,#4a3020,#1f140c)', kind: 'rss', url: 'https://www.ft.com/artificial-intelligence?format=rss' },
 ];
 
 export const srcById: Record<string, Source> = {};

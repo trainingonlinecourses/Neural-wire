@@ -100,7 +100,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     id: 'newsroom',
     term: 'Newsroom',
     category: 'desk',
-    short: 'The live feed of curated AI stories from 40 sources, refreshed in place every few minutes.',
+    short: 'The live feed of curated AI stories from 50 sources, refreshed in place every few minutes.',
     see: [{ label: 'Open the desk', href: '/' }],
   },
   {

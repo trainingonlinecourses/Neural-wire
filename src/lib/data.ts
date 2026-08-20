@@ -82,7 +82,12 @@ async function dbNews(): Promise<NewsData> {
     benchmarks: (s.benchmarks as BenchRef[]) || [],
     isModel: Boolean(s.is_model),
   }));
-  return { stories: parsed, sources: rows, demo: false, fetchedAt: Date.now() };
+  for (const s of parsed) {
+    const row = rows.find((r) => r.id === s.sourceId);
+    if (row) row.count += 1;
+  }
+  const payload = { stories: parsed, sources: rows, demo: false, fetchedAt: Date.now() };
+  return payload;
 }
 
 /** Primary server data accessor for the news feed. */

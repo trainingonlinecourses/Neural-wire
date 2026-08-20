@@ -135,11 +135,14 @@ export async function fetchAllSources(enabled: string[]): Promise<Map<string, Ra
   const results = await Promise.all(
     ids.map(async (id) => {
       try {
-        return { id, items: await fetchSource(id) };
-      } catch {
+        const items = await fetchSource(id);
+        return { id, items };
+      } catch (e) {
+        const err = e instanceof Error ? e.message : String(e);
         return { id, items: [] as RawFeedItem[] };
       }
     })
   );
-  return new Map(results.map((r) => [r.id, r.items]));
+  const map = new Map(results.map((r) => [r.id, r.items]));
+  return map;
 }
