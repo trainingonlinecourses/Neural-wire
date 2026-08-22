@@ -5,9 +5,11 @@ import type { NewsData } from '@/lib/data';
 import { NewsCard } from './news-card';
 import { LiveModelsView } from './live-models-view';
 import { rosterByNewest, vendorFlag } from '@/lib/benchmarks';
+import { groupByTime } from '@/lib/time-groups';
 
 export function ModelWatch({ data }: { data: NewsData }) {
   const [q, setQ] = useState('');
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const roster = useMemo(() => rosterByNewest(), []);
 
   const models = useMemo(() => {
@@ -21,11 +23,26 @@ export function ModelWatch({ data }: { data: NewsData }) {
     );
   }, [data.stories, q]);
 
+  const groups = useMemo(() => {
+    return groupByTime(models, (s) => s.date);
+  }, [models]);
+
+  // Auto-expand the first group
+  useMemo(() => {
+    if (groups.length > 0 && expandedGroup === null) {
+      setExpandedGroup(groups[0].label);
+    }
+  }, [groups]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const mentioned = useMemo(() => {
     const counts = new Map<string, number>();
     for (const s of data.stories) for (const m of s.models) counts.set(m, (counts.get(m) || 0) + 1);
     return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20);
   }, [data.stories]);
+
+  const toggleGroup = (label: string) => {
+    setExpandedGroup(expandedGroup === label ? null : label);
+  };
 
   return (
     <>
@@ -94,11 +111,41 @@ export function ModelWatch({ data }: { data: NewsData }) {
           ))}
         </div>
       </div>
-      <div className="wrap grid">
-        {models.map((s) => (
-          <NewsCard key={s.id} story={s} />
-        ))}
-        {models.length === 0 && <p className="empty">No model releases in the feed right now.</p>}
+      {/* Time-grouped model stories */}
+      <div className="wrap">
+        <div className="meta-row">
+          <span>MODEL NEWS · {models.length} stories grouped by date</span>
+        </div>
+      </div>
+      <div className="model-time-groups">
+        {groups.length === 0 && (
+          <div className="wrap">
+            <p className="empty">No model releases in the feed right now.</p>
+          </div>
+        )}
+        {groups.map((group) => {
+          const isExpanded = expandedGroup === group.label;
+          return (
+            <div key={group.label} className="model-time-group">
+              <button
+                className="mtg-header"
+                onClick={() => toggleGroup(group.label)}
+                aria-expanded={isExpanded}
+              >
+                <span className="mtg-label">📰 {group.label}</span>
+                <span className="mtg-count">{group.items.length} stor{group.items.length !== 1 ? 'ies' : 'y'}</span>
+                <span className="mtg-chevron">{isExpanded ? '▾' : '▸'}</span>
+              </button>
+              {isExpanded && (
+                <div className="mtg-body grid">
+                  {(group.items as typeof models).map((s) => (
+                    <NewsCard key={s.id} story={s} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </>
   );

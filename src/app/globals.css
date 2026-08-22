@@ -1687,3 +1687,43 @@ html { -webkit-tap-highlight-color: transparent; }
 .bt-story { font-size: 0.72rem; }
 .bt-story a { color: var(--acc); text-decoration: none; }
 .bt-story a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MODEL TIME GROUPS — date-bucketed model cards
+   ═══════════════════════════════════════════════════════════════════ */
+.model-time-groups {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 0 24px; max-width: 1200px; margin: 0 auto 20px;
+}
+.model-time-group {
+  border-radius: 10px; background: var(--card);
+  border: 1px solid var(--line); overflow: hidden;
+}
+.mtg-header {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 12px 16px; background: var(--field); border: none;
+  cursor: pointer; font-family: var(--font-space); color: var(--fg);
+  transition: background 0.15s;
+}
+.mtg-header:hover { background: var(--card); }
+.mtg-label {
+  font-weight: 700; font-size: 0.85rem;
+  white-space: nowrap;
+}
+.mtg-count {
+  font-size: 0.68rem; color: var(--mut); font-family: var(--font-mono);
+  padding: 2px 8px; border-radius: 99px; background: var(--line);
+  white-space: nowrap;
+}
+.mtg-chevron {
+  margin-left: auto; font-size: 0.75rem; color: var(--mut);
+  transition: transform 0.2s;
+}
+.mtg-body {
+  padding: 8px 12px 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mtg-body.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px; padding: 12px;
+}
