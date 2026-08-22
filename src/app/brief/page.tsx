@@ -7,7 +7,7 @@ import { PageHead } from '@/components/page-head';
 import { ago } from '@/lib/utils';
 import { rosterByNewest, vendorFlag } from '@/lib/benchmarks';
 
-export const revalidate = 180;
+export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Today in AI — NEURALWIRE' };
 

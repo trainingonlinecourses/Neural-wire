@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { NewsData } from '@/lib/data';
 import { NewsCard } from './news-card';
 import { LiveModelsView } from './live-models-view';
@@ -28,11 +28,11 @@ export function ModelWatch({ data }: { data: NewsData }) {
   }, [models]);
 
   // Auto-expand the first group
-  useMemo(() => {
+  useEffect(() => {
     if (groups.length > 0 && expandedGroup === null) {
       setExpandedGroup(groups[0].label);
     }
-  }, [groups]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [groups, expandedGroup]);
 
   const mentioned = useMemo(() => {
     const counts = new Map<string, number>();

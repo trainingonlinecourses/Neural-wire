@@ -2,7 +2,7 @@ import { ModelWatch } from '@/components/model-watch';
 import { PageHead } from '@/components/page-head';
 import { getNewsData } from '@/lib/data';
 
-export const revalidate = 180;
+export const dynamic = 'force-dynamic';
 
 export default async function ModelWatchPage() {
   const data = await getNewsData();

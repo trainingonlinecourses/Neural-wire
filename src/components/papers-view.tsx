@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ago } from '@/lib/utils';
 
 interface Paper {
@@ -24,12 +24,13 @@ interface PapersPayload {
 const CACHE_TTL = 10 * 60 * 1000;
 let cache: { papers: Paper[]; at: number } | null = null;
 
-/** Compact author list: first 3 names + "et al." when there are more. */
 function authorList(authors: string[]): string {
   if (authors.length === 0) return 'Unknown authors';
   if (authors.length <= 3) return authors.join(', ');
   return authors.slice(0, 3).join(', ') + ` et al. (${authors.length})`;
 }
+
+type SortMode = 'upvotes' | 'comments' | 'newest' | 'oldest';
 
 export function PapersView() {
   const [papers, setPapers] = useState<Paper[] | null>(null);
@@ -37,6 +38,8 @@ export function PapersView() {
   const [loading, setLoading] = useState(false);
   const [at, setAt] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [q, setQ] = useState('');
+  const [sort, setSort] = useState<SortMode>('upvotes');
 
   const load = useCallback((force = false) => {
     if (!force && cache && Date.now() - cache.at < CACHE_TTL) {
@@ -67,34 +70,59 @@ export function PapersView() {
 
   const toggle = (id: string) => setExpandedId((prev) => (prev === id ? null : id));
 
+  const filtered = useMemo(() => {
+    if (!papers) return [];
+    let list = [...papers];
+    if (q) {
+      const needle = q.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.title.toLowerCase().includes(needle) ||
+          p.authors.some((a) => a.toLowerCase().includes(needle)) ||
+          p.summary.toLowerCase().includes(needle),
+      );
+    }
+    switch (sort) {
+      case 'upvotes': list.sort((a, b) => b.upvotes - a.upvotes); break;
+      case 'comments': list.sort((a, b) => b.commentCount - a.commentCount); break;
+      case 'newest': list.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()); break;
+      case 'oldest': list.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()); break;
+    }
+    return list;
+  }, [papers, q, sort]);
+
   return (
     <>
       <div className="wrap">
         <div className="searchbar">
+          <input
+            className="field"
+            placeholder="Search papers by title, author, or topic…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            style={{ flex: '1 1 300px' }}
+          />
+          <select className="field" value={sort} onChange={(e) => setSort(e.target.value as SortMode)}>
+            <option value="upvotes">MOST UPVOTED</option>
+            <option value="comments">MOST DISCUSSED</option>
+            <option value="newest">NEWEST FIRST</option>
+            <option value="oldest">OLDEST FIRST</option>
+          </select>
           <button className="btn primary" onClick={() => load(true)} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
-          <span className="dim" style={{ alignSelf: 'center' }}>
-            {papers ? `${papers.length} papers` : ''}
-          </span>
         </div>
       </div>
       <div className="wrap">
         <div className="meta-row">
-          <span>
-            HUGGINGFACE DAILY PAPERS — trending ML/AI research, ranked by community upvotes
-          </span>
-          <span className="meta-right dim">
-            {at ? 'fetched ' + ago(new Date(at)) : ''}
-          </span>
+          <span>{filtered.length} papers{q ? ` matching "${q}"` : ''}</span>
+          <span className="meta-right dim">{at ? 'fetched ' + ago(new Date(at)) : ''}</span>
         </div>
       </div>
       {error && !papers && (
         <div className="wrap">
           <p className="empty">
             <b>Papers feed unavailable ({error})</b>
-            <br />
-            Check connection and retry.
           </p>
         </div>
       )}
@@ -108,9 +136,14 @@ export function PapersView() {
           <p className="empty">No papers available right now.</p>
         </div>
       )}
-      {papers && papers.length > 0 && (
+      {papers && filtered.length === 0 && q && (
+        <div className="wrap">
+          <p className="empty">No papers match &ldquo;{q}&rdquo;. Try a different search.</p>
+        </div>
+      )}
+      {filtered.length > 0 && (
         <div className="wrap papers-list">
-          {papers.map((p, i) => {
+          {filtered.map((p, i) => {
             const isExpanded = expandedId === p.id;
             return (
               <article className="paper-card" key={p.id}>
