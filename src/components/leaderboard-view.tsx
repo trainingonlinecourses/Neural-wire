@@ -111,10 +111,7 @@ export function LeaderboardView() {
             ))}
           </div>
           <p className="empty bench-note">
-            Newest flagships first — every score is exactly as reported by the vendor at release, and the SOURCE link
-            opens the official model card or announcement. Labs use different harnesses, so treat cross-model deltas as
-            directional, not exact. Models that don&apos;t report a classic benchmark (e.g. MMLU) simply don&apos;t list one here —
-            their official cards now publish modern benchmarks instead.
+            Scores from official model cards — SOURCE links to the original announcement.
           </p>
         </div>
       ) : (
@@ -166,9 +163,7 @@ export function LeaderboardView() {
             })}
           </div>
           <p className="empty bench-note">
-            Only 2025+ flagships are listed — the newest models report modern benchmarks (SWE-bench, HLE, Terminal Bench)
-            instead of HumanEval/GSM8K, so those comparisons were dropped. Every score is exactly as reported by the vendor
-            at release and links to the official card.
+            2025+ flagships only — modern benchmarks replace legacy evaluations.
           </p>
         </div>
       )}

@@ -16,7 +16,6 @@ interface MoversItem {
   matches: MoversMatch[];
 }
 
-/** One compact movers row inside a watchlist card — kind, rank, name, heat, overall %. */
 function MoversMiniRow({ m }: { m: MoversMatch }) {
   const row = m.row;
   const inner = (
@@ -83,7 +82,7 @@ export function WatchlistView() {
     setErr('');
     if (!name.trim()) return;
     if (!isKnownEntity(name.trim())) {
-      setErr(`"${name.trim()}" isn't in the tracked entity dictionary. Try e.g. Anthropic, OpenAI, Nvidia.`);
+      setErr(`"${name.trim()}" isn't tracked. Try: Anthropic, OpenAI, Nvidia, Mistral.`);
       return;
     }
     const r = await fetch('/api/watchlist', {
@@ -107,7 +106,7 @@ export function WatchlistView() {
     load();
   }
 
-  if (loading) return <div className="wrap"><p className="empty">Loading watchlist…</p></div>;
+  if (loading) return <div className="wrap"><p className="empty">Loading…</p></div>;
 
   return (
     <>
@@ -115,7 +114,7 @@ export function WatchlistView() {
         <form className="searchbar" onSubmit={follow}>
           <input
             className="field"
-            placeholder="Follow an entity — e.g. Anthropic, OpenAI, Nvidia, Mistral"
+            placeholder="Follow — e.g. Anthropic, OpenAI, Nvidia, Mistral"
             list="entity-suggestions"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -133,8 +132,7 @@ export function WatchlistView() {
       <div className="wrap">
         <div className="meta-row">
           <span>
-            {follows.length} followed {demo ? '· DEMO (no DB — sign in with Supabase configured to persist)' : '· persisted per account'}
-            <span className="wm-note"> · 24H movers status</span>
+            {follows.length} followed {demo ? '· demo mode' : '· persisted per account'}
           </span>
         </div>
       </div>
@@ -155,16 +153,16 @@ export function WatchlistView() {
                 <div className="wm">
                   <div className="wm-head">
                     📈 24H MOVERS
-                    <span className="wm-count">{matches.length > 0 ? `${matches.length} in the ranking` : 'no matches'}</span>
+                    <span className="wm-count">{matches.length > 0 ? `${matches.length} in ranking` : 'no matches'}</span>
                   </div>
                   {matches.length > 0 ? (
                     matches.slice(0, 5).map((m) => <MoversMiniRow key={m.row.kind + ':' + m.row.id} m={m} />)
                   ) : (
-                    <p className="dim">Nothing in the 24h movers ranking right now.</p>
+                    <p className="dim">Nothing in the 24h movers right now.</p>
                   )}
                 </div>
                 <div className="timeline">
-                  {f.stories.length === 0 && <p className="dim">No recent stories mention this entity yet.</p>}
+                  {f.stories.length === 0 && <p className="dim">No recent stories.</p>}
                   {f.stories.slice(0, 8).map((s) => (
                     <div key={s.id} className="tl-row">
                       <a href={s.link} target="_blank" rel="noopener noreferrer">
@@ -180,8 +178,7 @@ export function WatchlistView() {
         })}
         {follows.length === 0 && !demo && (
           <p className="empty">
-            <b>Nothing followed yet.</b> Follow companies, models and people to build your own intelligence
-            timeline — each card shows their 24h movers status.
+            <b>Follow entities</b> to build your own AI intelligence timeline.
           </p>
         )}
       </div>

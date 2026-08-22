@@ -10,6 +10,8 @@ import { DeskButton } from '@/components/desk-button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SignOutButton } from '@/components/sign-out-button';
 import { Footer } from '@/components/footer';
+import { GlobalSearch } from '@/components/global-search';
+import { BackToTop } from '@/components/back-to-top';
 import { createClient } from '@/lib/supabase/server';
 
 const spaceGrotesk = Space_Grotesk({
@@ -89,6 +91,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <span className="dot" />
                 LIVE
               </div>
+              <GlobalSearch />
               <PaletteButton />
               <DeskButton />
               <ThemeToggle />
@@ -108,6 +111,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main>{children}</main>
         <Palette />
         <Shortcuts />
+        <BackToTop />
         <Footer />
       </body>
     </html>
