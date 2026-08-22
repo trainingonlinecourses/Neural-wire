@@ -138,6 +138,8 @@ const VENDOR_FLAGS: Record<string, string> = {
   Alibaba: '🇨🇳',
   MiniMax: '🇨🇳',
   Zhipu: '🇨🇳',
+  '~z-ai': '🇨🇳',
+  'z-ai': '🇨🇳',
   Moonshot: '🇨🇳',
   DeepSeek: '🇨🇳',
   Baidu: '🇨🇳',
@@ -154,6 +156,14 @@ const VENDOR_FLAGS: Record<string, string> = {
   NVIDIA: '🇺🇸',
   Mistral: '🇫🇷',
   Cohere: '🇨🇦',
+  LiquidAI: '🇺🇸',
+  'Liquid AI': '🇺🇸',
+  unsloth: '🌐',
+  stealth: '🌐',
+  'dots-studio': '🌐',
+  orcarouter: '🌐',
+  JonathanColetti: '🌐',
+  'x-ai': '🇺🇸',
 };
 
 export function vendorFlag(vendor: string): string {
