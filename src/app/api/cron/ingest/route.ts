@@ -5,7 +5,7 @@ import { buildIngestPayload } from '@/lib/ingest';
 import { createAdminClient, isSupabaseConfigured } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function authorized(req: Request): boolean {
   const secret = process.env.CRON_SECRET;

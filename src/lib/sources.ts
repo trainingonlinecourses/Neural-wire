@@ -56,6 +56,25 @@ export const SOURCES: Source[] = [
   { id: 'pytorch', name: 'PyTorch', short: 'PT', color: '#ee4c2c', grad: 'linear-gradient(135deg,#4a1508,#1f0803)', kind: 'rss', url: 'https://pytorch.org/blog/feed.xml' },
   { id: 'bloomberg', name: 'Bloomberg Tech', short: 'BBG', color: '#2800d7', grad: 'linear-gradient(135deg,#150855,#08032a)', kind: 'rss', url: 'https://feeds.bloomberg.com/technology/news.rss' },
   { id: 'ftai', name: 'Financial Times AI', short: 'FT', color: '#fff1e5', grad: 'linear-gradient(135deg,#4a3020,#1f140c)', kind: 'rss', url: 'https://www.ft.com/artificial-intelligence?format=rss' },
+  // ── Frontier model labs & research ──────────────────────────────────
+  { id: 'anthropic', name: 'Anthropic', short: 'ANT', color: '#d4a574', grad: 'linear-gradient(135deg,#3d2b1a,#1a110a)', kind: 'rss', url: 'https://www.anthropic.com/rss.xml' },
+  { id: 'xai', name: 'xAI', short: 'XAI', color: '#1d9bf0', grad: 'linear-gradient(135deg,#0c2d4a,#061520)', kind: 'rss', url: 'https://x.ai/blog/rss.xml' },
+  { id: 'metaai', name: 'Meta AI', short: 'META', color: '#0668E1', grad: 'linear-gradient(135deg,#0a2a5e,#051530)', kind: 'rss', url: 'https://ai.meta.com/blog/rss/' },
+  { id: 'cohere', name: 'Cohere', short: 'COH', color: '#39594D', grad: 'linear-gradient(135deg,#1a2e24,#0d1712)', kind: 'rss', url: 'https://cohere.com/blog/rss.xml' },
+  { id: 'stability', name: 'Stability AI', short: 'STB', color: '#a855f7', grad: 'linear-gradient(135deg,#2e1560,#140a30)', kind: 'rss', url: 'https://stability.ai/blog/rss.xml' },
+  // ── Open-source model aggregators ───────────────────────────────────
+  { id: 'paperswithcode', name: 'Papers With Code', short: 'PWC', color: '#21ba45', grad: 'linear-gradient(135deg,#0d3a1a,#061d0d)', kind: 'rss', url: 'https://paperswithcode.com/latest.rss' },
+  { id: 'yannic', name: 'Yannic Kilcher', short: 'YK', color: '#ef4444', grad: 'linear-gradient(135deg,#4a1515,#1f0808)', kind: 'rss', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew' },
+  { id: 'airesearch', name: 'AI Research Digest', short: 'ARD', color: '#6366f1', grad: 'linear-gradient(135deg,#1e1b4b,#0c0a24)', kind: 'rss', url: 'https://buttondown.com/ainews/rss' },
+  { id: 'themodelvillage', name: 'The Model Village', short: 'TMV', color: '#f59e0b', grad: 'linear-gradient(135deg,#451a03,#1c0a01)', kind: 'rss', url: 'https://buttondown.com/the-model-village/rss' },
+  // ── Chinese AI ecosystem ────────────────────────────────────────────
+  { id: 'qaboratory', name: 'Qwen Blog', short: 'QW', color: '#7c3aed', grad: 'linear-gradient(135deg,#2e1065,#150530)', kind: 'rss', url: 'https://qwenlm.github.io/index.xml' },
+  { id: 'deepseekblog', name: 'DeepSeek Blog', short: 'DS', color: '#0ea5e9', grad: 'linear-gradient(135deg,#0c4a6e,#052035)', kind: 'rss', url: 'https://api.deepseek.com/blog/rss.xml' },
+  // ── AI safety & alignment ───────────────────────────────────────────
+  { id: 'alignmentforum', name: 'Alignment Forum', short: 'AF', color: '#f97316', grad: 'linear-gradient(135deg,#4a2000,#1f0d00)', kind: 'rss', url: 'https://www.alignmentforum.org/feed.xml' },
+  { id: 'lesswrong', name: 'LessWrong', short: 'LW', color: '#dc2626', grad: 'linear-gradient(135deg,#4a1010,#1f0505)', kind: 'rss', url: 'https://www.lesswrong.com/feed.xml?feedType=recentCurated' },
+  // ── AI video/image generation ───────────────────────────────────────
+  { id: 'aimagazine', name: 'AI Magazine', short: 'AIM', color: '#14b8a6', grad: 'linear-gradient(135deg,#134e4a,#062422)', kind: 'rss', url: 'https://aimagazine.com/articles/rss' },
 ];
 
 export const srcById: Record<string, Source> = {};

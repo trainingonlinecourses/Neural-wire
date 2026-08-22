@@ -15,17 +15,31 @@ export const NAV = [
   { href: '/watchlist', label: '👀 Watchlist' },
   { href: '/saved', label: '💾 Saved' },
   { href: '/glossary', label: '📖 Glossary' },
+  { href: '/papers', label: '📄 Papers' },
+  { href: '/api/feed', label: '📡 RSS', external: true },
 ];
 
 export function Nav() {
   const path = usePathname();
   return (
     <nav className="nav">
-      {NAV.map((n) => (
-        <Link key={n.href} href={n.href} className={'tab' + (path === n.href ? ' active' : '')}>
-          {n.label}
-        </Link>
-      ))}
+      {NAV.map((n) =>
+        'external' in n && n.external ? (
+          <a
+            key={n.href}
+            href={n.href}
+            className="tab"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {n.label}
+          </a>
+        ) : (
+          <Link key={n.href} href={n.href} className={'tab' + (path === n.href ? ' active' : '')}>
+            {n.label}
+          </Link>
+        ),
+      )}
     </nav>
   );
 }

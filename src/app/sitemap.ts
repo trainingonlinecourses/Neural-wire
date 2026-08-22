@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/huggingface',
     '/pulse',
     '/glossary',
+    '/papers',
   ];
   return pages.map((p) => ({
     url: base + p,

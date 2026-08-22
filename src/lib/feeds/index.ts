@@ -10,10 +10,29 @@ import { parseFeedXML } from './parse';
 
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
-async function fetchText(url: string, ms = 12000): Promise<string> {
-  const res = await fetch(url, { signal: timeoutSig(ms) });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.text();
+async function fetchText(url: string, ms = 12000, retries = 2): Promise<string> {
+  let lastErr: Error | null = null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, { signal: timeoutSig(ms) });
+      if (res.status === 429 || res.status === 503) {
+        // Rate-limited or temporarily unavailable — back off and retry
+        if (attempt < retries) {
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
+      }
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
+    } catch (e) {
+      lastErr = e instanceof Error ? e : new Error(String(e));
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+        continue;
+      }
+    }
+  }
+  throw lastErr || new Error('fetch failed');
 }
 
 async function fetchJSON(url: string, ms = 12000): Promise<unknown> {
