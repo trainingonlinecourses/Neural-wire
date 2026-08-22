@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GhCard, type GhRepo } from './gh-card';
-import { isoDaysAgo, fmtStars, ago } from '@/lib/utils';
+import { fmtStars, ago } from '@/lib/utils';
 
 type TimeRange = 'day' | 'week' | 'month' | '3mo' | '6mo' | '1yr' | 'all';
 
@@ -12,19 +12,15 @@ interface GHData {
   total: number;
 }
 
-const RANGE_DAYS: Record<TimeRange, number> = { day: 1, week: 7, month: 30, '3mo': 90, '6mo': 180, '1yr': 365, all: 9999 };
-const RANGE_LABELS: Record<TimeRange, string> = { day: '24H', week: '7D', month: '1M', '3mo': '3M', '6mo': '6M', '1yr': '1Y', all: 'ALL' };
-const RANGE_MIN_STARS: Record<TimeRange, number> = { day: 10, week: 5, month: 10, '3mo': 20, '6mo': 50, '1yr': 100, all: 200 };
+const RANGE_LABELS: Record<TimeRange, string> = {
+  day: '24H', week: '7D', month: '1M', '3mo': '3M', '6mo': '6M', '1yr': '1Y', all: 'ALL',
+};
+const RANGE_MIN_STARS: Record<TimeRange, number> = {
+  day: 10, week: 5, month: 10, '3mo': 20, '6mo': 50, '1yr': 100, all: 200,
+};
 
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 10 * 60 * 1000;
 const cache: Partial<Record<TimeRange, GHData>> = {};
-
-async function ghSearch(q: string, sort: string, order: string, per = 30): Promise<{ total_count: number; items: GhRepo[] }> {
-  const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=${sort}&order=${order}&per_page=${per}`;
-  const r = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
-  if (!r.ok) throw new Error(`GitHub ${r.status}`);
-  return r.json();
-}
 
 export function GitHubView() {
   const [range, setRangeState] = useState<TimeRange>('week');
@@ -41,34 +37,19 @@ export function GitHubView() {
     }
     setLoading(true);
     setError(null);
-    const days = RANGE_DAYS[r];
-    const minStars = RANGE_MIN_STARS[r];
-    const since = isoDaysAgo(days);
-    const topics = ['ai', 'llm', 'generative-ai', 'machine-learning', 'deep-learning', 'neural-network'];
-    const queries = days <= 7
-      ? topics.slice(0, 3).map((t) => `topic:${t} created:>=${since} stars:>=${minStars}`)
-      : days <= 365
-        ? topics.slice(0, 3).map((t) => `topic:${t} created:>=${since} stars:>=${minStars}`)
-        : topics.slice(0, 3).map((t) => `topic:${t} stars:>=${minStars}`);
 
-    Promise.all(queries.map((q) => ghSearch(q, 'stars', 'desc', 30)))
-      .then((results) => {
-        const seen = new Set<string>();
-        const items: GhRepo[] = [];
-        let total = 0;
-        results.forEach((j) => {
-          total = Math.max(total, j.total_count || 0);
-          (j.items || []).forEach((r) => {
-            if (!seen.has(r.full_name)) {
-              seen.add(r.full_name);
-              items.push(r);
-            }
-          });
-        });
-        items.sort((a, b) => b.stargazers_count - a.stargazers_count);
-        const slim = items.slice(0, 40);
-        cache[r] = { items: slim, at: Date.now(), total };
-        setData(cache[r]);
+    fetch(`/api/github/trending?range=${r}`)
+      .then(async (resp) => {
+        if (!resp.ok) {
+          const body = await resp.json().catch(() => ({}));
+          throw new Error(body.error || `Server ${resp.status}`);
+        }
+        return resp.json();
+      })
+      .then((j) => {
+        const result: GHData = { items: j.items || [], at: j.at || Date.now(), total: j.total || 0 };
+        cache[r] = result;
+        setData(result);
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
@@ -145,14 +126,14 @@ export function GitHubView() {
           .map((r, i) => (
             <GhCard key={r.full_name} r={r} rank={i + 1} />
           ))}
-        {loading && !data && <p className="empty">Pulling live from the GitHub API…</p>}
+        {loading && !data && <p className="empty">Pulling live from GitHub (server-side)…</p>}
         {!data && !loading && !error && <p className="empty">Loading…</p>}
         {error && !data && (
           <p className="empty">
             <b>GitHub request failed ({error})</b>
             <br />
-            {/403|429/.test(error)
-              ? 'Unauthenticated rate limit — wait ~1 minute and retry.'
+            {/403|429|rate/.test(error)
+              ? 'Rate-limited — the server will retry automatically. Wait ~1 minute and refresh.'
               : 'Check your connection and retry.'}
           </p>
         )}
@@ -160,5 +141,3 @@ export function GitHubView() {
     </>
   );
 }
-
-
