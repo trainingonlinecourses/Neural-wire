@@ -15,6 +15,13 @@ export function GlossaryView() {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState<GlossaryCategory | 'all'>('all');
 
+  // Term of the day: deterministic based on date
+  const termOfTheDay = useMemo(() => {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    return GLOSSARY[seed % GLOSSARY.length];
+  }, []);
+
   const entries = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return GLOSSARY.filter((e) => {
@@ -30,6 +37,18 @@ export function GlossaryView() {
 
   return (
     <div className="wrap">
+      {termOfTheDay && !q && cat === 'all' && (
+        <div style={{ marginBottom: 16, padding: '16px 20px', borderRadius: 12, background: 'var(--field)', border: '1px solid var(--line)' }}>
+          <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--mut)', letterSpacing: '0.05em', marginBottom: 6 }}>
+            💡 TERM OF THE DAY
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+            <h3 style={{ margin: 0, fontSize: '1rem' }}>{termOfTheDay.term}</h3>
+            <span className={'gloss-tag ' + termOfTheDay.category}>{CAT_LABEL[termOfTheDay.category]}</span>
+          </div>
+          <p style={{ margin: 0, fontSize: '0.82rem', lineHeight: 1.5 }}>{termOfTheDay.short}</p>
+        </div>
+      )}
       <div className="gloss-toolbar">
         <input
           className="field"

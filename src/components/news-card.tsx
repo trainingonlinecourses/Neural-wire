@@ -109,6 +109,23 @@ export function NewsCard({
             </span>
           )}
           <CopyLink href={story.link} />
+          <button
+            className="card-save"
+            onClick={(e) => {
+              e.preventDefault();
+              try {
+                const raw = window.localStorage.getItem('nw_quick_save');
+                const list: Array<{ id: string; title: string; link: string; at: number }> = raw ? JSON.parse(raw) : [];
+                if (!list.some((x) => x.id === story.id)) {
+                  list.unshift({ id: story.id, title: story.title, link: story.link, at: Date.now() });
+                  window.localStorage.setItem('nw_quick_save', JSON.stringify(list.slice(0, 50)));
+                }
+              } catch { /* storage unavailable */ }
+            }}
+            title="Quick save"
+          >
+            💾 SAVE
+          </button>
           {stats.hasDiscussion && story.discussion && (
             <a className="open" href={story.discussion} target="_blank" rel="noopener noreferrer">
               DISCUSS ↗

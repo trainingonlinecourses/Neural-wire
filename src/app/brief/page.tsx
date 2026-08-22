@@ -44,6 +44,27 @@ export default async function BriefPage() {
       </div>
 
       <div className="wrap">
+        <div className="section-note">📡 Source activity — last 24h</div>
+        <div className="brief-sources">
+          {brief.sources.slice(0, 12).map((s) => {
+            const src = srcById[s.id];
+            const pct = brief.total > 0 ? Math.round((s.count / brief.total) * 100) : 0;
+            return (
+              <div className="brief-source" key={s.id}>
+                <span className="bs-name" style={{ color: src?.color }}>
+                  {src?.short || s.id}
+                </span>
+                <span className="bs-bar">
+                  <span className="bs-fill" style={{ width: pct + '%', background: src?.color }} />
+                </span>
+                <span className="bs-count">{s.count}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="wrap">
         <div className="section-note">Newest flagships on the leaderboard</div>
         <div className="chips">
           {rosterByNewest()

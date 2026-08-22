@@ -50,6 +50,7 @@ export function HFView() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [at, setAt] = useState(0);
+  const [pipeFilter, setPipeFilter] = useState<string>('all');
 
   const load = useCallback((k: Kind, force = false) => {
     if (!force && cache[k] && Date.now() - cache[k].at < CACHE_TTL) {
@@ -112,9 +113,28 @@ export function HFView() {
           <span>Hugging Face Hub — real trending {kind}, live (sort=trendingScore)</span>
           <span className="dim">{at ? 'fetched ' + ago(new Date(at)) : ''}</span>
         </div>
+        {data && kind === 'models' && data.length > 0 && (() => {
+          const pipes = [...new Set(data.map((m) => m.pipe).filter(Boolean))].sort();
+          if (pipes.length < 2) return null;
+          return (
+            <div className="hf-pipeline-chips">
+              <button className={'chip' + (pipeFilter === 'all' ? ' on' : '')} onClick={() => setPipeFilter('all')}>
+                ALL · {data.length}
+              </button>
+              {pipes.slice(0, 6).map((p) => {
+                const count = data.filter((m) => m.pipe === p).length;
+                return (
+                  <button key={p} className={'chip' + (pipeFilter === p ? ' on' : '')} onClick={() => setPipeFilter(p)}>
+                    {p} · {count}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
       <div className="wrap grid">
-        {data?.map((m) => (
+        {data?.filter((m) => kind !== 'models' || pipeFilter === 'all' || m.pipe === pipeFilter).map((m) => (
           <HfCard key={m.id} m={m} isModel={kind === 'models'} />
         ))}
         {loading && !data && <p className="empty">Pulling live from the HF Hub API…</p>}

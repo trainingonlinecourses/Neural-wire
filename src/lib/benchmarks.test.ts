@@ -26,7 +26,10 @@ describe('benchmark dataset integrity', () => {
         expect(ids.has(bid), `${m.model} unknown bench ${bid}`).toBe(true);
         expect(typeof v).toBe('number');
         expect(v).toBeGreaterThan(0);
-        expect(v).toBeLessThanOrEqual(100);
+        // Arena Elo scores are 1000-1600, percentage benchmarks are 0-100
+        const bench = BENCHMARKS.find((b) => b.id === bid);
+        const maxScore = bench?.unit === ' elo' ? 2000 : 100;
+        expect(v).toBeLessThanOrEqual(maxScore);
       }
     }
   });

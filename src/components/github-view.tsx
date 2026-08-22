@@ -27,6 +27,7 @@ export function GitHubView() {
   const [data, setData] = useState<GHData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [langFilter, setLangFilter] = useState<string>('all');
 
   const load = useCallback((m: Mode, force = false) => {
     if (!force && cache[m] && Date.now() - cache[m].at < CACHE_TTL) {
@@ -117,9 +118,30 @@ export function GitHubView() {
           </span>
           {error && <span className="err">{error}</span>}
         </div>
+        {data && data.items.length > 0 && (() => {
+          const langs = [...new Set(data.items.map((r) => r.language).filter((l): l is string => Boolean(l)))].sort();
+          if (langs.length < 2) return null;
+          return (
+            <div className="gh-lang-chips">
+              <button className={'chip' + (langFilter === 'all' ? ' on' : '')} onClick={() => setLangFilter('all')}>
+                ALL · {data.items.length}
+              </button>
+              {langs.slice(0, 8).map((l) => {
+                const count = data.items.filter((r) => r.language === l).length;
+                return (
+                  <button key={l} className={'chip' + (langFilter === l ? ' on' : '')} onClick={() => setLangFilter(l)}>
+                    {l} · {count}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
       <div className="wrap grid">
-        {data?.items.map((r, i) => (
+        {data?.items
+          .filter((r) => langFilter === 'all' || r.language === langFilter)
+          .map((r, i) => (
           <GhCard key={r.full_name} r={r} rank={i + 1} />
         ))}
         {loading && !data && <p className="empty">Pulling live from the GitHub API…</p>}
