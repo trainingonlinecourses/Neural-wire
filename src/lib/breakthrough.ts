@@ -123,27 +123,27 @@ function computeBreakthroughScore(stories: Story[], windowMs: number): number {
   const hourSpan = windowMs / HOUR_MS;
 
   // 1. Velocity score: stories per hour in this window
-  //    Baseline: ~12 stories/hour across 66 sources in 24h
-    //    A breakthrough window might have 10+ stories in 2 hours = 5x baseline
+  //    With ~300 stories/day across 66 sources, baseline is ~12 stories/hour
+  //    A breakthrough needs significantly higher density in a short window
   const storiesPerHour = n / Math.max(1, hourSpan);
-  const velocityScore = Math.min(40, (storiesPerHour / 3) * 40); // 3 stories/hour = 40 points
+  const velocityScore = Math.min(35, (storiesPerHour / 8) * 35); // 8 stories/hour = 35 points
 
   // 2. Source diversity: independent sources = strong signal
   const sources = new Set(stories.map((s) => s.sourceId));
-  const diversityScore = Math.min(25, (sources.size / 5) * 25); // 5 sources = 25 points
+  const diversityScore = Math.min(25, (sources.size / 8) * 25); // 8 sources = 25 points
 
-  // 3. Model mention density
+  // 3. Model mention density (needs real model releases, not just mentions)
   const allModels = stories.flatMap((s) => s.models);
   const uniqueModels = new Set(allModels);
-  const modelScore = Math.min(15, (uniqueModels.size / 3) * 15); // 3 models = 15 points
+  const modelScore = Math.min(20, (uniqueModels.size / 4) * 20); // 4 models = 20 points
 
   // 4. Engagement boost (aggregate points/comments)
   const totalEngagement = stories.reduce((sum, s) => sum + (s.points || 0) + (s.comments || 0), 0);
-  const engagementScore = Math.min(10, (totalEngagement / 500) * 10); // 500 engagement = 10 points
+  const engagementScore = Math.min(10, (totalEngagement / 1000) * 10); // 1000 engagement = 10 points
 
-  // 5. Model release bonus
+  // 5. Model release bonus (only count actual model releases)
   const modelReleases = stories.filter((s) => s.isModel).length;
-  const releaseBonus = Math.min(10, modelReleases * 5); // each model release = 5 bonus
+  const releaseBonus = Math.min(10, modelReleases * 3); // each model release = 3 bonus
 
   return Math.min(100, Math.round(
     velocityScore + diversityScore + modelScore + engagementScore + releaseBonus,
@@ -181,7 +181,7 @@ export function detectBreakthroughs(stories: Story[], now = Date.now()): Breakth
       if (windowStories.length < 5) continue;
 
       const score = computeBreakthroughScore(windowStories, windowMs);
-      if (score < 35) continue; // threshold
+      if (score < 50) continue; // threshold - only flag genuine breakthroughs
 
       const sources = new Set(windowStories.map((s) => s.sourceId));
       const allModels = [...new Set(windowStories.flatMap((s) => s.models))];

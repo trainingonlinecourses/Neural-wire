@@ -81,16 +81,22 @@ const THREAD_DEFS: Record<EventThread, { label: string; color: string; icon: str
 function classifyThread(story: Story): EventThread {
   const text = (story.title + ' ' + story.description).toLowerCase();
 
-  if (story.isModel || /\b(release|launch|announce|introdu|debut|unveil)\b/.test(text)) {
-    if (/\b(safety|alignment|jailbreak|guardrail|red.?team)\b/.test(text)) return 'safety';
-    if (/\b(benchmark|eval|score|leaderboard|arena)\b/.test(text)) return 'research';
-    return 'model';
+  // Safety first (highest priority)
+  if (/\b(safety|alignment|jailbreak|guardrail|red.?team|harm|bias|ethics)\b/.test(text)) return 'safety';
+  // Regulation & policy
+  if (/\b(regulat|ban|policy|law|congress|eu ai act|senate|compliance|executive order|legislat)\b/.test(text)) return 'regulation';
+  // Funding & deals
+  if (/\b(fund|rais|series|invest|valuation|acqui|merger|ipo|billion|million|venture|capital)\b/.test(text)) return 'funding';
+  // Research & papers (check BEFORE model, since arxiv papers mention models)
+  if (/\b(paper|arxiv|study|dataset|training run|method|technique|novel|survey|benchmark)\b/.test(text)) return 'research';
+  // Product launches (not model releases)
+  if (/\b(product|feature|api|plugin|integration|app|ship|rollout|update)\b/.test(text) &&
+      !/\b(model|llm|gpt|claude|gemini|llama|grok|qwen|deepseek)\b/.test(text)) return 'product';
+  // Model releases: explicit release verbs OR isModel flag with release context
+  if (story.isModel || /\b(release|launch|announce|introdu|debut|unveil|drop|preview)\b/.test(text)) {
+    if (story.models.length > 0) return 'model';
+    if (/\b(model|llm|gpt|claude|gemini|llama|grok|qwen|deepseek)\b/.test(text)) return 'model';
   }
-  if (/\b(regulat|ban|policy|law|congress|eu ai act|senate|compliance|executive order)\b/.test(text)) return 'regulation';
-  if (/\b(fund|rais|series|invest|valuation|acqui|merger|ipo|billion|million)\b/.test(text)) return 'funding';
-  if (/\b(paper|research|arxiv|study|dataset|training|breakthrough|method)\b/.test(text)) return 'research';
-  if (/\b(safety|alignment|ethics|bias|harm|jailbreak|guardrail)\b/.test(text)) return 'safety';
-  if (/\b(product|launch|feature|api|plugin|integration|app|ship)\b/.test(text)) return 'product';
   return 'other';
 }
 

@@ -188,7 +188,11 @@ export function SentimentView() {
 
       <div className="wrap sentiment-list">
         {topics.length === 0 && (
-          <p className="empty">Not enough stories for momentum analysis (need 2+ per topic).</p>
+          <p className="empty">
+            <b>Waiting for more data…</b>
+            <br />
+            Momentum needs 2+ stories per topic in the last 24h. The wire refreshes every few minutes.
+          </p>
         )}
         {topics.map((t) => {
           const isExpanded = expandedId === t.topic;
