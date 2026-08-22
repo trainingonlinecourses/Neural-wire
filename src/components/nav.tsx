@@ -3,49 +3,86 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export const NAV = [
-  { href: '/', label: '📰 Newsroom' },
-  { href: '/brief', label: '⚡ Brief' },
-  { href: '/trending', label: '📈 Trending' },
-  { href: '/model-watch', label: '🧠 Model Watch' },
-  { href: '/leaderboard', label: '🏆 Leaderboard' },
-  { href: '/github', label: '🔥 GitHub' },
-  { href: '/huggingface', label: '🤗 HF Hub' },
-  { href: '/pulse', label: '⚡ Pulse' },
-  { href: '/watchlist', label: '👀 Watchlist' },
-  { href: '/saved', label: '💾 Saved' },
-  { href: '/glossary', label: '📖 Glossary' },
-  { href: '/papers', label: '📄 Papers' },
-  { href: '/graph', label: '🕸 Graph' },
-  { href: '/sentiment', label: '📈 Momentum' },
-  { href: '/capability-matrix', label: '📊 Matrix' },
-  { href: '/timeline', label: '📅 Timeline' },
-  { href: '/breakthrough', label: '🚨 Alerts' },
-  { href: '/feed-health', label: '📡 Health' },
-  { href: '/api/feed', label: '📡 RSS', external: true },
+/**
+ * Two-row navigation. Row 1 = core pages (always visible).
+ * Row 2 = data & analysis pages (also visible via flex-wrap).
+ * Account items (Watchlist, Saved) are in the header bar.
+ */
+
+interface NavItem {
+  href: string;
+  label: string;
+  external?: boolean;
+  group: 'core' | 'data';
+}
+
+export const NAV: NavItem[] = [
+  // ── Row 1: Core ────────────────────────────────────────────────
+  { href: '/', label: '📰 Newsroom', group: 'core' },
+  { href: '/brief', label: '⚡ Brief', group: 'core' },
+  { href: '/trending', label: '📈 Trending', group: 'core' },
+  { href: '/model-watch', label: '🧠 Model Watch', group: 'core' },
+  { href: '/leaderboard', label: '🏆 Leaderboard', group: 'core' },
+  { href: '/github', label: '🔥 GitHub', group: 'core' },
+  { href: '/huggingface', label: '🤗 HF Hub', group: 'core' },
+  { href: '/pulse', label: '⚡ Pulse', group: 'core' },
+  // ── Row 2: Data & Analysis ────────────────────────────────────
+  { href: '/papers', label: '📄 Papers', group: 'data' },
+  { href: '/graph', label: '🕸 Graph', group: 'data' },
+  { href: '/sentiment', label: '📈 Momentum', group: 'data' },
+  { href: '/capability-matrix', label: '📊 Matrix', group: 'data' },
+  { href: '/timeline', label: '📅 Timeline', group: 'data' },
+  { href: '/breakthrough', label: '🚨 Alerts', group: 'data' },
+  { href: '/feed-health', label: '📡 Health', group: 'data' },
+  { href: '/glossary', label: '📖 Glossary', group: 'data' },
+  { href: '/api/feed', label: '📡 RSS', external: true, group: 'data' },
 ];
 
 export function Nav() {
   const path = usePathname();
+
+  const renderTab = (n: NavItem) => {
+    const active = path === n.href;
+    if ('external' in n && n.external) {
+      return (
+        <a
+          key={n.href}
+          href={n.href}
+          className="tab"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {n.label}
+        </a>
+      );
+    }
+    return (
+      <Link
+        key={n.href}
+        href={n.href}
+        className={'tab' + (active ? ' active' : '')}
+      >
+        {n.label}
+      </Link>
+    );
+  };
+
+  const coreItems = NAV.filter((n) => n.group === 'core');
+  const dataItems = NAV.filter((n) => n.group === 'data');
+
   return (
-    <nav className="nav">
-      {NAV.map((n) =>
-        'external' in n && n.external ? (
-          <a
-            key={n.href}
-            href={n.href}
-            className="tab"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {n.label}
-          </a>
-        ) : (
-          <Link key={n.href} href={n.href} className={'tab' + (path === n.href ? ' active' : '')}>
-            {n.label}
-          </Link>
-        ),
-      )}
+    <nav className="nav nav-2row">
+      <div className="nav-row nav-row-primary">
+        {coreItems.map(renderTab)}
+      </div>
+      <div className="nav-row nav-row-data">
+        {dataItems.map(renderTab)}
+      </div>
     </nav>
   );
 }
+
+/**
+ * All NAV items flattened for use by GlobalSearch and other consumers.
+ */
+export const NAV_FLAT = NAV.map(({ group: _, ...rest }) => rest);
