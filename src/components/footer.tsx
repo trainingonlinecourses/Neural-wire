@@ -10,6 +10,7 @@ const FOOT_COLS: { h: string; links: [string, string][] }[] = [
       ['/trending', 'Trending'],
       ['/model-watch', 'Model Watch'],
       ['/leaderboard', 'Leaderboard'],
+      ['/compare', 'Model Compare'],
     ],
   },
   {

@@ -23,6 +23,7 @@ export const NAV: NavItem[] = [
   { href: '/trending', label: '📈 Trending', group: 'core' },
   { href: '/model-watch', label: '🧠 Model Watch', group: 'core' },
   { href: '/leaderboard', label: '🏆 Leaderboard', group: 'core' },
+  { href: '/compare', label: '🔀 Compare', group: 'core' },
   { href: '/github', label: '🔥 GitHub', group: 'core' },
   { href: '/huggingface', label: '🤗 HF Hub', group: 'core' },
   { href: '/pulse', label: '⚡ Pulse', group: 'core' },
