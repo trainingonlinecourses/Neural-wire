@@ -110,6 +110,21 @@ export const SOURCES: Source[] = [
   { id: 'producthunt', name: 'Product Hunt', short: 'PH', color: '#da552f', grad: 'linear-gradient(135deg,#4a1a0d,#200b04)', kind: 'rss', url: 'https://www.producthunt.com/feed' },
   // ── India & Asia AI ───────────────────────────────────────────────
   { id: 'analyticsinsight', name: 'Analytics Insight', short: 'AI-INS', color: '#20beff', grad: 'linear-gradient(135deg,#0c3a52,#051a25)', kind: 'rss', url: 'https://www.analyticsinsight.net/feed/' },
+  // ── Enterprise AI & Cloud ML ───────────────────────────────────────
+  { id: 'amazon-science', name: 'Amazon Science', short: 'AMZ', color: '#ff9900', grad: 'linear-gradient(135deg,#4a2f06,#201402)', kind: 'rss', url: 'https://www.amazon.science/blog/rss' },
+  { id: 'ibm-blog', name: 'IBM AI Blog', short: 'IBM', color: '#0530ad', grad: 'linear-gradient(135deg,#0c2a5e,#061530)', kind: 'rss', url: 'https://www.ibm.com/blog/feed/' },
+  { id: 'salesforce-ai', name: 'Salesforce AI', short: 'SF', color: '#00a1e0', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://www.salesforce.com/blog/feed/' },
+  { id: 'databricks', name: 'Databricks', short: 'DB', color: '#ff3621', grad: 'linear-gradient(135deg,#4a1010,#1f0505)', kind: 'rss', url: 'https://www.databricks.com/blog/feed' },
+  // ── ML Infrastructure ─────────────────────────────────────────────
+  { id: 'redis-blog', name: 'Redis AI', short: 'RED', color: '#dc382d', grad: 'linear-gradient(135deg,#4a1010,#1f0505)', kind: 'rss', url: 'https://redis.io/blog/feed/' },
+  { id: 'neo4j-blog', name: 'Neo4j Graph AI', short: 'N4J', color: '#018bff', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://neo4j.com/blog/feed/' },
+  { id: 'mongodb-blog', name: 'MongoDB AI', short: 'MDB', color: '#116149', grad: 'linear-gradient(135deg,#0d3a22,#051d10)', kind: 'rss', url: 'https://www.mongodb.com/blog/rss' },
+  // ── ML Frameworks ─────────────────────────────────────────────────
+  { id: 'tensorflow-blog', name: 'TensorFlow Blog', short: 'TF', color: '#ff6f00', grad: 'linear-gradient(135deg,#4a2500,#1f0f00)', kind: 'rss', url: 'https://blog.tensorflow.org/feeds/posts/default/-/AI' },
+  { id: 'docker-ai', name: 'Docker AI', short: 'DKR', color: '#2496ed', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://www.docker.com/blog/feed/' },
+  // ── Data Engineering & AI ─────────────────────────────────────────
+  { id: 'dbt-blog', name: 'dbt Labs', short: 'DBT', color: '#ff694b', grad: 'linear-gradient(135deg,#4a1a0d,#200b04)', kind: 'rss', url: 'https://www.dbt.com/blog/feed.xml' },
+  { id: 'prefect-blog', name: 'Prefect', short: 'PRF', color: '#000000', grad: 'linear-gradient(135deg,#1c2740,#0a0f1c)', kind: 'rss', url: 'https://www.prefect.io/blog/rss.xml' },
 ];
 
 export const srcById: Record<string, Source> = {};

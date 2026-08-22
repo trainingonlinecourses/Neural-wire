@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const q = url.searchParams.get('q') ?? '';
   const source = url.searchParams.get('source') ?? '';
   const limitRaw = parseInt(url.searchParams.get('limit') ?? '50', 10);
-  const limit = Number.isFinite(limitRaw) ? Math.min(100, Math.max(1, limitRaw)) : 50;
+  const limit = Number.isFinite(limitRaw) ? Math.min(1000, Math.max(1, limitRaw)) : 50;
 
   const data = await getNewsData();
 

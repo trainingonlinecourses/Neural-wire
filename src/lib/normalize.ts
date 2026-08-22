@@ -34,9 +34,22 @@ export function normItem(raw: RawFeedItem, src: Source): Story {
   };
 }
 
-/** Normalize a batch, dropping empty titles. */
-export function normBatch(raws: RawFeedItem[], src: Source): Story[] {
-  return raws
-    .filter((r) => (r.title || '').trim().length > 0)
-    .map((r) => normItem(r, src));
+/**
+ * Normalize a batch, dropping empty titles and deduplicating by normalized
+ * title (same story covered by multiple sources → keep the first one).
+ */
+export function normBatch(raws: RawFeedItem[], src: Source, seenTitles?: Set<string>): Story[] {
+  const localSeen = seenTitles || new Set<string>();
+  const results: Story[] = [];
+  for (const r of raws) {
+    const title = stripHtml(r.title || '').trim();
+    if (!title) continue;
+    // Normalize title for dedup: lowercase, strip punctuation, collapse whitespace
+    const norm = title.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/\s+/g, ' ').trim();
+    if (norm.length < 5) continue; // skip very short titles (noise)
+    if (localSeen.has(norm)) continue; // duplicate title across sources
+    localSeen.add(norm);
+    results.push(normItem(r, src));
+  }
+  return results;
 }

@@ -62,11 +62,13 @@ export function buildIngestPayload(itemsBySource: Map<string, RawFeedItem[]>): I
   const entitySet = new Map<string, IngestEntityRow>();
   const storyEntities: IngestEntityRef[] = [];
   const benchRows: IngestBenchRow[] = [];
+  // Shared dedup set: same story from different sources → keep only the first
+  const seenTitles = new Set<string>();
 
   for (const [sourceId, raws] of itemsBySource) {
     const src = srcById[sourceId];
     if (!src) continue;
-    const batch = normBatch(raws, src);
+    const batch = normBatch(raws, src, seenTitles);
     for (const s of batch) {
       stories.push({
         id: s.id,
