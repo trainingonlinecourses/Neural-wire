@@ -14,6 +14,7 @@ import { useAutoSync } from '@/lib/use-auto-sync';
 import { coverageClusters, coverageMembers } from '@/lib/cluster';
 import { loadWatchTerms, saveWatchTerms, normalizeTerm, matchStories, MAX_WATCH_TERMS } from '@/lib/watch';
 import type { PulseSignal } from '@/lib/pulse';
+import { useStoryKeyboardNav } from './story-keyboard-nav';
 
 type Sort = 'newest' | 'oldest' | 'top';
 type Show = 'all' | 'models';
@@ -75,6 +76,9 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   const feedRef = useRef<NewsData>(data);
   const watchTermsRef = useRef<string[]>([]);
+
+  // Keyboard navigation: j/k to move between stories, o/Enter to open, x to dismiss
+  useStoryKeyboardNav();
 
   useEffect(() => {
     feedRef.current = feed;

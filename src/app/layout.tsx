@@ -12,6 +12,7 @@ import { SignOutButton } from '@/components/sign-out-button';
 import { Footer } from '@/components/footer';
 import { GlobalSearch } from '@/components/global-search';
 import { BackToTop } from '@/components/back-to-top';
+import { KeyboardHelp } from '@/components/keyboard-help';
 import { createClient } from '@/lib/supabase/server';
 
 const spaceGrotesk = Space_Grotesk({
@@ -112,6 +113,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Palette />
         <Shortcuts />
         <BackToTop />
+        <KeyboardHelp />
         <Footer />
       </body>
     </html>
