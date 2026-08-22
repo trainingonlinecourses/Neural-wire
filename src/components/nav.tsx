@@ -16,6 +16,11 @@ export const NAV = [
   { href: '/saved', label: '💾 Saved' },
   { href: '/glossary', label: '📖 Glossary' },
   { href: '/papers', label: '📄 Papers' },
+  { href: '/graph', label: '🕸 Graph' },
+  { href: '/sentiment', label: '📈 Momentum' },
+  { href: '/capability-matrix', label: '📊 Matrix' },
+  { href: '/timeline', label: '📅 Timeline' },
+  { href: '/breakthrough', label: '🚨 Alerts' },
   { href: '/api/feed', label: '📡 RSS', external: true },
 ];
 

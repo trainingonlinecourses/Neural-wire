@@ -13,6 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/pulse',
     '/glossary',
     '/papers',
+    '/graph',
+    '/sentiment',
+    '/capability-matrix',
+    '/timeline',
+    '/breakthrough',
   ];
   return pages.map((p) => ({
     url: base + p,

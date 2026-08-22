@@ -16,6 +16,11 @@ const KEYS: { key: string; href: string; label: string }[] = [
   { key: 'p', href: '/pulse', label: 'Pulse' },
   { key: 'w', href: '/watchlist', label: 'Watchlist' },
   { key: 's', href: '/saved', label: 'Saved' },
+  { key: 'x', href: '/graph', label: 'Story Graph' },
+  { key: 'd', href: '/sentiment', label: 'Momentum' },
+  { key: 'r', href: '/capability-matrix', label: 'Capability Matrix' },
+  { key: 'e', href: '/timeline', label: 'AI Timeline' },
+  { key: 'c', href: '/breakthrough', label: 'Breakthrough Alerts' },
 ];
 
 const CAT_ORDER: GlossaryCategory[] = ['ranking', 'desk', 'data', 'account'];
