@@ -14,7 +14,14 @@ async function fetchText(url: string, ms = 12000, retries = 2): Promise<string> 
   let lastErr: Error | null = null;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(url, { signal: timeoutSig(ms) });
+      const res = await fetch(url, {
+        signal: timeoutSig(ms),
+        redirect: 'follow',
+        headers: {
+          'User-Agent': 'NeuralWire/2.2 (+https://neuralwire.app) FeedFetcher/1.0',
+          'Accept': 'application/rss+xml, application/xml, application/atom+xml, text/xml, */*',
+        },
+      });
       if (res.status === 429 || res.status === 503) {
         // Rate-limited or temporarily unavailable — back off and retry
         if (attempt < retries) {
