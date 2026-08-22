@@ -75,6 +75,41 @@ export const SOURCES: Source[] = [
   // ── AI video/image generation ───────────────────────────────────────
   { id: 'arxiv-cs-lg', name: 'arXiv cs.LG', short: 'AXV-L', color: '#dc2626', grad: 'linear-gradient(135deg,#3f0d0d,#1a0404)', kind: 'rss', url: 'https://export.arxiv.org/rss/cs.LG' },
   { id: 'arxiv-cs-cl', name: 'arXiv cs.CL', short: 'AXV-C', color: '#b91c1c', grad: 'linear-gradient(135deg,#3f0d0d,#1a0404)', kind: 'rss', url: 'https://export.arxiv.org/rss/cs.CL' },
+  // ── Major tech media & general AI ───────────────────────────────────
+  { id: 'zdnet-ai', name: 'ZDNet AI', short: 'ZD', color: '#ef4444', grad: 'linear-gradient(135deg,#4a1010,#1f0505)', kind: 'rss', url: 'https://www.zdnet.com/topic/artificial-intelligence/rss.xml' },
+  { id: 'cnet-ai', name: 'CNET AI', short: 'CN', color: '#0668E1', grad: 'linear-gradient(135deg,#0a2a5e,#051530)', kind: 'rss', url: 'https://www.cnet.com/rss/ai/' },
+  { id: 'tnw', name: 'The Next Web', short: 'TNW', color: '#ff5a36', grad: 'linear-gradient(135deg,#4a1a0d,#200b04)', kind: 'rss', url: 'https://thenextweb.com/feed' },
+  { id: 'skynews-tech', name: 'Sky News Tech', short: 'SKY', color: '#38bdf8', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://feeds.skynews.com/feeds/rss/technology.xml' },
+  { id: 'reuters-tech', name: 'Reuters Tech', short: 'RT', color: '#ff9900', grad: 'linear-gradient(135deg,#4a2f06,#201402)', kind: 'rss', url: 'https://www.reuters.com/arc/outboundfeeds/rss/category/technology/' },
+  // ── Research & Nature ──────────────────────────────────────────────
+  { id: 'nature-ai', name: 'Nature AI', short: 'NAT', color: '#22c55e', grad: 'linear-gradient(135deg,#0d3a1e,#051a0c)', kind: 'rss', url: 'https://www.nature.com/natmachintell.rss' },
+  { id: 'nature', name: 'Nature', short: 'NAT-G', color: '#16a34a', grad: 'linear-gradient(135deg,#0d3a1e,#051a0c)', kind: 'rss', url: 'https://www.nature.com/nature.rss' },
+  // ── Cloud & Enterprise AI ─────────────────────────────────────────
+  { id: 'google-cloud-ai', name: 'Google Cloud AI', short: 'GC', color: '#4285F4', grad: 'linear-gradient(135deg,#122a5e,#0a1630)', kind: 'rss', url: 'https://cloud.google.com/blog/products/ai-machine-learning/rss' },
+  { id: 'azure-ai', name: 'Azure AI', short: 'AZ', color: '#0078D4', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://azure.microsoft.com/en-us/blog/feed/' },
+  // ── ML frameworks & tools ─────────────────────────────────────────
+  { id: 'langchain', name: 'LangChain', short: 'LC', color: '#22c55e', grad: 'linear-gradient(135deg,#0d3a1e,#051a0c)', kind: 'rss', url: 'https://blog.langchain.dev/rss/' },
+  { id: 'llamaindex', name: 'LlamaIndex', short: 'LI', color: '#8b5cf6', grad: 'linear-gradient(135deg,#2e2154,#130c26)', kind: 'rss', url: 'https://www.llamaindex.ai/blog/rss.xml' },
+  { id: 'streamlit', name: 'Streamlit', short: 'ST', color: '#ff4b4b', grad: 'linear-gradient(135deg,#4a1010,#1f0505)', kind: 'rss', url: 'https://blog.streamlit.io/rss/' },
+  { id: 'gradio', name: 'Gradio', short: 'GR', color: '#f97316', grad: 'linear-gradient(135deg,#472306,#1e0e02)', kind: 'rss', url: 'https://gradio.app/blog/rss/' },
+  // ── Vector DB & RAG ───────────────────────────────────────────────
+  { id: 'weaviate', name: 'Weaviate', short: 'WV', color: '#22c55e', grad: 'linear-gradient(135deg,#0d3a1e,#051a0c)', kind: 'rss', url: 'https://www.weaviate.io/blog/rss.xml' },
+  // ── GitHub & dev community ─────────────────────────────────────────
+  { id: 'github-blog', name: 'GitHub Blog', short: 'GH', color: '#24292e', grad: 'linear-gradient(135deg,#1c2740,#0a0f1c)', kind: 'rss', url: 'https://github.blog/tag/ai/feed/' },
+  { id: 'stackoverflow', name: 'Stack Overflow', short: 'SO', color: '#f48024', grad: 'linear-gradient(135deg,#4a2508,#1f0f03)', kind: 'rss', url: 'https://stackoverflow.blog/feed/' },
+  // ── Reddit AI communities ──────────────────────────────────────────
+  { id: 'reddit-ml', name: 'r/MachineLearning', short: 'RML', color: '#ff4500', grad: 'linear-gradient(135deg,#4a1508,#1f0803)', kind: 'rss', url: 'https://www.reddit.com/r/MachineLearning/.rss' },
+  { id: 'reddit-ai', name: 'r/artificial', short: 'RAI', color: '#ff6314', grad: 'linear-gradient(135deg,#4a2000,#1f0d00)', kind: 'rss', url: 'https://www.reddit.com/r/artificial/.rss' },
+  { id: 'reddit-llama', name: 'r/LocalLLaMA', short: 'RLL', color: '#7c3aed', grad: 'linear-gradient(135deg,#2e1065,#150530)', kind: 'rss', url: 'https://www.reddit.com/r/LocalLLaMA/.rss' },
+  { id: 'reddit-chatgpt', name: 'r/ChatGPT', short: 'RCG', color: '#10a37f', grad: 'linear-gradient(135deg,#0e3f33,#071d18)', kind: 'rss', url: 'https://www.reddit.com/r/ChatGPT/.rss' },
+  { id: 'reddit-openai', name: 'r/OpenAI', short: 'ROA', color: '#10a37f', grad: 'linear-gradient(135deg,#0e3f33,#071d18)', kind: 'rss', url: 'https://www.reddit.com/r/OpenAI/.rss' },
+  // ── Lobsters specialized ──────────────────────────────────────────
+  { id: 'lobsters-ml', name: 'Lobsters ML', short: 'LOML', color: '#dc2626', grad: 'linear-gradient(135deg,#3d0a07,#1a0302)', kind: 'rss', url: 'https://lobste.rs/t/ml.rss' },
+  { id: 'lobsters-dl', name: 'Lobsters Deep Learning', short: 'LODL', color: '#b91c1c', grad: 'linear-gradient(135deg,#3d0a07,#1a0302)', kind: 'rss', url: 'https://lobste.rs/t/deep-learning.rss' },
+  // ── Product Hunt AI ───────────────────────────────────────────────
+  { id: 'producthunt', name: 'Product Hunt', short: 'PH', color: '#da552f', grad: 'linear-gradient(135deg,#4a1a0d,#200b04)', kind: 'rss', url: 'https://www.producthunt.com/feed' },
+  // ── India & Asia AI ───────────────────────────────────────────────
+  { id: 'analyticsinsight', name: 'Analytics Insight', short: 'AI-INS', color: '#20beff', grad: 'linear-gradient(135deg,#0c3a52,#051a25)', kind: 'rss', url: 'https://www.analyticsinsight.net/feed/' },
 ];
 
 export const srcById: Record<string, Source> = {};
