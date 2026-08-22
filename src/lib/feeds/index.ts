@@ -44,8 +44,17 @@ async function fetchJSON(url: string, ms = 12000): Promise<unknown> {
   }
 }
 
-/** RSS via rss2json, falling back to direct XML parse on failure. */
+/** RSS: try direct XML first (more reliable), fall back to rss2json. */
 async function fetchRSS(src: Source): Promise<RawFeedItem[]> {
+  // Direct XML parse is more reliable than the rss2json proxy
+  try {
+    const xml = await fetchText(src.url!, 12000);
+    const items = parseFeedXML(xml);
+    if (items.length > 0) return items;
+  } catch {
+    // fall through to rss2json
+  }
+  // Fallback: rss2json proxy
   try {
     const j = (await fetchJSON(RSS2JSON + encodeURIComponent(src.url!), 12000)) as {
       status?: string;
@@ -68,10 +77,7 @@ async function fetchRSS(src: Source): Promise<RawFeedItem[]> {
     }
     throw new Error((j && j.message) || 'rss2json error');
   } catch {
-    const xml = await fetchText(src.url!, 10000);
-    const items = parseFeedXML(xml);
-    if (!items.length) throw new Error('empty feed');
-    return items;
+    throw new Error('feed failed');
   }
 }
 

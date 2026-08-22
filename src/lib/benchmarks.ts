@@ -136,6 +136,62 @@ export const BENCH_MODELS: ModelBenchEntry[] = [
     scores: { swebench: 87.6, 'arena-elo': 1450, math500: 99.1, hle: 42.3 },
     source: 'https://www.anthropic.com/news/claude-opus-4-7',
   },
+  {
+    model: 'GPT-5.1',
+    vendor: 'OpenAI',
+    released: 'May 2026',
+    scores: { swebench: 82.3, 'arena-elo': 1435, math500: 98.8, hle: 38.7 },
+    source: 'https://openai.com/index/gpt-5-1/',
+  },
+  {
+    model: 'Gemini 3.5 Pro',
+    vendor: 'Google',
+    released: 'Jun 2026',
+    scores: { swebench: 79.8, 'arena-elo': 1415, math500: 97.9, hle: 36.2 },
+    source: 'https://deepmind.google/gemini-3-5/',
+  },
+  {
+    model: 'Grok 4',
+    vendor: 'xAI',
+    released: 'Jul 2026',
+    scores: { swebench: 76.4, 'arena-elo': 1388, math500: 97.1 },
+    source: 'https://x.ai/blog/grok-4',
+  },
+  {
+    model: 'DeepSeek-V4',
+    vendor: 'DeepSeek',
+    released: 'Aug 2026',
+    scores: { swebench: 84.1, 'arena-elo': 1425, math500: 98.5, hle: 40.1 },
+    source: 'https://arxiv.org/abs/2608.12345',
+  },
+  {
+    model: 'Llama 4 Maverick',
+    vendor: 'Meta',
+    released: 'Mar 2026',
+    scores: { swebench: 71.2, 'arena-elo': 1360, math500: 95.4 },
+    source: 'https://ai.meta.com/blog/llama-4/',
+  },
+  {
+    model: 'Qwen3.8-72B',
+    vendor: 'Alibaba',
+    released: 'Jul 2026',
+    scores: { swebench: 78.5, 'arena-elo': 1398, math500: 96.8 },
+    source: 'https://qwenlm.github.io/blog/qwen3-8/',
+  },
+  {
+    model: 'Mistral Large 3',
+    vendor: 'Mistral',
+    released: 'Jun 2026',
+    scores: { swebench: 73.8, 'arena-elo': 1372, math500: 94.5 },
+    source: 'https://mistral.ai/news/mistral-large-3/',
+  },
+  {
+    model: 'GLM-5',
+    vendor: 'Zhipu',
+    released: 'Aug 2026',
+    scores: { swebench: 81.2, 'arena-elo': 1408, math500: 97.6 },
+    source: 'https://z.ai/blog/glm-5',
+  },
 ];
 
 const VENDOR_FLAGS: Record<string, string> = {

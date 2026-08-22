@@ -54,7 +54,7 @@ async function demoNews(): Promise<NewsData> {
 async function dbNews(): Promise<NewsData> {
   const supabase = await createClient();
   const [{ data: stories, error }, { data: sources }] = await Promise.all([
-    supabase.from('stories').select('*').order('published_at', { ascending: false }).limit(300),
+    supabase.from('stories').select('*').order('published_at', { ascending: false }).limit(1000),
     supabase.from('sources').select('*'),
   ]);
   if (error) throw error;
