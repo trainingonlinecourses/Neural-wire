@@ -1759,6 +1759,11 @@ html { -webkit-tap-highlight-color: transparent; }
    HF HUB — pipeline filter
    ═══════════════════════════════════════════════════════════════════ */
 .hf-pipeline-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.hf-trend {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+  color: var(--hot-ink, #ef4444); background: var(--field); padding: 2px 8px;
+  border-radius: 6px; border: 1px solid var(--line); white-space: nowrap;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    SAVED — export button

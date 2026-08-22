@@ -5,9 +5,17 @@ import { HfCard, type HfItem } from './hf-card';
 import { ago } from '@/lib/utils';
 
 type Kind = 'models' | 'spaces';
+type TimeRange = 'day' | 'week' | 'month' | 'all';
+
+const RANGE_LABELS: Record<TimeRange, string> = { day: '24H', week: '7D', month: '1M', all: 'ALL' };
+
+interface HfData {
+  items: HfItem[];
+  at: number;
+}
 
 const CACHE_TTL = 5 * 60 * 1000;
-const cache: Partial<Record<Kind, { items: HfItem[]; at: number }>> = {};
+const cache: Partial<Record<string, HfData>> = {};
 
 interface RawHF {
   id?: string;
@@ -22,6 +30,7 @@ interface RawHF {
   createdAt?: number;
   created_at?: number;
   lastModified?: number;
+  tags?: string[];
 }
 
 function normHF(m: RawHF): HfItem {
@@ -35,6 +44,7 @@ function normHF(m: RawHF): HfItem {
     sdk: m.sdk || '',
     score: m.trendingScore == null ? null : m.trendingScore,
     created: m.createdAt || m.created_at || m.lastModified || Date.now(),
+    tags: m.tags || [],
   };
 }
 
@@ -46,34 +56,42 @@ async function hfFetch(url: string): Promise<RawHF[]> {
 
 export function HFView() {
   const [kind, setKind] = useState<Kind>('models');
+  const [range, setRange] = useState<TimeRange>('week');
   const [data, setData] = useState<HfItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [at, setAt] = useState(0);
   const [pipeFilter, setPipeFilter] = useState<string>('all');
 
-  const load = useCallback((k: Kind, force = false) => {
-    if (!force && cache[k] && Date.now() - cache[k].at < CACHE_TTL) {
-      setData(cache[k].items);
-      setAt(cache[k].at);
+  const load = useCallback((k: Kind, r: TimeRange, force = false) => {
+    const cacheKey = `${k}-${r}`;
+    if (!force && cache[cacheKey] && Date.now() - cache[cacheKey].at < CACHE_TTL) {
+      setData(cache[cacheKey].items);
+      setAt(cache[cacheKey].at);
       return;
     }
     setLoading(true);
     setError(null);
+
+    // Sort by trendingScore for short windows, likes for longer
+    const sort = r === 'all' || r === 'month' ? 'likes' : 'trendingScore';
+    const limit = 40;
+
     const urls = [
-      'https://huggingface.co/api/' + k + '?sort=trendingScore&limit=18&full=false',
-      'https://huggingface.co/api/' + k + '?sort=likes&limit=18&full=false',
+      `https://huggingface.co/api/${k}?sort=${sort}&limit=${limit}&full=false`,
+      `https://huggingface.co/api/${k}?sort=likes&limit=${limit}&full=false`,
     ];
-    const idx = 0;
+
     const tryUrl = (i: number): Promise<RawHF[]> =>
       hfFetch(urls[i]).catch(() => {
         if (i + 1 < urls.length) return tryUrl(i + 1);
         throw new Error('HF API unreachable');
       });
-    tryUrl(idx)
+
+    tryUrl(0)
       .then((j) => {
         const items = j.map(normHF);
-        cache[k] = { items, at: Date.now() };
+        cache[cacheKey] = { items, at: Date.now() };
         setData(items);
         setAt(Date.now());
       })
@@ -82,13 +100,13 @@ export function HFView() {
   }, []);
 
   useEffect(() => {
-    load(kind);
+    load(kind, range);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind]);
+  }, [kind, range]);
 
   const switchKind = (k: Kind) => {
     setKind(k);
-    load(k);
+    setPipeFilter('all');
   };
 
   return (
@@ -103,14 +121,26 @@ export function HFView() {
               🚀 SPACES
             </button>
           </div>
-          <button className="btn primary" onClick={() => load(kind, true)} disabled={loading}>
+          <div className="seg" role="group" aria-label="Time range">
+            {(Object.keys(RANGE_LABELS) as TimeRange[]).map((r) => (
+              <button
+                key={r}
+                className={'seg-btn' + (range === r ? ' active' : '')}
+                onClick={() => setRange(r)}
+                aria-pressed={range === r}
+              >
+                {RANGE_LABELS[r]}
+              </button>
+            ))}
+          </div>
+          <button className="btn primary" onClick={() => load(kind, range, true)} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
         </div>
       </div>
       <div className="wrap">
         <div className="meta-row">
-          <span>Hugging Face Hub — real trending {kind}, live (sort=trendingScore)</span>
+          <span>HUGGINGFACE {kind.toUpperCase()} — LAST {RANGE_LABELS[range]} · sort={range === 'all' || range === 'month' ? 'likes' : 'trendingScore'}</span>
           <span className="dim">{at ? 'fetched ' + ago(new Date(at)) : ''}</span>
         </div>
         {data && kind === 'models' && data.length > 0 && (() => {
@@ -121,7 +151,7 @@ export function HFView() {
               <button className={'chip' + (pipeFilter === 'all' ? ' on' : '')} onClick={() => setPipeFilter('all')}>
                 ALL · {data.length}
               </button>
-              {pipes.slice(0, 6).map((p) => {
+              {pipes.slice(0, 8).map((p) => {
                 const count = data.filter((m) => m.pipe === p).length;
                 return (
                   <button key={p} className={'chip' + (pipeFilter === p ? ' on' : '')} onClick={() => setPipeFilter(p)}>
