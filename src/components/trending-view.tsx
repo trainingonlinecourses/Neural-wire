@@ -63,7 +63,7 @@ export function TrendingView() {
   const rangeRef = useRef<TimeRange>('7d');
   const [rows, setRows] = useState<TrendingRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [at, setAt] = useState(0);
   const [lastSync, setLastSync] = useState<{ added: number; removed: number } | null>(null);
   const [syncFailed, setSyncFailed] = useState(false);

@@ -72,7 +72,7 @@ function Sparkline({ data }: { data: number[] }) {
 
 export function SentimentView() {
   const [data, setData] = useState<SentimentPayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'model' | 'topic'>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);

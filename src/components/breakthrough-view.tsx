@@ -101,7 +101,7 @@ function ScoreGauge({ score, size = 60 }: { score: number; size?: number }) {
 
 export function BreakthroughView() {
   const [data, setData] = useState<BreakthroughPayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>('all');

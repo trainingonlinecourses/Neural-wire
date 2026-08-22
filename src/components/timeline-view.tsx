@@ -87,7 +87,7 @@ function ImportanceBar({ score }: { score: number }) {
 
 export function TimelineView() {
   const [data, setData] = useState<TimelinePayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [threadFilter, setThreadFilter] = useState<string>('all');
 

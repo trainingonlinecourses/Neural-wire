@@ -21,6 +21,7 @@ export const NAV = [
   { href: '/capability-matrix', label: '📊 Matrix' },
   { href: '/timeline', label: '📅 Timeline' },
   { href: '/breakthrough', label: '🚨 Alerts' },
+  { href: '/feed-health', label: '📡 Health' },
   { href: '/api/feed', label: '📡 RSS', external: true },
 ];
 

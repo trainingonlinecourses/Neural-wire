@@ -116,7 +116,7 @@ function RadarChart({ profiles, dimensions, size = 200 }: {
 
 export function CapabilityMatrixView() {
   const [data, setData] = useState<MatrixPayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedA, setSelectedA] = useState<string>('GPT-4o');
   const [selectedB, setSelectedB] = useState<string>('Claude Opus 4');

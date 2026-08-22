@@ -35,7 +35,7 @@ type SortMode = 'upvotes' | 'comments' | 'newest' | 'oldest';
 export function PapersView() {
   const [papers, setPapers] = useState<Paper[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [at, setAt] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [q, setQ] = useState('');

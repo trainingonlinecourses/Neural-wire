@@ -69,7 +69,7 @@ const TYPE_ICONS: Record<string, string> = {
 
 export function StoryGraphView() {
   const [data, setData] = useState<GraphPayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [filter, setFilter] = useState<string>('all');

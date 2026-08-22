@@ -19,7 +19,7 @@ const FOOT_COLS: { h: string; links: [string, string][] }[] = [
       ['/huggingface', 'HF Hub'],
       ['/pulse', 'AI Pulse'],
       ['/graph', 'Story Graph'],
-      ['/timeline', 'Timeline'],
+      ['/feed-health', 'Feed Health'],
     ],
   },
   {
