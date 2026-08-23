@@ -10,7 +10,7 @@ import { parseFeedXML } from './parse';
 
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
-async function fetchText(url: string, ms = 12000, retries = 2): Promise<string> {
+async function fetchText(url: string, ms = 18000, retries = 2): Promise<string> {
   let lastErr: Error | null = null;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -18,8 +18,9 @@ async function fetchText(url: string, ms = 12000, retries = 2): Promise<string> 
         signal: timeoutSig(ms),
         redirect: 'follow',
         headers: {
-          'User-Agent': 'NeuralWire/2.2 (+https://neuralwire.app) FeedFetcher/1.0',
+          'User-Agent': 'NeuralWire/2.3 (+https://neuralwire.app) FeedFetcher/1.0',
           'Accept': 'application/rss+xml, application/xml, application/atom+xml, text/xml, */*',
+          'Accept-Encoding': 'gzip, deflate',
         },
       });
       if (res.status === 429 || res.status === 503) {
@@ -55,7 +56,7 @@ async function fetchJSON(url: string, ms = 12000): Promise<unknown> {
 async function fetchRSS(src: Source): Promise<RawFeedItem[]> {
   // Direct XML parse is more reliable than the rss2json proxy
   try {
-    const xml = await fetchText(src.url!, 12000);
+    const xml = await fetchText(src.url!, 18000);
     const items = parseFeedXML(xml);
     if (items.length > 0) return items;
   } catch {
@@ -63,7 +64,7 @@ async function fetchRSS(src: Source): Promise<RawFeedItem[]> {
   }
   // Fallback: rss2json proxy
   try {
-    const j = (await fetchJSON(RSS2JSON + encodeURIComponent(src.url!), 12000)) as {
+    const j = (await fetchJSON(RSS2JSON + encodeURIComponent(src.url!), 18000)) as {
       status?: string;
       items?: Array<Record<string, unknown>>;
       message?: string;

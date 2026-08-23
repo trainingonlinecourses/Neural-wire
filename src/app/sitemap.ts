@@ -18,6 +18,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/capability-matrix',
     '/timeline',
     '/breakthrough',
+    '/feed-health',
+    '/compare',
+    '/watchlist',
+    '/saved',
+    '/events',
   ];
   return pages.map((p) => ({
     url: base + p,

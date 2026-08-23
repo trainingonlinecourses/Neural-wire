@@ -21,6 +21,7 @@ const FOOT_COLS: { h: string; links: [string, string][] }[] = [
       ['/pulse', 'AI Pulse'],
       ['/graph', 'Story Graph'],
       ['/feed-health', 'Feed Health'],
+      ['/events', 'AI Events'],
     ],
   },
   {

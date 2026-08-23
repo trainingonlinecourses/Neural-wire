@@ -34,6 +34,7 @@ const PAGES: { href: string; label: string; icon: string; keywords: string[] }[]
   { href: '/sentiment', label: 'Sentiment', icon: '📈', keywords: ['sentiment', 'momentum', 'mood'] },
   { href: '/breakthrough', label: 'Alerts', icon: '🚨', keywords: ['breakthrough', 'alerts', 'detection'] },
   { href: '/glossary', label: 'Glossary', icon: '📖', keywords: ['glossary', 'terms', 'definitions'] },
+  { href: '/events', label: 'AI Events', icon: '📅', keywords: ['events', 'conferences', 'deadlines', 'launches', 'calendar'] },
   { href: '/watchlist', label: 'Watchlist', icon: '👀', keywords: ['watchlist', 'follow', 'track'] },
   { href: '/saved', label: 'Saved', icon: '💾', keywords: ['saved', 'collections', 'bookmarks'] },
 ];

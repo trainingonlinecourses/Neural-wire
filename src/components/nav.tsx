@@ -37,6 +37,7 @@ export const NAV: NavItem[] = [
   { href: '/timeline', label: '📅 Timeline', group: 'data' },
   { href: '/breakthrough', label: '🚨 Alerts', group: 'data' },
   { href: '/feed-health', label: '📡 Health', group: 'data' },
+  { href: '/events', label: '📅 Events', group: 'data' },
   { href: '/glossary', label: '📖 Glossary', group: 'data' },
   { href: '/api/feed', label: '📡 RSS', external: true, group: 'data' },
 ];
