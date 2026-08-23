@@ -14,6 +14,8 @@ export const DATA_VERSION = '2026-08-16.2';
 
 const HF_API = 'https://huggingface.co/api';
 const OPENROUTER_API = 'https://openrouter.ai/api/v1/models';
+const TOGETHER_API = 'https://api.together.xyz/v1/models';
+const GROQ_API = 'https://api.groq.com/openai/v1/models';
 
 /** One officially-reported benchmark number pulled from a model card. */
 export interface LiveBenchmark {
@@ -233,13 +235,72 @@ export async function fetchHfTrending(limit = 14): Promise<LiveModel[]> {
   }
 }
 
+/** Newest models from Together AI. */
+export async function fetchTogetherNewest(limit = 12): Promise<LiveModel[]> {
+  try {
+    const j = await fetchJSON<{ data: Array<{ id: string; display_name?: string; created_at?: string; model_type?: string; context_length?: number }> }>(
+      TOGETHER_API,
+    );
+    const now = Date.now() / 1000;
+    const out: LiveModel[] = [];
+    for (const raw of j.data || []) {
+      // Only include text generation models
+      if (raw.model_type && !['chat', 'completion', 'instruct'].includes(raw.model_type)) continue;
+      const created = raw.created_at ? Math.floor(new Date(raw.created_at).getTime() / 1000) : 0;
+      out.push({
+        id: raw.id,
+        name: raw.display_name || raw.id.split('/').pop() || raw.id,
+        vendor: vendorFromId(raw.id),
+        created,
+        context: raw.context_length,
+        hfUrl: `https://huggingface.co/${raw.id}`,
+        benchmarks: [],
+      });
+    }
+    out.sort((a, b) => b.created - a.created);
+    return out.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+/** Newest models from Groq. */
+export async function fetchGroqNewest(limit = 12): Promise<LiveModel[]> {
+  try {
+    const j = await fetchJSON<{ data: Array<{ id: string; created?: number; owned_by?: string }> }>(
+      GROQ_API,
+    );
+    const out: LiveModel[] = [];
+    for (const raw of j.data || []) {
+      // Filter to known model families
+      const id = raw.id;
+      if (!id.match(/llama|mixtral|gemma|qwen|deepseek|whisper|distil/i)) continue;
+      out.push({
+        id: 'groq/' + id,
+        name: id,
+        vendor: vendorFromId(id),
+        created: raw.created || 0,
+        benchmarks: [],
+      });
+    }
+    return out.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
 /**
- * Merge OpenRouter + HF trending into one newest-first list (deduped by HF
- * id), attaching card-extracted benchmarks to the top entries. Bounded card
- * fetches keep the route fast.
+ * Merge OpenRouter + HF trending + Together + Groq into one newest-first
+ * list (deduped by HF id), attaching card-extracted benchmarks to the
+ * top entries. Bounded card fetches keep the route fast.
  */
 export async function getLiveModels(): Promise<LiveModel[]> {
-  const [fromOr, fromHf] = await Promise.all([fetchOpenRouterNewest(), fetchHfTrending()]);
+  const [fromOr, fromHf, fromTogether, fromGroq] = await Promise.all([
+    fetchOpenRouterNewest(),
+    fetchHfTrending(),
+    fetchTogetherNewest(),
+    fetchGroqNewest(),
+  ]);
   const byId = new Map<string, LiveModel>();
   for (const m of fromOr) byId.set(m.id, m);
   for (const m of fromHf) {
@@ -251,6 +312,12 @@ export async function getLiveModels(): Promise<LiveModel[]> {
     } else {
       byId.set(m.id, m);
     }
+  }
+  for (const m of fromTogether) {
+    if (!byId.has(m.id)) byId.set(m.id, m);
+  }
+  for (const m of fromGroq) {
+    if (!byId.has(m.id)) byId.set(m.id, m);
   }
   const merged = [...byId.values()].sort((a, b) => b.created - a.created);
   // Attach card benchmarks to the freshest entries only (bounded work).

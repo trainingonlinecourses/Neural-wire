@@ -134,6 +134,8 @@ export const SOURCES: Source[] = [
   { id: 'sigmoid', name: 'Sigmoid', short: 'SIG', color: '#6366f1', grad: 'linear-gradient(135deg,#1e1b4b,#0c0a24)', kind: 'rss', url: 'https://www.sigmoid.com/blog/feed/' },
   { id: 'kubernetes-ai', name: 'Kubernetes', short: 'K8S', color: '#326ce5', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://kubernetes.io/feed.xml' },
   { id: 'datarobot', name: 'DataRobot', short: 'DR', color: '#1c4e80', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://www.datarobot.com/blog/feed/' },
+  { id: 'ollama', name: 'Ollama', short: 'OLL', color: '#ffffff', grad: 'linear-gradient(135deg,#2d2d35,#101014)', kind: 'rss', url: 'https://ollama.com/blog/rss.xml' },
+  { id: 'mlflow', name: 'MLflow', short: 'MLF', color: '#0194e2', grad: 'linear-gradient(135deg,#0c3a55,#061c2a)', kind: 'rss', url: 'https://mlflow.org/blog/rss.xml' },
   // ── Hacker News & DEV ─────────────────────────────────────────────
   { id: 'hn', name: 'Hacker News', short: 'HN', color: '#ff6600', grad: 'linear-gradient(135deg,#4a2000,#1f0d00)', kind: 'hn', url: null },
   { id: 'devto', name: 'DEV Community', short: 'DEV', color: '#08090a', grad: 'linear-gradient(135deg,#1c2740,#0a0f1c)', kind: 'devto', url: null },
