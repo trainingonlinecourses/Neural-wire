@@ -207,9 +207,9 @@ export const SOURCES: Source[] = [
 
   // ── Additional AI Research Labs ──
   { id:'anthropic',name:'Anthropic',short:'ANT',color:'#d97706',grad:'linear-gradient(135deg,rgb(54,23,0),rgb(21,9,0))',kind:'rss',url:'https://news.google.com/rss/search?q=site:anthropic.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'ai2',name:'Allen Institute for AI',short:'AI2',color:'#0066cc',grad:'linear-gradient(135deg,rgb(0,13,20),rgb(0,5,8))',kind:'rss',url:'https://www.allenai.org/blog/rss.xml' },
+  { id:'ai2',name:'Allen Institute for AI',short:'AI2',color:'#0066cc',grad:'linear-gradient(135deg,rgb(0,13,20),rgb(0,5,8))',kind:'rss',url:'https://news.google.com/rss/search?q=site:allenai.org&hl=en-US&gl=US&ceid=US:en' },
   { id:'eleutherai',name:'EleutherAI',short:'ELU',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:eleuther.ai&hl=en-US&gl=US&ceid=US:en' },
-  { id:'fair',name:'FAIR (Meta AI)',short:'FAIR',color:'#0066ff',grad:'linear-gradient(135deg,rgb(0,17,38),rgb(0,7,15))',kind:'rss',url:'https://research.facebook.com/blog/rss/' },
+  { id:'fair',name:'FAIR (Meta AI)',short:'FAIR',color:'#0066ff',grad:'linear-gradient(135deg,rgb(0,17,38),rgb(0,7,15))',kind:'rss',url:'https://about.fb.com/news/feed/' },
   { id:'google-brain',name:'Google Brain',short:'GBR',color:'#4285F4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://research.google/blog/rss/' },
 
   // ── AI News Aggregators ──
@@ -226,7 +226,7 @@ export const SOURCES: Source[] = [
   { id:'databricks',name:'Databricks',short:'DBR',color:'#ff3621',grad:'linear-gradient(135deg,rgb(68,8,5),rgb(27,3,2))',kind:'rss',url:'https://www.databricks.com/blog/feed.xml' },
   { id:'snowflake',name:'Snowflake',short:'SNW',color:'#29b5e8',grad:'linear-gradient(135deg,rgb(8,35,43),rgb(3,14,17))',kind:'rss',url:'https://www.snowflake.com/blog/feed/' },
   { id:'scale-ai',name:'Scale AI',short:'SCL',color:'#000000',grad:'linear-gradient(135deg,rgb(0,0,0),rgb(0,0,0))',kind:'rss',url:'https://scale.com/blog/rss.xml' },
-  { id:'wandb-blog',name:'Weights & Biases Blog',short:'WBB',color:'#ffcc33',grad:'linear-gradient(135deg,rgb(76,40,7),rgb(30,16,3))',kind:'rss',url:'https://wandb.ai/feed.xml' },
+  { id:'wandb-blog',name:'Weights & Biases Blog',short:'WBB',color:'#ffcc33',grad:'linear-gradient(135deg,rgb(76,40,7),rgb(30,16,3))',kind:'rss',url:'https://news.google.com/rss/search?q=site:wandb.ai&hl=en-US&gl=US&ceid=US:en' },
 
   // ── Academic Research Labs ──
   { id:'mit-csail',name:'MIT CSAIL',short:'CSAIL',color:'#a31f34',grad:'linear-gradient(135deg,rgb(40,3,5),rgb(16,1,2))',kind:'rss',url:'https://www.csail.mit.edu/rss.xml' },
