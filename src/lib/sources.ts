@@ -123,7 +123,6 @@ export const SOURCES: Source[] = [
   { id:'mlmastery',name:'ML Mastery',short:'MLM',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://machinelearningmastery.com/feed/' },
   { id:'analyticsinsight',name:'Analytics Insight',short:'AI-INS',color:'#20beff',grad:'linear-gradient(135deg,rgb(9,38,38),rgb(3,15,15))',kind:'rss',url:'https://www.analyticsinsight.net/feed/' },
   { id:'ai-news',name:'AI News',short:'AI-N',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(17,26,36),rgb(7,10,14))',kind:'rss',url:'https://www.artificialintelligence-news.com/feed/' },
-  { id:'synced',name:'Synced Review',short:'SYN',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://syncedreview.com/feed/' },
   { id:'quanta',name:'Quanta Magazine',short:'QNT',color:'#f59e0b',grad:'linear-gradient(135deg,rgb(73,31,1),rgb(29,12,0))',kind:'rss',url:'https://www.quantamagazine.org/feed/' },
   { id:'towardsds',name:'Towards Data Science',short:'TDS',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://towardsdatascience.com/feed' },
   { id:'infoq',name:'InfoQ AI/ML',short:'IQ',color:'#2874a6',grad:'linear-gradient(135deg,rgb(12,23,24),rgb(4,9,9))',kind:'rss',url:'https://feed.infoq.com/ai-ml-data-eng' },
@@ -207,47 +206,45 @@ export const SOURCES: Source[] = [
   { id:'israel-innovation',name:'Israel Innovation',short:'IL',color:'#0038b8',grad:'linear-gradient(135deg,rgb(0,5,28),rgb(0,2,11))',kind:'rss',url:'https://innovationisrael.org.il/feed/' },
 
   // ── Additional AI Research Labs ──
-  { id:'anthropic',name:'Anthropic',short:'ANT',color:'#d97706',grad:'linear-gradient(135deg,rgb(54,23,0),rgb(21,9,0))',kind:'rss',url:'https://www.anthropic.com/news/feed.xml' },
-  { id:'ai2',name:'Allen Institute for AI',short:'AI2',color:'#0066cc',grad:'linear-gradient(135deg,rgb(0,13,20),rgb(0,5,8))',kind:'rss',url:'https://allenai.org/blog/rss.xml' },
-  { id:'eleutherai',name:'EleutherAI',short:'ELU',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://blog.eleuther.ai/rss.xml' },
-  { id:'fair',name:'FAIR (Meta AI)',short:'FAIR',color:'#0066ff',grad:'linear-gradient(135deg,rgb(0,17,38),rgb(0,7,15))',kind:'rss',url:'https://ai.meta.com/blog/rss/' },
-  { id:'google-brain',name:'Google Brain',short:'GBR',color:'#4285F4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://ai.googleblog.com/feeds/posts/default' },
+  { id:'anthropic',name:'Anthropic',short:'ANT',color:'#d97706',grad:'linear-gradient(135deg,rgb(54,23,0),rgb(21,9,0))',kind:'rss',url:'https://news.google.com/rss/search?q=site:anthropic.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'ai2',name:'Allen Institute for AI',short:'AI2',color:'#0066cc',grad:'linear-gradient(135deg,rgb(0,13,20),rgb(0,5,8))',kind:'rss',url:'https://www.allenai.org/blog/rss.xml' },
+  { id:'eleutherai',name:'EleutherAI',short:'ELU',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:eleuther.ai&hl=en-US&gl=US&ceid=US:en' },
+  { id:'fair',name:'FAIR (Meta AI)',short:'FAIR',color:'#0066ff',grad:'linear-gradient(135deg,rgb(0,17,38),rgb(0,7,15))',kind:'rss',url:'https://research.facebook.com/blog/rss/' },
+  { id:'google-brain',name:'Google Brain',short:'GBR',color:'#4285F4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://research.google/blog/rss/' },
 
   // ── AI News Aggregators ──
   { id:'the-batch',name:'The Batch (Andrew Ng)',short:'BATCH',color:'#10b981',grad:'linear-gradient(135deg,rgb(4,39,15),rgb(1,15,6))',kind:'rss',url:'https://www.deeplearning.ai/the-batch/feed/' },
   { id:'import-ai',name:'Import AI',short:'IMP',color:'#f59e0b',grad:'linear-gradient(135deg,rgb(54,31,0),rgb(21,12,0))',kind:'rss',url:'https://importai.substack.com/feed' },
   { id:'ai-weekly',name:'AI Weekly',short:'AIW',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://aiweekly.co/rss/' },
-  { id:'ai-news',name:'AI News',short:'AIN',color:'#ec4899',grad:'linear-gradient(135deg,rgb(56,11,29),rgb(22,4,11))',kind:'rss',url:'https://artificialintelligence-news.com/feed/' },
   { id:'synced',name:'Synced',short:'SYN',color:'#0ea5e9',grad:'linear-gradient(135deg,rgb(0,33,43),rgb(0,13,17))',kind:'rss',url:'https://syncedreview.com/feed/' },
   { id:'venturebeat-ai',name:'VentureBeat AI',short:'VB-AI',color:'#ff6b35',grad:'linear-gradient(135deg,rgb(76,21,8),rgb(30,8,3))',kind:'rss',url:'https://venturebeat.com/category/ai/feed/' },
   { id:'the-information-ai',name:'The Information AI',short:'INFO',color:'#000000',grad:'linear-gradient(135deg,rgb(0,0,0),rgb(0,0,0))',kind:'rss',url:'https://www.theinformation.com/feed/ai' },
 
   // ── ML Platforms & Tools ──
-  { id:'kaggle',name:'Kaggle',short:'KGL',color:'#20beff',grad:'linear-gradient(135deg,rgb(0,39,47),rgb(0,15,18))',kind:'rss',url:'https://www.kaggle.com/blog/feed.xml' },
   { id:'paperswithcode',name:'Papers with Code',short:'PWC',color:'#00a67e',grad:'linear-gradient(135deg,rgb(0,32,19),rgb(0,13,7))',kind:'rss',url:'https://paperswithcode.com/rss.xml' },
   { id:'mlcommons',name:'MLCommons',short:'MLC',color:'#6b21a8',grad:'linear-gradient(135deg,rgb(32,10,42),rgb(13,4,16))',kind:'rss',url:'https://mlcommons.org/feed/' },
-  { id:'databricks',name:'Databricks',short:'DBR',color:'#ff3621',grad:'linear-gradient(135deg,rgb(68,8,5),rgb(27,3,2))',kind:'rss',url:'https://www.databricks.com/blog/feed' },
+  { id:'databricks',name:'Databricks',short:'DBR',color:'#ff3621',grad:'linear-gradient(135deg,rgb(68,8,5),rgb(27,3,2))',kind:'rss',url:'https://www.databricks.com/blog/feed.xml' },
   { id:'snowflake',name:'Snowflake',short:'SNW',color:'#29b5e8',grad:'linear-gradient(135deg,rgb(8,35,43),rgb(3,14,17))',kind:'rss',url:'https://www.snowflake.com/blog/feed/' },
   { id:'scale-ai',name:'Scale AI',short:'SCL',color:'#000000',grad:'linear-gradient(135deg,rgb(0,0,0),rgb(0,0,0))',kind:'rss',url:'https://scale.com/blog/rss.xml' },
-  { id:'wandb-blog',name:'Weights & Biases Blog',short:'WBB',color:'#ffcc33',grad:'linear-gradient(135deg,rgb(76,40,7),rgb(30,16,3))',kind:'rss',url:'https://wandb.ai/site/feed.xml' },
+  { id:'wandb-blog',name:'Weights & Biases Blog',short:'WBB',color:'#ffcc33',grad:'linear-gradient(135deg,rgb(76,40,7),rgb(30,16,3))',kind:'rss',url:'https://wandb.ai/feed.xml' },
 
   // ── Academic Research Labs ──
   { id:'mit-csail',name:'MIT CSAIL',short:'CSAIL',color:'#a31f34',grad:'linear-gradient(135deg,rgb(40,3,5),rgb(16,1,2))',kind:'rss',url:'https://www.csail.mit.edu/rss.xml' },
   { id:'stanford-hai',name:'Stanford HAI',short:'HAI',color:'#8c1515',grad:'linear-gradient(135deg,rgb(35,3,3),rgb(14,1,1))',kind:'rss',url:'https://hai.stanford.edu/news/rss' },
-  { id:'berkeley-bair',name:'Berkeley BAIR',short:'BAIR',color:'#003262',grad:'linear-gradient(135deg,rgb(0,8,19),rgb(0,3,7))',kind:'rss',url:'https://bair.berkeley.edu/blog/rss.xml' },
-  { id:'cmu-ml',name:'CMU ML',short:'CMU',color:'#c41230',grad:'linear-gradient(135deg,rgb(48,3,5),rgb(19,1,2))',kind:'rss',url:'https://ml.cmu.edu/feed/' },
+  { id:'berkeley-bair',name:'Berkeley BAIR',short:'BAIR',color:'#003262',grad:'linear-gradient(135deg,rgb(0,8,19),rgb(0,3,7))',kind:'rss',url:'https://news.google.com/rss/search?q=site:bair.berkeley.edu&hl=en-US&gl=US&ceid=US:en' },
+  { id:'cmu-ml',name:'CMU ML',short:'CMU',color:'#c41230',grad:'linear-gradient(135deg,rgb(48,3,5),rgb(19,1,2))',kind:'rss',url:'https://news.google.com/rss/search?q=site:ml.cmu.edu&hl=en-US&gl=US&ceid=US:en' },
   { id:'oxford-ml',name:'Oxford ML',short:'OXF',color:'#002147',grad:'linear-gradient(135deg,rgb(0,5,13),rgb(0,2,5))',kind:'rss',url:'https://www.ox.ac.uk/news/rss' },
 
   // ── AI Safety & Alignment ──
   { id:'center-ai-safety',name:'Center for AI Safety',short:'CAIS',color:'#dc2626',grad:'linear-gradient(135deg,rgb(66,7,5),rgb(26,3,2))',kind:'rss',url:'https://www.safe.ai/blog/rss.xml' },
   { id:'miri',name:'MIRI',short:'MIRI',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://intelligence.org/feed/' },
-  { id:'anthropic-safety',name:'Anthropic Safety',short:'ANT-S',color:'#d97706',grad:'linear-gradient(135deg,rgb(54,23,0),rgb(21,9,0))',kind:'rss',url:'https://www.anthropic.com/research/feed.xml' },
+  { id:'anthropic-safety',name:'Anthropic Safety',short:'ANT-S',color:'#d97706',grad:'linear-gradient(135deg,rgb(54,23,0),rgb(21,9,0))',kind:'rss',url:'https://news.google.com/rss/search?q=site:anthropic.com%2Fresearch&hl=en-US&gl=US&ceid=US:en' },
 
   // ── Emerging AI Companies ──
-  { id:'character-ai',name:'Character AI',short:'CHAI',color:'#c084fc',grad:'linear-gradient(135deg,rgb(48,13,48),rgb(19,5,19))',kind:'rss',url:'https://character.ai/blog/rss.xml' },
+  { id:'character-ai',name:'Character AI',short:'CHAI',color:'#c084fc',grad:'linear-gradient(135deg,rgb(48,13,48),rgb(19,5,19))',kind:'rss',url:'https://blog.character.ai/rss/' },
   { id:'perplexity',name:'Perplexity',short:'PPX',color:'#000000',grad:'linear-gradient(135deg,rgb(0,0,0),rgb(0,0,0))',kind:'rss',url:'https://www.perplexity.ai/blog/rss.xml' },
   { id:'you-com',name:'You.com',short:'YOU',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://you.com/blog/rss.xml' },
-  { id:'inflection',name:'Inflection AI',short:'INF',color:'#14b8a6',grad:'linear-gradient(135deg,rgb(5,37,33),rgb(2,15,13))',kind:'rss',url:'https://inflection.ai/blog/rss.xml' },
+  { id:'inflection',name:'Inflection AI',short:'INF',color:'#14b8a6',grad:'linear-gradient(135deg,rgb(5,37,33),rgb(2,15,13))',kind:'rss',url:'https://news.google.com/rss/search?q=site:inflection.ai&hl=en-US&gl=US&ceid=US:en' },
   { id:'adept',name:'Adept AI',short:'ADP',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://www.adept.ai/blog/rss.xml' },
   { id:'together-ai',name:'Together AI',short:'TGR',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://www.together.ai/blog/rss.xml' },
   { id:'cohere-blog',name:'Cohere Blog',short:'COH',color:'#39594D',grad:'linear-gradient(135deg,rgb(17,17,11),rgb(6,7,4))',kind:'rss',url:'https://cohere.com/blog/rss' },
