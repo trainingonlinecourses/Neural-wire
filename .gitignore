@@ -44,6 +44,11 @@ next-env.d.ts
 # testsprite test artifacts
 /.testsprite/
 
+# playwright (browsers downloaded locally, reports, results)
+/.playwright-browsers/
+/playwright-report/
+/test-results/
+
 # leftover create-next-app scaffold
 /nw-app/
 
