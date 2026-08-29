@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getNewsData } from '@/lib/data';
 import { isSupabaseConfigured, createAdminClient } from '@/lib/supabase/admin';
-import { fetchAllSources } from '@/lib/feeds';
+import { fetchSource } from '@/lib/feeds';
 import { normBatch } from '@/lib/normalize';
 import { SOURCES } from '@/lib/sources';
 
@@ -9,81 +9,90 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 /**
- * Server-side in-memory timestamp of last live RSS refresh.
- * Prevents hammering feeds — minimum 5 minutes between refreshes.
+ * Rotating refresh: each call refreshes a different batch of sources.
+ * Over 10 calls (~50 min), all sources are refreshed at least once.
  */
+let refreshIndex = 0;
+const BATCH_SIZE = 40; // sources per refresh cycle
+const MIN_REFRESH_INTERVAL = 3 * 60 * 1000; // 3 minutes between refreshes
 let lastLiveRefresh = 0;
-const MIN_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Live refresh endpoint — GET /api/news/refresh
  * 
- * When Supabase is configured:
- *   1. Checks if stories are stale (>5 min since last refresh)
- *   2. If stale: fetches live RSS from ALL sources in parallel
- *   3. Upserts fresh stories into Supabase
- *   4. Returns the merged dataset
- *   
- * When no Supabase (demo mode):
- *   Falls through to getNewsData() which live-fetches feeds.
+ * Rotating refresh: each call fetches a different batch of ~40 sources,
+ * so all 420 sources get refreshed over ~10 cycles (~30 min).
+ * This keeps the function within Vercel's timeout limits.
  */
 export async function GET() {
   const now = Date.now();
   const shouldRefresh = now - lastLiveRefresh > MIN_REFRESH_INTERVAL;
 
-  // In DB mode, try to do a live refresh if enough time has passed
   if (isSupabaseConfigured() && shouldRefresh) {
     try {
-      lastLiveRefresh = now; // Set immediately to prevent concurrent refreshes
+      lastLiveRefresh = now;
       
-      // Fetch live RSS from ALL sources in parallel
-      const map = await fetchAllSources([]);
-      const supabase = createAdminClient();
+      // Get the current batch of sources to refresh
+      const start = refreshIndex % SOURCES.length;
+      const batch = [];
+      for (let i = 0; i < BATCH_SIZE; i++) {
+        batch.push(SOURCES[(start + i) % SOURCES.length]);
+      }
+      refreshIndex += BATCH_SIZE;
       
-      let upsertedCount = 0;
-      // Process in batches of 50 sources to avoid overwhelming the DB
-      for (let i = 0; i < SOURCES.length; i += 50) {
-        const batch = SOURCES.slice(i, i + 50);
-        const rows: Array<Record<string, unknown>> = [];
-        
-        for (const src of batch) {
-          const items = map.get(src.id) || [];
-          const normalized = normBatch(items, src);
-          for (const s of normalized) {
-            rows.push({
-              id: s.id,
-              source_id: src.id,
-              title: s.title,
-              link: s.link,
-              description: s.description,
-              thumbnail: s.img,
-              points: s.points,
-              comments: s.comments,
-              discussion: s.discussion,
-              models: s.models,
-              topics: s.topics,
-              entities: [],
-              is_model: s.isModel,
-              published_at: s.date.toISOString(),
-            });
+      // Fetch this batch in parallel (fast — 40 sources)
+      const results = await Promise.all(
+        batch.map(async (src) => {
+          try {
+            const items = await fetchSource(src.id);
+            return { src, items, error: null };
+          } catch {
+            return { src, items: [], error: 'fetch failed' };
           }
-        }
-        
-        if (rows.length) {
-          const { error } = await supabase
-            .from('stories')
-            .upsert(rows, { onConflict: 'id' });
-          if (!error) upsertedCount += rows.length;
+        })
+      );
+      
+      const supabase = createAdminClient();
+      let upsertedCount = 0;
+      const rows: Array<Record<string, unknown>> = [];
+      
+      for (const { src, items } of results) {
+        const normalized = normBatch(items, src);
+        for (const s of normalized) {
+          rows.push({
+            id: s.id,
+            source_id: src.id,
+            title: s.title,
+            link: s.link,
+            description: s.description,
+            thumbnail: s.img,
+            points: s.points,
+            comments: s.comments,
+            discussion: s.discussion,
+            models: s.models,
+            topics: s.topics,
+            entities: [],
+            is_model: s.isModel,
+            published_at: s.date.toISOString(),
+          });
         }
       }
       
-      // Update source timestamps
+      if (rows.length) {
+        const { error } = await supabase
+          .from('stories')
+          .upsert(rows, { onConflict: 'id' });
+        if (!error) upsertedCount += rows.length;
+      }
+      
+      // Update timestamps for refreshed sources
+      const refreshedIds = batch.map((s) => s.id);
       await supabase
         .from('sources')
         .update({ last_fetched_at: new Date().toISOString() })
-        .in('id', SOURCES.map((s) => s.id));
+        .in('id', refreshedIds);
       
-      // Now read the updated data from DB
+      // Read the updated data from DB
       const data = await getNewsData();
       return NextResponse.json({
         stories: data.stories.map((s) => ({ ...s, date: s.date.toISOString() })),
@@ -92,10 +101,11 @@ export async function GET() {
         fetchedAt: data.fetchedAt,
         liveRefreshed: true,
         upserted: upsertedCount,
+        batch: `${start}-${start + BATCH_SIZE}`,
+        cycle: Math.floor(refreshIndex / SOURCES.length) + 1,
       });
-    } catch (e) {
-      // Live refresh failed — fall through to DB read
-      lastLiveRefresh = now - MIN_REFRESH_INTERVAL + 60_000; // Allow retry in 1 min
+    } catch {
+      lastLiveRefresh = now - MIN_REFRESH_INTERVAL + 60_000;
     }
   }
 
