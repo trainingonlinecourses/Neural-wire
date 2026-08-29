@@ -11,6 +11,8 @@ const FOOT_COLS: { h: string; links: [string, string][] }[] = [
       ['/model-watch', 'Model Watch'],
       ['/leaderboard', 'Leaderboard'],
       ['/compare', 'Model Compare'],
+      ['/insights', 'AI Insights'],
+      ['/providers', 'Provider Directory'],
     ],
   },
   {

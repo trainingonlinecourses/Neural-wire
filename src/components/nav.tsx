@@ -27,6 +27,8 @@ export const NAV: NavItem[] = [
   { href: '/github', label: '🔥 GitHub', group: 'core' },
   { href: '/huggingface', label: '🤗 HF Hub', group: 'core' },
   { href: '/pulse', label: '⚡ Pulse', group: 'core' },
+  { href: '/insights', label: '🧠 Insights', group: 'core' },
+  { href: '/providers', label: '🏢 Providers', group: 'core' },
   // ── Row 2: Personal + Data & Analysis ─────────────────────────
   { href: '/watchlist', label: '👀 Watchlist', group: 'data' },
   { href: '/saved', label: '💾 Saved', group: 'data' },

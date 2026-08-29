@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/watchlist',
     '/saved',
     '/events',
+    '/insights',
+    '/providers',
   ];
   return pages.map((p) => ({
     url: base + p,
