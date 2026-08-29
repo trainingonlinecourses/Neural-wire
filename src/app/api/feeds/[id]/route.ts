@@ -7,18 +7,41 @@ import { createAdminClient, isSupabaseConfigured } from '@/lib/supabase/admin';
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
+/* ---- Simple in-memory rate limiter: 5 req/min per IP per source ---- */
+const rateLimit = new Map<string, number[]>();
+function isRateLimited(key: string, limit = 5, windowMs = 60_000): boolean {
+  const now = Date.now();
+  const hits = (rateLimit.get(key) || []).filter((t) => now - t < windowMs);
+  hits.push(now);
+  rateLimit.set(key, hits);
+  // Evict old entries periodically
+  if (rateLimit.size > 5000) {
+    for (const [k, v] of rateLimit) {
+      if (v.length === 0 || now - v[v.length - 1] > windowMs * 2) rateLimit.delete(k);
+    }
+  }
+  return hits.length > limit;
+}
+
 /**
  * POST /api/feeds/[id] — fetch one wire now, persist, return story count.
  * Used by on-demand "refresh this wire" actions.
+ * Rate-limited: 5 requests per minute per IP per source.
  */
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
   const src = srcById[id];
   if (!src) return NextResponse.json({ error: 'unknown source' }, { status: 404 });
   if (!isSupabaseConfigured()) return NextResponse.json({ error: 'supabase not configured' }, { status: 501 });
+
+  // Rate limit per IP
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (isRateLimited(`${ip}:${id}`)) {
+    return NextResponse.json({ error: 'rate limited — try again in 1 minute' }, { status: 429 });
+  }
 
   try {
     const raws = await fetchSource(id);
