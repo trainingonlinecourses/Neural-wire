@@ -6,8 +6,12 @@ import { ago } from '@/lib/utils';
 
 type Kind = 'models' | 'spaces';
 type TimeRange = 'day' | 'week' | 'month' | 'all';
+type HfSortKey = 'trending' | 'likes' | 'downloads' | 'recent' | 'name';
 
 const RANGE_LABELS: Record<TimeRange, string> = { day: '24H', week: '7D', month: '1M', all: 'ALL' };
+const HF_SORT_LABELS: Record<HfSortKey, string> = {
+  trending: '🔥 Trending', likes: '❤ Likes', downloads: '⇣ Downloads', recent: '🆕 Newest', name: 'A-Z Name',
+};
 
 interface HfData {
   items: HfItem[];
@@ -62,6 +66,7 @@ export function HFView() {
   const [loading, setLoading] = useState(false);
   const [at, setAt] = useState(0);
   const [pipeFilter, setPipeFilter] = useState<string>('all');
+  const [sortKey, setSortKey] = useState<HfSortKey>('trending');
 
   const load = useCallback((k: Kind, r: TimeRange, force = false) => {
     const cacheKey = `${k}-${r}`;
@@ -73,13 +78,12 @@ export function HFView() {
     setLoading(true);
     setError(null);
 
-    // Sort by trendingScore for short windows, likes for longer
-    const sort = r === 'all' || r === 'month' ? 'likes' : 'trendingScore';
-    const limit = 40;
+    const limit = 60;
 
     const urls = [
-      `https://huggingface.co/api/${k}?sort=${sort}&limit=${limit}&full=false`,
+      `https://huggingface.co/api/${k}?sort=trendingScore&limit=${limit}&full=false`,
       `https://huggingface.co/api/${k}?sort=likes&limit=${limit}&full=false`,
+      `https://huggingface.co/api/${k}?sort=downloads&limit=${limit}&full=false`,
     ];
 
     const tryUrl = (i: number): Promise<RawHF[]> =>
@@ -133,6 +137,18 @@ export function HFView() {
               </button>
             ))}
           </div>
+          <div className="seg" role="group" aria-label="Sort order">
+            {(Object.keys(HF_SORT_LABELS) as HfSortKey[]).map((k) => (
+              <button
+                key={k}
+                className={'seg-btn' + (sortKey === k ? ' active' : '')}
+                onClick={() => setSortKey(k)}
+                aria-pressed={sortKey === k}
+              >
+                {HF_SORT_LABELS[k]}
+              </button>
+            ))}
+          </div>
           <button className="btn primary" onClick={() => load(kind, range, true)} disabled={loading}>
             {loading ? 'PULLING…' : '⟳ REFRESH'}
           </button>
@@ -140,7 +156,7 @@ export function HFView() {
       </div>
       <div className="wrap">
         <div className="meta-row">
-          <span>HUGGINGFACE {kind.toUpperCase()} — LAST {RANGE_LABELS[range]} · sort={range === 'all' || range === 'month' ? 'likes' : 'trendingScore'}</span>
+          <span>HUGGINGFACE {kind.toUpperCase()} — LAST {RANGE_LABELS[range]} · sort={HF_SORT_LABELS[sortKey]}</span>
           <span className="dim">{at ? 'fetched ' + ago(new Date(at)) : ''}</span>
         </div>
         {data && kind === 'models' && data.length > 0 && (() => {
@@ -164,9 +180,20 @@ export function HFView() {
         })()}
       </div>
       <div className="wrap grid">
-        {data?.filter((m) => kind !== 'models' || pipeFilter === 'all' || m.pipe === pipeFilter).map((m) => (
-          <HfCard key={m.id} m={m} isModel={kind === 'models'} />
-        ))}
+        {(() => {
+          let filtered = (data || []).filter((m) => kind !== 'models' || pipeFilter === 'all' || m.pipe === pipeFilter);
+          // Client-side sort
+          switch (sortKey) {
+            case 'trending': filtered = [...filtered].sort((a, b) => (b.score || 0) - (a.score || 0)); break;
+            case 'likes': filtered = [...filtered].sort((a, b) => b.likes - a.likes); break;
+            case 'downloads': filtered = [...filtered].sort((a, b) => (b.downloads || 0) - (a.downloads || 0)); break;
+            case 'recent': filtered = [...filtered].sort((a, b) => b.created - a.created); break;
+            case 'name': filtered = [...filtered].sort((a, b) => a.id.localeCompare(b.id)); break;
+          }
+          return filtered.map((m) => (
+            <HfCard key={m.id} m={m} isModel={kind === 'models'} />
+          ));
+        })()}
         {loading && !data && <p className="empty">Pulling live from the HF Hub API…</p>}
         {error && !data && (
           <p className="empty">

@@ -254,6 +254,146 @@ export const SOURCES: Source[] = [
   { id:'hn',name:'Hacker News',short:'HN',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'hn',url:null },
   { id:'hn-best',name:'HN Best AI',short:'HN-B',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/best?q=AI+OR+LLM+OR+machine+learning' },
   { id:'devto',name:'DEV Community',short:'DEV',color:'#08090a',grad:'linear-gradient(135deg,rgb(2,1,1),rgb(0,0,0))',kind:'devto',url:null },
+
+  // ── arXiv subcategories ────────────────────────────────────────
+  { id:'arxiv-stat-ml',name:'arXiv stat.ML',short:'A-SML',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/stat.ML' },
+  { id:'arxiv-cs-ai',name:'arXiv cs.AI',short:'A-AI',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.AI' },
+  { id:'arxiv-cs-cc',name:'arXiv cs.CC',short:'A-CC',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.CC' },
+  { id:'arxiv-cs-cr',name:'arXiv cs.CR',short:'A-CR',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.CR' },
+  { id:'arxiv-cs-dc',name:'arXiv cs.DC',short:'A-DC',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.DC' },
+  { id:'arxiv-cs-hc',name:'arXiv cs.HC',short:'A-HC',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.HC' },
+  { id:'arxiv-cs-ir',name:'arXiv cs.IR',short:'A-IR',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.IR' },
+  { id:'arxiv-cs-mm',name:'arXiv cs.MM',short:'A-MM',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.MM' },
+  { id:'arxiv-cs-ne',name:'arXiv cs.NE',short:'A-NE',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.NE' },
+  { id:'arxiv-cs-pl',name:'arXiv cs.PL',short:'A-PL',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.PL' },
+  { id:'arxiv-cs-ro',name:'arXiv cs.RO',short:'A-RO',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.RO' },
+  { id:'arxiv-cs-sd',name:'arXiv cs.SD',short:'A-SD',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.SD' },
+  { id:'arxiv-cs-se',name:'arXiv cs.SE',short:'A-SE',color:'#b31b1b',grad:'linear-gradient(135deg,rgb(44,3,3),rgb(17,1,1))',kind:'rss',url:'https://rss.arxiv.org/rss/cs.SE' },
+
+  // ── More media ──────────────────────────────────────────────────
+  { id:'ft-tech',name:'Financial Times Tech',short:'FT',color:'#f5f5f5',grad:'linear-gradient(135deg,rgb(40,40,40),rgb(15,15,15))',kind:'rss',url:'https://www.ft.com/rss/tech' },
+  { id:'theverge-ai',name:'The Verge AI',short:'VRG',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml' },
+  { id:'wired-ai',name:'Wired AI',short:'WIR',color:'#000000',grad:'linear-gradient(135deg,rgb(0,0,0),rgb(0,0,0))',kind:'rss',url:'https://www.wired.com/feed/tag/ai/latest/rss' },
+  { id:'ars-ai',name:'Ars Technica AI',short:'ARS',color:'#ff4500',grad:'linear-gradient(135deg,rgb(76,11,0),rgb(30,4,0))',kind:'rss',url:'https://arstechnica.com/tag/ai/feed/' },
+  { id:'register-ai',name:'The Register',short:'REG',color:'#ff4500',grad:'linear-gradient(135deg,rgb(76,11,0),rgb(30,4,0))',kind:'rss',url:'https://www.theregister.com/headlines.atom' },
+
+  // ── Dev.to tags ─────────────────────────────────────────────────
+  { id:'devto-tensorflow',name:'DEV TensorFlow',short:'DEV-TF',color:'#ff6f00',grad:'linear-gradient(135deg,rgb(76,22,0),rgb(30,8,0))',kind:'rss',url:'https://dev.to/feed/tag/tensorflow' },
+
+  // ── Blogs & writers ─────────────────────────────────────────────
+  { id:'karpathy',name:'Andrej Karpathy',short:'KAR',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://karpathy.github.io/feed.xml' },
+  { id:'lil-log',name:'Lilian Weng',short:'LIL',color:'#ec4899',grad:'linear-gradient(135deg,rgb(59,8,36),rgb(23,3,14))',kind:'rss',url:'https://lilianweng.github.io/index.xml' },
+  { id:'sebastianraschka',name:'Sebastian Raschka',short:'RAS',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://sebastianraschka.com/rss_feed.xml' },
+  { id:'ruder',name:'Sebastian Ruder',short:'RUD',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(14,31,66),rgb(5,12,26))',kind:'rss',url:'https://www.ruder.io/rss/' },
+  { id:'distillpub',name:'Distill.pub',short:'DIS',color:'#14b8a6',grad:'linear-gradient(135deg,rgb(5,37,33),rgb(2,15,13))',kind:'rss',url:'https://distill.pub/rss.xml' },
+  { id:'machinelearningmastery',name:'ML Mastery',short:'MLM',color:'#0ea5e9',grad:'linear-gradient(135deg,rgb(3,31,45),rgb(1,12,18))',kind:'rss',url:'https://machinelearningmastery.com/feed/' },
+  { id:'theneurond',name:'The Neuron',short:'TN',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://theneuron.ai/feed' },
+  { id:'simonwillison',name:'Simon Willison',short:'SIM',color:'#059669',grad:'linear-gradient(135deg,rgb(2,25,13),rgb(1,10,5))',kind:'rss',url:'https://simonwillison.net/atom/everything/' },
+  { id:'twiml-ai',name:'TWIML AI',short:'TWIM',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://twimlai.com/feed/' },
+  { id:'analyticsvidhya',name:'Analytics Vidhya',short:'AV',color:'#0077b6',grad:'linear-gradient(135deg,rgb(0,29,37),rgb(0,11,15))',kind:'rss',url:'https://www.analyticsvidhya.com/feed/' },
+  { id:'towardsdatascience',name:'Towards Data Science',short:'TDS',color:'#00796b',grad:'linear-gradient(135deg,rgb(0,30,26),rgb(0,12,10))',kind:'rss',url:'https://towardsdatascience.com/feed' },
+
+  // ── Open source projects ────────────────────────────────────────
+  { id:'huggingface-blog',name:'HF Blog',short:'HF-B',color:'#ffd21e',grad:'linear-gradient(135deg,rgb(76,42,4),rgb(30,16,1))',kind:'rss',url:'https://huggingface.co/blog/feed.xml' },
+  { id:'pytorch-blog',name:'PyTorch Blog',short:'PT-B',color:'#ee4c2c',grad:'linear-gradient(135deg,rgb(71,15,6),rgb(28,6,2))',kind:'rss',url:'https://pytorch.org/blog/feed.xml' },
+  { id:'tensorflow-blog',name:'TensorFlow Blog',short:'TF-B',color:'#ff6f00',grad:'linear-gradient(135deg,rgb(76,22,0),rgb(30,8,0))',kind:'rss',url:'https://blog.tensorflow.org/feeds/posts/default?alt=rss' },
+  { id:'ollama-blog',name:'Ollama Blog',short:'OLL-B',color:'#ffffff',grad:'linear-gradient(135deg,rgb(76,51,38),rgb(30,20,15))',kind:'rss',url:'https://ollama.com/blog/rss.xml' },
+  { id:'docker-blog',name:'Docker Blog',short:'DKR',color:'#2496ed',grad:'linear-gradient(135deg,rgb(9,35,58),rgb(3,14,23))',kind:'rss',url:'https://www.docker.com/blog/feed/' },
+  { id:'kubernetes-blog',name:'Kubernetes Blog',short:'K8S',color:'#326ce5',grad:'linear-gradient(135deg,rgb(12,22,49),rgb(5,9,20))',kind:'rss',url:'https://kubernetes.io/feed.xml' },
+  { id:'redis-blog',name:'Redis Blog',short:'RED-B',color:'#dc382d',grad:'linear-gradient(135deg,rgb(66,11,6),rgb(26,4,2))',kind:'rss',url:'https://redis.io/blog/feed/' },
+  { id:'neo4j-blog',name:'Neo4j Blog',short:'NJ',color:'#018bff',grad:'linear-gradient(135deg,rgb(0,26,55),rgb(0,10,22))',kind:'rss',url:'https://neo4j.com/blog/feed/' },
+  { id:'replicate-blog',name:'Replicate Blog',short:'REP',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://replicate.com/blog/rss' },
+  { id:'wandb-connected',name:'W&B Connected',short:'W&B-C',color:'#ffcc33',grad:'linear-gradient(135deg,rgb(76,40,7),rgb(30,16,3))',kind:'rss',url:'https://wandb.ai/fully-connected/rss.xml' },
+  { id:'weaviate-blog',name:'Weaviate Blog',short:'WV-B',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://www.weaviate.io/blog/rss.xml' },
+  { id:'mlflow-blog',name:'MLflow Blog',short:'MLF-B',color:'#0194e2',grad:'linear-gradient(135deg,rgb(0,29,33),rgb(0,11,13))',kind:'rss',url:'https://mlflow.org/blog/rss.xml' },
+
+  // ── Cloud & infra ───────────────────────────────────────────────
+  { id:'aws-ml',name:'AWS ML Blog',short:'AWS-B',color:'#ff9900',grad:'linear-gradient(135deg,rgb(76,30,0),rgb(30,12,0))',kind:'rss',url:'https://aws.amazon.com/blogs/machine-learning/feed/' },
+  { id:'linode-ai',name:'Linode Blog',short:'LIN',color:'#00b050',grad:'linear-gradient(135deg,rgb(0,33,16),rgb(0,13,6))',kind:'rss',url:'https://www.linode.com/blog/feed/' },
+  { id:'runpod-blog',name:'RunPod Blog',short:'RP',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://www.runpod.io/blog/rss.xml' },
+
+  // ── NVIDIA ──────────────────────────────────────────────────────
+  { id:'nvidia-developer',name:'NVIDIA Developer',short:'NV-D2',color:'#76b900',grad:'linear-gradient(135deg,rgb(35,37,0),rgb(14,14,0))',kind:'rss',url:'https://developer.nvidia.com/blog/feed/' },
+
+  // ── YouTube channels ────────────────────────────────────────────
+  { id:'yt-3blue1brown',name:'3Blue1Brown',short:'3B1B',color:'#1d4ed8',grad:'linear-gradient(135deg,rgb(7,14,51),rgb(3,5,20))',kind:'rss',url:'https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw' },
+  { id:'yt-fireship',name:'Fireship',short:'FIRE',color:'#ef4444',grad:'linear-gradient(135deg,rgb(59,8,8),rgb(23,3,3))',kind:'rss',url:'https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA' },
+  { id:'yt-karpathy',name:'Karpathy YT',short:'K-YT',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://www.youtube.com/feeds/videos.xml?channel_id=UCXUPKJO5MZQN11PqgIvyuvQ' },
+  { id:'yt-ai-explained',name:'AI Explained',short:'AIE',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(14,31,66),rgb(5,12,26))',kind:'rss',url:'https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw' },
+  { id:'yt-yannick',name:'Yannic Kilcher',short:'YK',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew' },
+
+  // ── AI Safety ───────────────────────────────────────────────────
+  { id:'alignment-forum',name:'Alignment Forum',short:'ALF',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://www.alignmentforum.org/feed.xml' },
+  { id:'lesswrong-ai',name:'LessWrong AI',short:'LW',color:'#dc382d',grad:'linear-gradient(135deg,rgb(66,11,6),rgb(26,4,2))',kind:'rss',url:'https://www.lesswrong.com/feed.xml?tag=AI' },
+  { id:'futureoflife',name:'Future of Life',short:'FLI',color:'#0ea5e9',grad:'linear-gradient(135deg,rgb(3,31,45),rgb(1,12,18))',kind:'rss',url:'https://futureoflife.org/feed/' },
+
+  // ── Reddit communities ──────────────────────────────────────────
+  { id:'reddit-localllama',name:'r/LocalLLaMA',short:'R-LLM',color:'#ff4500',grad:'linear-gradient(135deg,rgb(76,11,0),rgb(30,4,0))',kind:'rss',url:'https://www.reddit.com/r/LocalLLaMA/top/.rss?t=week' },
+
+  // ── Lobsters tags ───────────────────────────────────────────────
+  { id:'lobsters-ai',name:'Lobsters AI',short:'LOB-AI',color:'#ac3513',grad:'linear-gradient(135deg,rgb(40,12,3),rgb(16,5,1))',kind:'rss',url:'https://lobste.rs/t/ai.rss' },
+  { id:'lobsters-javascript',name:'Lobsters JS',short:'LOB-JS',color:'#f7df1e',grad:'linear-gradient(135deg,rgb(60,46,0),rgb(24,18,0))',kind:'rss',url:'https://lobste.rs/t/javascript.rss' },
+
+  // ── Google News — AI topics ─────────────────────────────────────
+  { id:'gn-ai',name:'Google News: AI',short:'GN-AI',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-llm',name:'Google News: LLM',short:'GN-LLM',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=large+language+model&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-gpt',name:'Google News: GPT',short:'GN-GPT',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=GPT+OpenAI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-claude',name:'Google News: Claude',short:'GN-CLD',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Claude+Anthropic&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-gemini',name:'Google News: Gemini',short:'GN-GEM',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Gemini+Google+AI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-llama',name:'Google News: Llama',short:'GN-LLM',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Llama+Meta+AI+open+source&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-deepseek',name:'Google News: DeepSeek',short:'GN-DS',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=DeepSeek+AI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-robotics',name:'Google News: Robotics',short:'GN-RBT',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+robotics&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-chips',name:'Google News: AI Chips',short:'GN-CHP',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+chips+GPU+NVIDIA&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-safety',name:'Google News: AI Safety',short:'GN-SAF',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+safety+alignment&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-startups',name:'Google News: AI Startups',short:'GN-ST',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+startup+funding&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-regulation',name:'Google News: AI Policy',short:'GN-REG',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+regulation+policy&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-open-source-ai',name:'Google News: OSS AI',short:'GN-OSS',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=open+source+AI+model&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-video',name:'Google News: AI Video',short:'GN-VID',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+video+Sora+Runway&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-audio',name:'Google News: AI Audio',short:'GN-AUD',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+audio+voice+music&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-image',name:'Google News: AI Image',short:'GN-IMG',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+image+generation+DALL-E&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-code',name:'Google News: AI Code',short:'GN-COD',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+coding+copilot&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-openai-blog',name:'GN: OpenAI Blog',short:'GN-OAI',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:openai.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-anthropic-blog',name:'GN: Anthropic Blog',short:'GN-ANT',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:anthropic.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-google-ai',name:'GN: Google AI',short:'GN-GAI',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:ai.google+OR+site:deepmind.google&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-meta-ai',name:'GN: Meta AI',short:'GN-MET',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:ai.meta.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-microsoft-ai',name:'GN: Microsoft AI',short:'GN-MS',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=site:microsoft.com+AI+OR+copilot&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-qwen',name:'Google News: Qwen',short:'GN-QW',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Qwen+AI+model&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-grok',name:'Google News: Grok',short:'GN-GRK',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Grok+xAI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-mistral',name:'Google News: Mistral',short:'GN-MIS',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Mistral+AI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-huggingface',name:'Google News: HF',short:'GN-HF',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=HuggingFace+AI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ollama',name:'Google News: Ollama',short:'GN-OLL',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Ollama+local+LLM&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-rag',name:'Google News: RAG',short:'GN-RAG',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=RAG+retrieval+augmented+generation&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-agents',name:'Google News: Agents',short:'GN-AGT',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+agents+autonomous&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-fine-tuning',name:'Google News: Fine-tuning',short:'GN-FT',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+fine+tuning+training&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-multimodal',name:'Google News: Multimodal',short:'GN-MM',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=multimodal+AI+vision&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-benchmark',name:'Google News: Benchmarks',short:'GN-BEN',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+benchmark+leaderboard&hl=en-US&gl=US&ceid=US:en' },
+
+  // ── Hacker News more ────────────────────────────────────────────
+  { id:'hn-llm',name:'HN LLM',short:'HN-L',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/newest?q=LLM+OR+language+model&points=50' },
+  { id:'hn-ml',name:'HN ML',short:'HN-M',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/newest?q=machine+learning+OR+deep+learning&points=50' },
+
+  // ── TechCrunch ──────────────────────────────────────────────────
+  { id:'techcrunch-ai',name:'TechCrunch AI',short:'TC-AI',color:'#00a562',grad:'linear-gradient(135deg,rgb(0,33,19),rgb(0,13,7))',kind:'rss',url:'https://techcrunch.com/category/artificial-intelligence/feed/' },
+  { id:'techcrunch-robotics',name:'TechCrunch Robotics',short:'TC-R',color:'#00a562',grad:'linear-gradient(135deg,rgb(0,33,19),rgb(0,13,7))',kind:'rss',url:'https://techcrunch.com/category/robotics/feed/' },
+  { id:'techcrunch-venture',name:'TechCrunch Venture',short:'TC-V',color:'#00a562',grad:'linear-gradient(135deg,rgb(0,33,19),rgb(0,13,7))',kind:'rss',url:'https://techcrunch.com/category/venture/feed/' },
+
+  // ── Product Hunt ────────────────────────────────────────────────
+  { id:'ph-ai',name:'Product Hunt AI',short:'PH',color:'#da552f',grad:'linear-gradient(135deg,rgb(54,16,8),rgb(21,6,3))',kind:'rss',url:'https://www.producthunt.com/feed?category=ai' },
+
+  // ── Science ─────────────────────────────────────────────────────
+  { id:'sciencedaily-ai',name:'ScienceDaily AI',short:'SD',color:'#006400',grad:'linear-gradient(135deg,rgb(0,25,0),rgb(0,10,0))',kind:'rss',url:'https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml' },
+  { id:'quantamagazine',name:'Quanta Magazine',short:'QNT',color:'#1a1a2e',grad:'linear-gradient(135deg,rgb(5,5,12),rgb(2,2,5))',kind:'rss',url:'https://www.quantamagazine.org/feed/' },
+
+  // ── Medium tags ─────────────────────────────────────────────────
+  { id:'medium-datascience',name:'Medium DataScience',short:'MED-DS',color:'#00796b',grad:'linear-gradient(135deg,rgb(0,30,26),rgb(0,12,10))',kind:'rss',url:'https://medium.com/feed/tag/data-science' },
+
+  // ── Stack Overflow ──────────────────────────────────────────────
+  { id:'stackoverflow-llm',name:'SO LLM',short:'SO-L',color:'#f48024',grad:'linear-gradient(135deg,rgb(61,25,5),rgb(24,10,2))',kind:'rss',url:'https://stackoverflow.com/feeds/tag/large-language-model' },
+  { id:'stackoverflow-nlp',name:'SO NLP',short:'SO-N',color:'#f48024',grad:'linear-gradient(135deg,rgb(61,25,5),rgb(24,10,2))',kind:'rss',url:'https://stackoverflow.com/feeds/tag/nlp' },
+
+  // ── More blogs ──────────────────────────────────────────────────
+  { id:'datarobot-blog',name:'DataRobot',short:'DR',color:'#1b2a4a',grad:'linear-gradient(135deg,rgb(6,10,18),rgb(2,4,7))',kind:'rss',url:'https://www.datarobot.com/blog/feed/' },
+  { id:'analytics-india',name:'Analytics India',short:'AI-M',color:'#e63946',grad:'linear-gradient(135deg,rgb(58,14,17),rgb(23,5,7))',kind:'rss',url:'https://analyticsindiamag.com/category/artificial-intelligence/feed/' },
 ];
 
 export const srcById: Record<string, Source> = {};

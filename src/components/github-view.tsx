@@ -5,6 +5,7 @@ import { GhCard, type GhRepo } from './gh-card';
 import { fmtStars, ago } from '@/lib/utils';
 
 type TimeRange = 'day' | 'week' | 'month' | '3mo' | '6mo' | '1yr' | 'all';
+type SortKey = 'stars' | 'updated' | 'created' | 'forks' | 'name';
 
 interface GHData {
   items: GhRepo[];
@@ -18,6 +19,20 @@ const RANGE_LABELS: Record<TimeRange, string> = {
 const RANGE_MIN_STARS: Record<TimeRange, number> = {
   day: 10, week: 5, month: 10, '3mo': 20, '6mo': 50, '1yr': 100, all: 200,
 };
+const SORT_LABELS: Record<SortKey, string> = {
+  stars: '★ Stars', updated: '↻ Recently Updated', created: '🆕 Newest', forks: '⑂ Forks', name: 'A-Z Name',
+};
+
+function sortItems(items: GhRepo[], key: SortKey): GhRepo[] {
+  const sorted = [...items];
+  switch (key) {
+    case 'stars': return sorted.sort((a, b) => b.stargazers_count - a.stargazers_count);
+    case 'updated': return sorted.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+    case 'created': return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    case 'forks': return sorted.sort((a, b) => b.forks_count - a.forks_count);
+    case 'name': return sorted.sort((a, b) => a.name.localeCompare(b.name));
+  }
+}
 
 const CACHE_TTL = 10 * 60 * 1000;
 const cache: Partial<Record<TimeRange, GHData>> = {};
@@ -25,6 +40,7 @@ const cache: Partial<Record<TimeRange, GHData>> = {};
 export function GitHubView() {
   const [range, setRangeState] = useState<TimeRange>('week');
   const rangeRef = useRef<TimeRange>('week');
+  const [sortKey, setSortKey] = useState<SortKey>('stars');
   const [data, setData] = useState<GHData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -66,6 +82,8 @@ export function GitHubView() {
     load(r);
   };
 
+  const sortedItems = data ? sortItems(data.items, sortKey) : [];
+  const filteredItems = sortedItems.filter((r) => langFilter === 'all' || r.language === langFilter);
   const starsSum = data?.items.reduce((a, r) => a + r.stargazers_count, 0) || 0;
 
   return (
@@ -81,6 +99,18 @@ export function GitHubView() {
                 aria-pressed={range === r}
               >
                 {RANGE_LABELS[r]}
+              </button>
+            ))}
+          </div>
+          <div className="seg" role="group" aria-label="Sort order">
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+              <button
+                key={k}
+                className={'seg-btn' + (sortKey === k ? ' active' : '')}
+                onClick={() => setSortKey(k)}
+                aria-pressed={sortKey === k}
+              >
+                {SORT_LABELS[k]}
               </button>
             ))}
           </div>
@@ -121,11 +151,9 @@ export function GitHubView() {
         })()}
       </div>
       <div className="wrap grid">
-        {data?.items
-          .filter((r) => langFilter === 'all' || r.language === langFilter)
-          .map((r, i) => (
-            <GhCard key={r.full_name} r={r} rank={i + 1} />
-          ))}
+        {filteredItems.map((r, i) => (
+          <GhCard key={r.full_name} r={r} rank={i + 1} />
+        ))}
         {loading && !data && <p className="empty">Pulling live from GitHub (server-side)…</p>}
         {!data && !loading && !error && <p className="empty">Loading…</p>}
         {error && !data && (
