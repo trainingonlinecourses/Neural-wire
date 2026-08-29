@@ -35,9 +35,11 @@ interface RefreshPayload {
   sources: SourceRow[];
   demo: boolean;
   fetchedAt: number;
+  liveRefreshed?: boolean;
+  upserted?: number;
 }
 
-const SYNC_TIMEOUT_MS = 20_000;
+const SYNC_TIMEOUT_MS = 65_000; // 65s — allows live RSS refresh (up to 60s server-side)
 const MAX_ALERTS = 24;
 
 const HIDDEN_KEY = 'nw_hidden';
@@ -45,7 +47,7 @@ const MYFEED_KEY = 'nw_myfeed';
 const HISTORY_KEY = 'nw_history';
 const MAX_HISTORY = 20;
 
-export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; refreshSeconds?: number }) {
+export function NewsExplorer({ data, refreshSeconds = 300 }: { data: NewsData; refreshSeconds?: number }) {
   const [feed, setFeed] = useState<NewsData>(data);
   const [q, setQ] = useState('');
   const [sort, setSort] = useState<Sort>('newest');
@@ -68,6 +70,7 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
 
   const [syncFailed, setSyncFailed] = useState(false);
   const [lastSync, setLastSync] = useState<SyncState | null>(null);
+  const [liveInfo, setLiveInfo] = useState<{ refreshed: boolean; count: number } | null>(null);
 
   // Keyword watch: watched terms + alerts raised by new stories on sync.
   const [watchTerms, setWatchTerms] = useState<string[]>([]);
@@ -227,6 +230,9 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       setFeed(next);
       setLastSync(diff);
       setSyncFailed(false);
+      if (payload.liveRefreshed) {
+        setLiveInfo({ refreshed: true, count: payload.upserted || 0 });
+      }
       void loadPulse();
     } catch {
       setSyncFailed(true);
@@ -283,9 +289,11 @@ export function NewsExplorer({ data, refreshSeconds = 180 }: { data: NewsData; r
       ? '⟳ syncing…'
       : syncFailed
         ? '⚠ sync failed'
-        : lastSync && (lastSync.added > 0 || lastSync.removed > 0)
-          ? `✓ +${lastSync.added} · −${lastSync.removed}`
-          : '✓ up to date';
+        : liveInfo?.refreshed
+          ? `🔴 LIVE +${liveInfo.count} fresh stories`
+          : lastSync && (lastSync.added > 0 || lastSync.removed > 0)
+            ? `✓ +${lastSync.added} · −${lastSync.removed}`
+            : '✓ up to date';
 
   return (
     <>
