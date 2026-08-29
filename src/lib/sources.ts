@@ -394,6 +394,100 @@ export const SOURCES: Source[] = [
   // ── More blogs ──────────────────────────────────────────────────
   { id:'datarobot-blog',name:'DataRobot',short:'DR',color:'#1b2a4a',grad:'linear-gradient(135deg,rgb(6,10,18),rgb(2,4,7))',kind:'rss',url:'https://www.datarobot.com/blog/feed/' },
   { id:'analytics-india',name:'Analytics India',short:'AI-M',color:'#e63946',grad:'linear-gradient(135deg,rgb(58,14,17),rgb(23,5,7))',kind:'rss',url:'https://analyticsindiamag.com/category/artificial-intelligence/feed/' },
+
+  // ── Regional AI (Asia, Europe, Global) ──────────────────────────
+  { id:'china-ai',name:'China AI News',short:'CNAI',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=China+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'japan-ai',name:'Japan AI News',short:'JAI',color:'#2563eb',grad:'linear-gradient(135deg,rgb(8,15,46),rgb(3,6,18))',kind:'rss',url:'https://news.google.com/rss/search?q=Japan+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'korea-ai',name:'Korea AI News',short:'KAI',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Korea+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'india-ai',name:'India AI News',short:'IAI',color:'#f59e0b',grad:'linear-gradient(135deg,rgb(61,24,2),rgb(24,9,1))',kind:'rss',url:'https://news.google.com/rss/search?q=India+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'eu-ai',name:'EU AI Policy',short:'EUAI',color:'#1d4ed8',grad:'linear-gradient(135deg,rgb(7,14,51),rgb(3,5,20))',kind:'rss',url:'https://news.google.com/rss/search?q=EU+Europe+AI+regulation&hl=en-US&gl=US&ceid=US:en' },
+  { id:'uk-ai',name:'UK AI News',short:'UKAI',color:'#1e3a5f',grad:'linear-gradient(135deg,rgb(7,14,24),rgb(3,5,10))',kind:'rss',url:'https://news.google.com/rss/search?q=UK+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'germany-ai',name:'Germany AI',short:'DEAI',color:'#6b7280',grad:'linear-gradient(135deg,rgb(30,30,30),rgb(12,12,12))',kind:'rss',url:'https://news.google.com/rss/search?q=Germany+AI+artificial+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'kr-asia',name:'KR Asia',short:'KR',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://kr-asia.com/feed' },
+  { id:'techinasia',name:'Tech in Asia',short:'TIA',color:'#1d4ed8',grad:'linear-gradient(135deg,rgb(7,14,51),rgb(3,5,20))',kind:'rss',url:'https://www.techinasia.com/feed' },
+  { id:'techcrunch-africa',name:'TC Africa',short:'TC-AF',color:'#00a562',grad:'linear-gradient(135deg,rgb(0,33,19),rgb(0,13,7))',kind:'rss',url:'https://techcrunch.com/tag/africa/feed/' },
+
+  // ── Google News deep topic feeds ────────────────────────────────
+  { id:'gn-ai-agent',name:'GN: AI Agents',short:'GN-AG',color:'#059669',grad:'linear-gradient(135deg,rgb(2,25,13),rgb(1,10,5))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+agent+framework+LangChain+CrewAI&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-testing',name:'GN: AI Testing',short:'GN-TST',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+testing+evaluation+benchmark&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-hardware',name:'GN: AI Hardware',short:'GN-HW',color:'#76b900',grad:'linear-gradient(135deg,rgb(35,37,0),rgb(14,14,0))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+hardware+TPU+ASIC&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-open-source',name:'GN: AI Open Source',short:'GN-OSS2',color:'#059669',grad:'linear-gradient(135deg,rgb(2,25,13),rgb(1,10,5))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+open+source+Apache+MIT+license&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-privacy',name:'GN: AI Privacy',short:'GN-PRI',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+privacy+differential+federated&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-medical',name:'GN: AI Medical',short:'GN-MED',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+medical+healthcare+diagnosis&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-finance',name:'GN: AI Finance',short:'GN-FIN',color:'#f59e0b',grad:'linear-gradient(135deg,rgb(61,24,2),rgb(24,9,1))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+finance+trading+quant&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-education',name:'GN: AI Education',short:'GN-EDU',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(14,31,66),rgb(5,12,26))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+education+tutoring+learning&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-autonomous',name:'GN: AI Autonomous',short:'GN-AUTO',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+autonomous+driving+vehicles&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-3d',name:'GN: AI 3D Gen',short:'GN-3D',color:'#ec4899',grad:'linear-gradient(135deg,rgb(59,8,36),rgb(23,3,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+3D+generation+NeRF+gaussian&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-protein',name:'GN: AI Protein',short:'GN-PROT',color:'#14b8a6',grad:'linear-gradient(135deg,rgb(5,37,33),rgb(2,15,13))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+protein+folding+bio+AlphaFold&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-game',name:'GN: AI Gaming',short:'GN-GAME',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+gaming+gameplay+NPC&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-cyber',name:'GN: AI Cybersec',short:'GN-CYB',color:'#ef4444',grad:'linear-gradient(135deg,rgb(59,8,8),rgb(23,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+cybersecurity+threat+detection&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-climate',name:'GN: AI Climate',short:'GN-CLIM',color:'#10b981',grad:'linear-gradient(135deg,rgb(4,39,23),rgb(1,15,9))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+climate+weather+environment&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-hallucination',name:'GN: AI Hallucination',short:'GN-HAL',color:'#e11d48',grad:'linear-gradient(135deg,rgb(57,7,18),rgb(22,3,7))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+hallucination+faithfulness+grounding&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-distillation',name:'GN: AI Distill',short:'GN-DIST',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+distillation+quantization+compression&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-agi',name:'GN: AGI',short:'GN-AGI',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=AGI+artificial+general+intelligence&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-spaces',name:'GN: AI Infra',short:'GN-INFRA',color:'#0ea5e9',grad:'linear-gradient(135deg,rgb(3,31,45),rgb(1,12,18))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+spaces+infrastructure+datacenter&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-chips-nvidia',name:'GN: NVIDIA Chips',short:'GN-NV2',color:'#76b900',grad:'linear-gradient(135deg,rgb(35,37,0),rgb(14,14,0))',kind:'rss',url:'https://news.google.com/rss/search?q=NVIDIA+H100+B200+Blackwell&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-chips-amd',name:'GN: AMD AI Chips',short:'GN-AMD',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=AMD+MI300+AI+chip&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-chips-intel',name:'GN: Intel AI Chips',short:'GN-INT',color:'#0071c5',grad:'linear-gradient(135deg,rgb(0,22,42),rgb(0,9,17))',kind:'rss',url:'https://news.google.com/rss/search?q=Intel+Gaudi+AI+chip&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-chips-google',name:'GN: Google TPU',short:'GN-TPU',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://news.google.com/rss/search?q=Google+TPU+Trillium&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-training',name:'GN: AI Training',short:'GN-TRN',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+training+compute+scaling&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-inference',name:'GN: AI Inference',short:'GN-INF2',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+inference+serving+optimization&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-embedding',name:'GN: AI Embeddings',short:'GN-EMB',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://news.google.com/rss/search?q=AI+embedding+vector+search&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-regulation-eu',name:'GN: EU AI Act',short:'GN-EUA',color:'#1d4ed8',grad:'linear-gradient(135deg,rgb(7,14,51),rgb(3,5,20))',kind:'rss',url:'https://news.google.com/rss/search?q=EU+AI+Act+regulation&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-regulation-us',name:'GN: US AI Policy',short:'GN-USP',color:'#1e3a5f',grad:'linear-gradient(135deg,rgb(7,14,24),rgb(3,5,10))',kind:'rss',url:'https://news.google.com/rss/search?q=US+AI+executive+order+regulation&hl=en-US&gl=US&ceid=US:en' },
+  { id:'gn-ai-china',name:'GN: China AI',short:'GN-CHN',color:'#dc2626',grad:'linear-gradient(135deg,rgb(55,8,8),rgb(22,3,3))',kind:'rss',url:'https://news.google.com/rss/search?q=China+AI+DeepSeek+Baidu+Alibaba&hl=en-US&gl=US&ceid=US:en' },
+
+  // ── Dev.to more tags ────────────────────────────────────────────
+  { id:'devto-claude',name:'DEV Claude',short:'DEV-C',color:'#c084fc',grad:'linear-gradient(135deg,rgb(48,13,48),rgb(19,5,19))',kind:'rss',url:'https://dev.to/feed/tag/claude' },
+  { id:'devto-gemini',name:'DEV Gemini',short:'DEV-G',color:'#4285f4',grad:'linear-gradient(135deg,rgb(19,26,36),rgb(7,10,14))',kind:'rss',url:'https://dev.to/feed/tag/gemini' },
+  { id:'devto-openai',name:'DEV OpenAI',short:'DEV-OAI',color:'#10a37f',grad:'linear-gradient(135deg,rgb(4,32,19),rgb(1,13,7))',kind:'rss',url:'https://dev.to/feed/tag/openai' },
+  { id:'devto-robotics',name:'DEV Robotics',short:'DEV-RBT',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://dev.to/feed/tag/robotics' },
+  { id:'devto-computervision',name:'DEV ComputerVision',short:'DEV-CV',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://dev.to/feed/tag/computervision' },
+  { id:'devto-rl',name:'DEV RL',short:'DEV-RL',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://dev.to/feed/tag/reinforcementlearning' },
+  { id:'devto-keras',name:'DEV Keras',short:'DEV-K',color:'#d946ef',grad:'linear-gradient(135deg,rgb(54,13,51),rgb(21,5,20))',kind:'rss',url:'https://dev.to/feed/tag/keras' },
+  { id:'devto-jax',name:'DEV JAX',short:'DEV-JAX',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(14,31,66),rgb(5,12,26))',kind:'rss',url:'https://dev.to/feed/tag/jax' },
+  { id:'devto-langchain',name:'DEV LangChain',short:'DEV-LC',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://dev.to/feed/tag/langchain' },
+  { id:'devto-rag',name:'DEV RAG',short:'DEV-RAG',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://dev.to/feed/tag/rag' },
+
+  // ── GitHub topic feeds ──────────────────────────────────────────
+  { id:'gh-ai-llm',name:'GH: Large LLMs',short:'GH-LLM',color:'#3b82f6',grad:'linear-gradient(135deg,rgb(14,31,66),rgb(5,12,26))',kind:'rss',url:'https://github.com/topics/large-language-models.atom' },
+  { id:'gh-ai-agents',name:'GH: AI Agents',short:'GH-AGT',color:'#059669',grad:'linear-gradient(135deg,rgb(2,25,13),rgb(1,10,5))',kind:'rss',url:'https://github.com/topics/ai-agents.atom' },
+  { id:'gh-ai-rag',name:'GH: RAG',short:'GH-RAG',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://github.com/topics/retrieval-augmented-generation.atom' },
+  { id:'gh-stable-diffusion',name:'GH: StableDiffusion',short:'GH-SD',color:'#d946ef',grad:'linear-gradient(135deg,rgb(54,13,51),rgb(21,5,20))',kind:'rss',url:'https://github.com/topics/stable-diffusion.atom' },
+  { id:'gh-machine-learning',name:'GH: ML',short:'GH-ML2',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://github.com/topics/machine-learning.atom' },
+  { id:'gh-deep-learning',name:'GH: DL',short:'GH-DL',color:'#ef4444',grad:'linear-gradient(135deg,rgb(59,8,8),rgb(23,3,3))',kind:'rss',url:'https://github.com/topics/deep-learning.atom' },
+  { id:'gh-transformers',name:'GH: Transformers',short:'GH-TF2',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://github.com/topics/transformers.atom' },
+  { id:'gh-nlp',name:'GH: NLP',short:'GH-NLP',color:'#ec4899',grad:'linear-gradient(135deg,rgb(59,8,36),rgb(23,3,14))',kind:'rss',url:'https://github.com/topics/natural-language-processing.atom' },
+  { id:'gh-computer-vision',name:'GH: ComputerVision',short:'GH-CV',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://github.com/topics/computer-vision.atom' },
+  { id:'gh-reinforcement-learning',name:'GH: RL',short:'GH-RL',color:'#14b8a6',grad:'linear-gradient(135deg,rgb(5,37,33),rgb(2,15,13))',kind:'rss',url:'https://github.com/topics/reinforcement-learning.atom' },
+  { id:'gh-pytorch',name:'GH: PyTorch',short:'GH-PT',color:'#ee4c2c',grad:'linear-gradient(135deg,rgb(71,15,6),rgb(28,6,2))',kind:'rss',url:'https://github.com/topics/pytorch.atom' },
+  { id:'gh-tensorflow',name:'GH: TensorFlow',short:'GH-TF3',color:'#ff6f00',grad:'linear-gradient(135deg,rgb(76,22,0),rgb(30,8,0))',kind:'rss',url:'https://github.com/topics/tensorflow.atom' },
+
+  // ── Blogs & newsletters ─────────────────────────────────────────
+  { id:'mit-news-ai',name:'MIT AI News',short:'MIT',color:'#a31f34',grad:'linear-gradient(135deg,rgb(41,7,13),rgb(16,3,5))',kind:'rss',url:'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml' },
+  { id:'latentspace',name:'Latent Space',short:'LS',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://www.latent.space/feed' },
+  { id:'stratechery',name:'Stratechery',short:'STR',color:'#6b7280',grad:'linear-gradient(135deg,rgb(30,30,30),rgb(12,12,12))',kind:'rss',url:'https://stratechery.com/feed/' },
+  { id:'exponential-view',name:'Exponential View',short:'XV',color:'#7c3aed',grad:'linear-gradient(135deg,rgb(37,11,35),rgb(14,4,14))',kind:'rss',url:'https://www.exponentialview.co/feed' },
+
+  // ── GitHub release feeds ────────────────────────────────────────
+  { id:'automatic1111',name:'Automatic1111',short:'A1111',color:'#d946ef',grad:'linear-gradient(135deg,rgb(54,13,51),rgb(21,5,20))',kind:'rss',url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui/releases.atom' },
+  { id:'comfyui-rss',name:'ComfyUI',short:'CMFUI',color:'#22c55e',grad:'linear-gradient(135deg,rgb(10,39,14),rgb(4,15,5))',kind:'rss',url:'https://github.com/comfyanonymous/ComfyUI/releases.atom' },
+  { id:'llama-cpp',name:'llama.cpp',short:'LCPP',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://github.com/ggerganov/llama.cpp/releases.atom' },
+  { id:'bento-ml',name:'BentoML',short:'BENTO',color:'#6366f1',grad:'linear-gradient(135deg,rgb(29,20,36),rgb(11,8,14))',kind:'rss',url:'https://github.com/bentoml/BentoML/releases.atom' },
+
+  // ── Reddit more ─────────────────────────────────────────────────
+  { id:'reddit-artificial',name:'r/artificial',short:'R-AI',color:'#ff4500',grad:'linear-gradient(135deg,rgb(76,11,0),rgb(30,4,0))',kind:'rss',url:'https://www.reddit.com/r/artificial/top/.rss?t=week' },
+
+  // ── HN more ─────────────────────────────────────────────────────
+  { id:'hn-openai',name:'HN: OpenAI',short:'HN-OAI',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/newest?q=OpenAI+GPT&points=50' },
+  { id:'hn-anthropic',name:'HN: Anthropic',short:'HN-ANT',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/newest?q=Anthropic+Claude&points=50' },
+  { id:'hn-local-llm',name:'HN: Local LLM',short:'HN-LLM',color:'#ff6600',grad:'linear-gradient(135deg,rgb(76,20,0),rgb(30,8,0))',kind:'rss',url:'https://hnrss.org/newest?q=local+LLM+Ollama+llama.cpp&points=30' },
+
+  // ── Medium more tags ────────────────────────────────────────────
+  { id:'medium-ai-agents',name:'Medium: AI Agents',short:'MED-AG',color:'#059669',grad:'linear-gradient(135deg,rgb(2,25,13),rgb(1,10,5))',kind:'rss',url:'https://medium.com/feed/tag/ai-agents' },
+  { id:'medium-fine-tuning',name:'Medium: Fine-tuning',short:'MED-FT',color:'#f97316',grad:'linear-gradient(135deg,rgb(74,23,3),rgb(29,9,1))',kind:'rss',url:'https://medium.com/feed/tag/fine-tuning' },
+  { id:'medium-computer-vision',name:'Medium: ComputerVision',short:'MED-CV',color:'#06b6d4',grad:'linear-gradient(135deg,rgb(2,37,46),rgb(1,14,18))',kind:'rss',url:'https://medium.com/feed/tag/computer-vision' },
+  { id:'medium-vector-db',name:'Medium: Vector DB',short:'MED-VDB',color:'#8b5cf6',grad:'linear-gradient(135deg,rgb(41,18,36),rgb(16,7,14))',kind:'rss',url:'https://medium.com/feed/tag/vector-database' },
 ];
 
 export const srcById: Record<string, Source> = {};
