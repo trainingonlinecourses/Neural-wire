@@ -187,6 +187,13 @@ export const GLOSSARY: GlossaryEntry[] = [
     see: [{ label: 'Model Watch', href: '/model-watch' }],
   },
   {
+    id: 'model-releases',
+    term: 'Model Releases',
+    category: 'data',
+    short: 'Recently launched models — frontier-tier and open source — with wire news covering each launch.',
+    see: [{ label: 'Model Releases', href: '/releases' }],
+  },
+  {
     id: 'leaderboard',
     term: 'Leaderboard',
     category: 'data',

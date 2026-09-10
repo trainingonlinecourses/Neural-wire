@@ -13,6 +13,7 @@
 export const DATA_VERSION = '2026-08-16.2';
 
 const HF_API = 'https://huggingface.co/api';
+
 const OPENROUTER_API = 'https://openrouter.ai/api/v1/models';
 const TOGETHER_API = 'https://api.together.xyz/v1/models';
 const GROQ_API = 'https://api.groq.com/openai/v1/models';
@@ -21,6 +22,12 @@ const GROQ_API = 'https://api.groq.com/openai/v1/models';
 export interface LiveBenchmark {
   name: string;
   value: number;
+}
+
+/** Real per-token pricing from the OpenRouter registry (USD). */
+export interface LivePricing {
+  prompt?: number;
+  completion?: number;
 }
 
 export interface LiveModel {
@@ -34,6 +41,7 @@ export interface LiveModel {
   trendingScore?: number;
   hfUrl?: string;
   openrouterUrl?: string;
+  pricing?: LivePricing;
   benchmarks: LiveBenchmark[];
 }
 
@@ -176,9 +184,16 @@ async function fetchCardMarkdown(hfId: string): Promise<string> {
 /** Newest models from OpenRouter (created timestamps), limit by recency. */
 export async function fetchOpenRouterNewest(limit = 18, maxAgeDays = 120): Promise<LiveModel[]> {
   try {
-    const j = await fetchJSON<{ data: Array<{ id: string; name?: string; created?: number; context_length?: number; hugging_face_id?: string }> }>(
-      OPENROUTER_API,
-    );
+    const j = await fetchJSON<{
+      data: Array<{
+        id: string;
+        name?: string;
+        created?: number;
+        context_length?: number;
+        hugging_face_id?: string;
+        pricing?: { prompt?: string | number; completion?: string | number };
+      }>;
+    }>(OPENROUTER_API);
     const now = Date.now() / 1000;
     const out: LiveModel[] = [];
     for (const raw of j.data) {
@@ -187,6 +202,12 @@ export async function fetchOpenRouterNewest(limit = 18, maxAgeDays = 120): Promi
       const hfId = (raw.hugging_face_id || '').trim();
       const id = hfId || raw.id;
       const name = hfId ? hfId.split('/').slice(1).join('/') : raw.id.split('/').slice(1).join('/');
+      const pricing = raw.pricing
+        ? {
+            prompt: num(raw.pricing.prompt),
+            completion: num(raw.pricing.completion),
+          }
+        : undefined;
       out.push({
         id,
         name: name || raw.id,
@@ -195,6 +216,7 @@ export async function fetchOpenRouterNewest(limit = 18, maxAgeDays = 120): Promi
         context: typeof raw.context_length === 'number' ? raw.context_length : undefined,
         hfUrl: hfId ? `https://huggingface.co/${hfId}` : undefined,
         openrouterUrl: `https://openrouter.ai/${raw.id}`,
+        pricing,
         benchmarks: [],
       });
     }
@@ -203,6 +225,13 @@ export async function fetchOpenRouterNewest(limit = 18, maxAgeDays = 120): Promi
   } catch {
     return [];
   }
+}
+
+/** Normalize a numeric or numeric-string price to a number (USD per token). */
+export function num(v: string | number | null | undefined): number | undefined {
+  if (v == null || v === '') return undefined;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return Number.isFinite(n) ? n : undefined;
 }
 
 /** Trending models from Hugging Face with engagement stats. */
@@ -241,7 +270,6 @@ export async function fetchTogetherNewest(limit = 12): Promise<LiveModel[]> {
     const j = await fetchJSON<{ data: Array<{ id: string; display_name?: string; created_at?: string; model_type?: string; context_length?: number }> }>(
       TOGETHER_API,
     );
-    const now = Date.now() / 1000;
     const out: LiveModel[] = [];
     for (const raw of j.data || []) {
       // Only include text generation models

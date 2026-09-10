@@ -23,6 +23,7 @@ const PAGES: { href: string; label: string; icon: string; keywords: string[] }[]
   { href: '/brief', label: 'Today in AI', icon: '⚡', keywords: ['brief', 'digest', 'summary'] },
   { href: '/trending', label: 'Trending', icon: '📈', keywords: ['trending', 'rising', 'hot'] },
   { href: '/model-watch', label: 'Model Watch', icon: '🧠', keywords: ['models', 'releases', 'new'] },
+  { href: '/releases', label: 'Model Releases', icon: '🚀', keywords: ['releases', 'launches', 'launched', 'new', 'open-source', 'frontier'] },
   { href: '/leaderboard', label: 'Leaderboard', icon: '🏆', keywords: ['benchmarks', 'scores', 'compare'] },
   { href: '/github', label: 'GitHub Trending', icon: '🔥', keywords: ['repos', 'github', 'open-source'] },
   { href: '/huggingface', label: 'HF Hub', icon: '🤗', keywords: ['huggingface', 'models', 'spaces'] },

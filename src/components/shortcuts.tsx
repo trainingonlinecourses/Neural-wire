@@ -8,6 +8,7 @@ import { DESK_OVERLAY_EVENT } from '@/lib/desk-overlay';
 
 const KEYS: { key: string; href: string; label: string }[] = [
   { key: 'm', href: '/model-watch', label: 'Model Watch' },
+  { key: 'n', href: '/releases', label: 'Model Releases' },
   { key: 'b', href: '/brief', label: 'Today in AI' },
   { key: 't', href: '/trending', label: 'Trending' },
   { key: 'l', href: '/leaderboard', label: 'Leaderboard' },

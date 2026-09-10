@@ -35,6 +35,7 @@ const PAGE_ICONS: Record<string, string> = {
   '/brief': '⚡',
   '/trending': '📈',
   '/model-watch': '🧠',
+  '/releases': '🚀',
   '/leaderboard': '🏆',
   '/github': '🔥',
   '/huggingface': '🤗',

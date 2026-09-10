@@ -1,6 +1,8 @@
 /* NEURALWIRE design system — ported from the original index.html */
 
 :root {
+  --background: #05070d;
+  --foreground: #e8edf7;
   --bg: #05070d;
   --panel: #0b1120;
   --panel2: #0e1628;
@@ -60,6 +62,8 @@
 }
 
 :root[data-theme='light'] {
+  --background: #f1f4fa;
+  --foreground: #0e1526;
   --bg: #f1f4fa;
   --panel: #ffffff;
   --panel2: #eef2f9;
@@ -109,6 +113,8 @@
 
 /* Register color tokens so gradients (cards, buttons, ticker) interpolate during theme transitions. */
 @property --bg { syntax: '<color>'; inherits: true; initial-value: #05070d; }
+@property --background { syntax: '<color>'; inherits: true; initial-value: #05070d; }
+@property --foreground { syntax: '<color>'; inherits: true; initial-value: #e8edf7; }
 @property --panel { syntax: '<color>'; inherits: true; initial-value: #0b1120; }
 @property --panel2 { syntax: '<color>'; inherits: true; initial-value: #0e1628; }
 @property --card { syntax: '<color>'; inherits: true; initial-value: #090f1c; }
@@ -139,6 +145,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+
+@media (prefers-color-scheme: dark) {
+  html { color-scheme: dark; }
+}
 
 body {
   background: var(--bg);
@@ -1297,6 +1307,51 @@ html { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 720px) {
   .roster-row { grid-template-columns: 22px 1.4fr 1fr 52px; }
   .roster-row .roster-date, .roster-row .roster-vendor { display: none; }
+}
+/* Model releases — launched recently, frontier vs open source (releases page). */
+.rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:  12px; }
+.rel-card {
+  background: linear-gradient(180deg, var(--panel), var(--card));
+  border:  1px solid var(--line); border-radius: var(--rad); padding: 14px 15px;
+  display: flex; flex-direction: column; gap:  9px;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.rel-card.is-open { border-top: 2px solid #22c55e; }
+.rel-card.is-frontier { border-top: 2px solid #f59e0b; }
+.rel-card:hover { transform: translateY(-2px); border-color: rgba(79, 124, 255, 0.45); }
+.rel-card-head { display: flex; align-items: flex-start; gap:  9px; }
+.rel-flag { font-size: 1.05rem; line-height: 1.2; }
+.rel-titles { flex:  1; min-width:  0; }
+.rel-titles h3 {
+  font-size:  0.84rem; font-weight:  700; color: var(--ink); line-height: 1.25; overflow-wrap: anywhere;
+}
+.rel-vendor { font-size:  0.66rem; color: var(--mut); }
+.rel-kind {
+  font-family: var(--font-mono, 'JetBrains Mono'); font-size:  0.58rem; font-weight: 700; letter-spacing:  0.08em;
+  padding: 2px 8px; border-radius: 99px; white-space: nowrap; align-self: flex-start;
+}
+.rel-kind.open { color: #22c55e; background: rgba(34, 197,  94,  0.12); }
+.rel-kind.frontier { color: #f59e0b; background: rgba(245, 158,  11,  0.12); }
+.rel-note { font-size:  0.72rem; color: var(--muted-ink); line-height: 1.45; margin:  0; }
+.rel-stats { display: flex; align-items: center; gap:  8px; flex-wrap: wrap; }
+.rel-stat {
+  font-family: var(--font-mono, 'JetBrains Mono'); font-size:  0.62rem; color: var(--cyan-ink);
+  background: var(--field); border: 1px solid var(--line); border-radius: 99px; padding: 2px 8px;
+}
+.rel-toggle {
+  font-family: var(--font-mono, 'JetBrains Mono'); font-size:  0.62rem; font-weight: 700; letter-spacing:  0.06em;
+  color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 99px;
+  padding: 3px 10px; cursor: pointer; transition:  0.15s;
+}
+.rel-toggle:hover { border-color: rgba(79, 124, 255, 0.6); color: var(--cyan-ink); }
+.rel-src { font-family: var(--font-mono, 'JetBrains Mono'); font-size:  0.62rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; margin-left: auto; }
+.rel-src:hover { text-decoration: underline; }
+.rel-news { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:  12px; margin-top:  8px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.mtg-header .rel-kind { font-size: 0.56rem; padding: 1px 7px; }
+.mtg-header .rel-flag { font-size: 0.95rem; }
+@media (max-width: 720px) {
+  .rel-stats .rel-toggle { width: 100%; justify-content: center; }
+  .rel-src { margin-left: auto; }
 }
 /* Live model radar — newest models pulled from HF + OpenRouter. */
 .live-models { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }

@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/brief',
     '/trending',
     '/model-watch',
+    '/releases',
     '/leaderboard',
     '/github',
     '/huggingface',
