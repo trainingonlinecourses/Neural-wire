@@ -1310,6 +1310,18 @@ html { -webkit-tap-highlight-color: transparent; }
 }
 /* Model releases — launched recently, frontier vs open source (releases page). */
 .rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:  12px; }
+.rel-section { margin-bottom: 22px; }
+.rel-section-head {
+  display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px;
+  border-bottom: 1px solid var(--line); padding-bottom: 6px;
+}
+.rel-section-head h2 {
+  font-size: 0.78rem; letter-spacing: 0.08em; margin: 0;
+  color: var(--cyan-ink); text-transform: uppercase;
+}
+.rel-section-head .dim { font-size: 0.68rem; color: var(--mut); }
+.rel-news-section { margin-bottom: 18px; }
+.rel-news-section .model-time-group { margin-bottom: 8px; }
 .rel-card {
   background: linear-gradient(180deg, var(--panel), var(--card));
   border:  1px solid var(--line); border-radius: var(--rad); padding: 14px 15px;

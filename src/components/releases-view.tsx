@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { NewsData } from '@/lib/data';
 import type { Story } from '@/lib/types';
 import {
+  groupReleasesByDate,
   kindLabel,
   storyMentionsRelease,
   type ModelKind,
@@ -58,28 +59,36 @@ export function ReleasesView({ data }: { data: NewsData }) {
     const base = releases ?? [];
     const byKind = kind === 'all' ? base : base.filter((r) => (kind === 'open') === r.openSource);
     const needle = q.trim().toLowerCase();
-    return needle
+    const filtered = needle
       ? byKind.filter((r) => r.name.toLowerCase().includes(needle) || r.vendor.toLowerCase().includes(needle))
       : byKind;
+    return groupReleasesByDate(filtered);
   }, [releases, kind, q]);
 
   // Auto-expand the freshest few launch cards.
   useEffect(() => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      for (const r of visible.slice(0, 3)) next.add(r.id);
+      for (const r of visible[0]?.releases.slice(0, 3) ?? []) next.add(r.id);
       return next;
     });
   }, [visible]);
 
   const storiesByRelease = useMemo(() => {
     const map = new Map<string, Story[]>();
-    for (const r of visible) {
-      const hits = data.stories.filter((s) => storyMentionsRelease(s.models, r));
-      if (hits.length > 0) map.set(r.id, hits);
+    for (const s of visible) {
+      for (const r of s.releases) {
+        const hits = data.stories.filter((st) => storyMentionsRelease(st.models, r));
+        if (hits.length > 0) map.set(r.id, hits);
+      }
     }
     return map;
   }, [data.stories, visible]);
+
+  const totalReleases = useMemo(
+    () => visible.reduce((n, s) => n + s.releases.length, 0),
+    [visible],
+  );
 
   const totalNews = useMemo(
     () => [...storiesByRelease.values()].reduce((n, arr) => n + arr.length, 0),
@@ -107,7 +116,7 @@ export function ReleasesView({ data }: { data: NewsData }) {
             aria-label="Filter releases"
           />
           <span className="dim" style={{ alignSelf: 'center' }}>
-            {releases ? visible.length + ' launches · ' + totalNews + ' news stories' : '⟳ fetching live registries…'}
+            {releases ? totalReleases + ' launches · ' + totalNews + ' news stories' : '⟳ fetching live registries…'}
           </span>
         </div>
       </div>
@@ -134,21 +143,28 @@ export function ReleasesView({ data }: { data: NewsData }) {
         {failed && <p className="empty">Live release registry unavailable right now — try again in a moment.</p>}
         {!releases && !failed && <p className="empty">⟳ polling OpenRouter + Hugging Face + Together + Groq…</p>}
         {releases && releases.length === 0 && <p className="empty">No recently-launched models found in the registries right now.</p>}
-        {releases && releases.length > 0 && visible.length === 0 && <p className="empty">No launches match the current filter.</p>}
-        {visible.length > 0 && (<div className="rel-grid">
-        {visible.map((r) => (
-          <ReleaseCard
-            key={r.id}
-            release={r}
-            newsCount={(storiesByRelease.get(r.id) || []).length}
-            expanded={expanded.has(r.id)}
-            onToggle={() => toggle(r.id)}
-            stories={storiesByRelease.get(r.id) || []}
-          />
+                {releases && releases.length > 0 && totalReleases === 0 && <p className="empty">No launches match the current filter.</p>}
+        {visible.map((s) => (
+          <section key={s.bucket} className="rel-section" aria-label={s.label}>
+            <div className="rel-section-head">
+              <h2>{s.label}</h2>
+              <span className="dim">{s.releases.length} launch{s.releases.length !== 1 ? 'es' : ''}</span>
+            </div>
+            <div className="rel-grid">
+              {s.releases.map((r) => (
+                <ReleaseCard
+                  key={r.id}
+                  release={r}
+                  newsCount={(storiesByRelease.get(r.id) || []).length}
+                  expanded={expanded.has(r.id)}
+                  onToggle={() => toggle(r.id)}
+                  stories={storiesByRelease.get(r.id) || []}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
-    )}
-    </div>
 
     <div className="wrap">
       <div className="meta-row">
@@ -161,31 +177,41 @@ export function ReleasesView({ data }: { data: NewsData }) {
       </div>
     ) : (
       <div className="model-time-groups">
-        {visible.map((r) => {
-          const hits = storiesByRelease.get(r.id) || [];
-          if (hits.length === 0) return null;
-          const isOpen = expanded.has(r.id);
-          return (
-            <div key={r.id} className="model-time-group">
-              <button className="mtg-header" onClick={() => toggle(r.id)} aria-expanded={isOpen}>
-                <span className="rel-flag" aria-hidden="true">{vendorFlag(r.vendor)}</span>
-                <span className="mtg-label">
-                  {r.name}
-                  <span className={`rel-kind${r.openSource ? ' open' : ' frontier'}`}>{kindLabel(r)}</span>
-                </span>
-                <span className="mtg-count">{hits.length} stor{hits.length !== 1 ? 'ies' : 'y'}</span>
-                <span className="mtg-chevron">{isOpen ? '▾' : '▸'}</span>
-              </button>
-              {isOpen && (
-                <div className="mtg-body grid">
-                  {hits.map((s) => (
-                    <NewsCard key={s.id} story={s} />
-                  ))}
-                </div>
-              )}
+        {visible.map((s) => (
+          s.releases.some((r) => (storiesByRelease.get(r.id) || []).length > 0) && (
+            <div key={s.bucket} className="rel-news-section">
+              <div className="rel-section-head">
+                <h2>{s.label} · LAUNCH NEWS</h2>
+                <span className="dim">{s.releases.reduce((n, r) => n + (storiesByRelease.get(r.id) || []).length, 0)} stories</span>
+              </div>
+              {s.releases.map((r) => {
+                const hits = storiesByRelease.get(r.id) || [];
+                if (hits.length === 0) return null;
+                const isOpen = expanded.has(r.id);
+                return (
+                  <div key={r.id} className="model-time-group">
+                    <button className="mtg-header" onClick={() => toggle(r.id)} aria-expanded={isOpen}>
+                      <span className="rel-flag" aria-hidden="true">{vendorFlag(r.vendor)}</span>
+                      <span className="mtg-label">
+                        {r.name}
+                        <span className={`rel-kind${r.openSource ? ' open' : ' frontier'}`}>{kindLabel(r)}</span>
+                      </span>
+                      <span className="mtg-count">{hits.length} stor{hits.length !== 1 ? 'ies' : 'y'}</span>
+                      <span className="mtg-chevron">{isOpen ? '▾' : '▸'}</span>
+                    </button>
+                    {isOpen && (
+                      <div className="mtg-body grid">
+                        {hits.map((st) => (
+                          <NewsCard key={st.id} story={st} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          )
+        ))}
       </div>
     )}
   </>

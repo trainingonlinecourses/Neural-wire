@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   deriveCostTier,
   filterRecent,
+  groupReleasesByDate,
   kindLabel,
   perMillion,
   releaseFromLiveModel,
@@ -50,8 +51,34 @@ describe('live model releases (real registry mappers)', () => {
     const recent = releaseFromLiveModel(fixture({ id: 'A/a', created: now - 5 * 86400 }));
     const stale = releaseFromLiveModel(fixture({ id: 'B/b', created: now - 400 * 86400 }));
     const nodate = releaseFromLiveModel(fixture({ id: 'C/c', created: 0 }));
-    const out = filterRecent([stale, recent, nodate], 180);
+    const out = filterRecent([stale, recent, nodate], 30);
     expect(out.map((r) => r.id)).toEqual(['A/a']);
+  });
+
+  it('defaults to a 30-day freshness window', () => {
+    const now = Date.now() / 1000;
+    const thisMonth = releaseFromLiveModel(fixture({ id: 'A/a', created: now - 20 * 86400 }));
+    const stale2 = releaseFromLiveModel(fixture({ id: 'B/b', created: now - 60 * 86400 }));
+    expect(filterRecent([thisMonth, stale2]).map((r) => r.id)).toEqual(['A/a']);
+  });
+
+  it('groups fresh releases into LAST 24 HOURS / THIS WEEK / THIS MONTH', () => {
+    const now = Date.now();
+    const mk = (id: string, hoursAgo: number) =>
+      releaseFromLiveModel(fixture({ id, created: Math.floor(now / 1000) - hoursAgo * 3600 }));
+    const out = groupReleasesByDate([mk('C/c', 3 * 24), mk('B/b', 3 * 24), mk('A/a', 2)], now);
+    expect(out.map((s) => s.label)).toEqual(['LAST 24 HOURS', 'THIS WEEK']);
+    expect(out[0].releases.map((r) => r.id)).toEqual(['A/a']);
+    expect(out[1].releases.map((r) => r.id)).toEqual(['C/c', 'B/b']); // newest first
+  });
+
+  it('puts 8-day-old releases in THIS MONTH and drops nothing stale', () => {
+    const now = Date.now();
+    const mk = (id: string, daysAgo: number) =>
+      releaseFromLiveModel(fixture({ id, created: Math.floor(now / 1000) - daysAgo * 86400 }));
+    const out = groupReleasesByDate([mk('A/a', 8), mk('B/b', 29)], now);
+    expect(out.map((s) => s.label)).toEqual(['THIS MONTH']);
+    expect(out[0].releases.map((r) => r.id)).toEqual(['A/a', 'B/b']);
   });
 
   it('labels kinds readably', () => {

@@ -14,7 +14,7 @@ export default async function ReleasesPage() {
         <PageHead
           kicker="🚀 New launches"
           title="MODEL RELEASES"
-          desc="Recently launched models — real data pulled live from OpenRouter, Hugging Face, Together and Groq, with wire news covering each launch."
+          desc="Fresh model launches from the last 30 days, grouped by date — LAST 24 HOURS / THIS WEEK / THIS MONTH. Real data live from OpenRouter, Hugging Face, Together and Groq, with wire news covering each launch."
           index="17"
         />
       </div>

@@ -86,11 +86,41 @@ export function releaseFromLiveModel(m: LiveModel): ModelRelease {
 }
 
 /** Keep only entries with a real date, inside the recency window, newest first. */
-export function filterRecent(releases: ModelRelease[], days =180, now = Date.now()): ModelRelease[] {
+export function filterRecent(releases: ModelRelease[], days =30, now = Date.now()): ModelRelease[] {
   const cutoff = now / 1000 - days * 24 * 3600;
   return releases
     .filter((r) => r.releasedAt > 0 && r.releasedAt >= cutoff)
     .sort((a, b) => b.releasedAt - a.releasedAt);
+}
+
+export interface ReleaseDateSection {
+  /** Section header, e.g. "LAST 24 HOURS", "THIS WEEK", "THIS MONTH". */
+  label: string;
+  /** Coarse bucket: 0 = last 24h, 1 = this week, 2 = this month. */
+  bucket: number;
+  releases: ModelRelease[];
+}
+
+/**
+ * Group fresh releases into coarse date sections — LAST 24 HOURS / THIS
+ * WEEK / THIS MONTH. Input must already be filterRecent()-ed (no stale
+ * entries survive). Pure and unit-tested. */
+export function groupReleasesByDate(releases: ModelRelease[], now = Date.now()): ReleaseDateSection[] {
+  const day = 86_400;
+  const age = (r: ModelRelease): number => (now / 1000 - r.releasedAt) / day;
+  const sections: ReleaseDateSection[] = [
+    { label: 'LAST 24 HOURS', bucket: 0, releases: [] },
+    { label: 'THIS WEEK', bucket: 1, releases: [] },
+    { label: 'THIS MONTH', bucket: 2, releases: [] },
+  ];
+  for (const r of releases) {
+    const a = age(r);
+    if (a < 1) sections[0].releases.push(r);
+    else if (a < 7) sections[1].releases.push(r);
+    else sections[2].releases.push(r);
+  }
+  for (const s of sections) s.releases.sort((a, b) => b.releasedAt - a.releasedAt);
+  return sections.filter((s) => s.releases.length > 0);
 }
 
 export function kindLabel(r: ModelRelease): string {
@@ -101,10 +131,15 @@ export function kindLabel(r: ModelRelease): string {
  * Live-fetch the newest releases from OpenRouter + Hugging Face + Together +
  * Groq, then classify real frontier vs open weights. Shows ONLY real,dated
  * model launches — no curated examples. */
-export async function getLiveReleases(days =180, limit =24): Promise<ModelRelease[]> {
+export async function getLiveReleases(days =30, limit =24): Promise<ModelRelease[]> {
   const live = await getLiveModels();
   const releases = filterRecent(live.map((m) => releaseFromLiveModel(m)), days);
   return releases.slice(0, limit);
+}
+
+/** Live releases grouped into LAST 24 HOURS / THIS WEEK / THIS MONTH sections. */
+export async function getLiveReleaseSections(days =30, limit =24): Promise<ReleaseDateSection[]> {
+  return groupReleasesByDate(await getLiveReleases(days, limit));
 }
 
 /**
