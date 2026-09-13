@@ -85,9 +85,9 @@ export function LiveModelsView() {
                                 HF ↗
                               </a>
                             )}
-                            {m.openrouterUrl && (
-                              <a className="open" href={m.openrouterUrl} target="_blank" rel="noopener noreferrer">
-                                OR ↗
+                            {m.modelsdevUrl && (
+                              <a className="open" href={m.modelsdevUrl} target="_blank" rel="noopener noreferrer">
+                                MD ↗
                               </a>
                             )}
                           </span>

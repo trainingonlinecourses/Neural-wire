@@ -3,20 +3,20 @@
  *
  * The curated roster (benchmarks.ts) holds sourced, official numbers but can
  * only move as fast as a human updates it. This module pulls the newest models
- * directly from OpenRouter (created timestamps) and Hugging Face trending on
- * every call, then tries to pull official benchmark numbers from each model's
- * own HF model card. Nothing here is invented: numbers come from the card or
- * are omitted.
+ * directly from the keyless models.dev registry (213 providers — OpenAI,
+ * Anthropic, Google, Meta, xAI, DeepSeek, Qwen, Moonshot, MiniMax, Mistral…)
+ * and Hugging Face trending on every call, then tries to pull official
+ * benchmark numbers from each model's own HF model card. Nothing here is
+ * invented: numbers come from the card or are omitted.
  */
 
 /** Bump when extraction/merge logic changes — invalidates the route cache. */
-export const DATA_VERSION = '2026-08-16.2';
+export const DATA_VERSION = '2026-09-10.1';
 
 const HF_API = 'https://huggingface.co/api';
 
-const OPENROUTER_API = 'https://openrouter.ai/api/v1/models';
-const TOGETHER_API = 'https://api.together.xyz/v1/models';
-const GROQ_API = 'https://api.groq.com/openai/v1/models';
+/** Keyless aggregated registry: release dates, open_weights, per-1M pricing. */
+const MODELSDEV_API = 'https://models.dev/api.json';
 
 /** One officially-reported benchmark number pulled from a model card. */
 export interface LiveBenchmark {
@@ -24,7 +24,7 @@ export interface LiveBenchmark {
   value: number;
 }
 
-/** Real per-token pricing from the OpenRouter registry (USD). */
+/** Real per-1M-token pricing (USD) from the models.dev registry. */
 export interface LivePricing {
   prompt?: number;
   completion?: number;
@@ -35,12 +35,12 @@ export interface LiveModel {
   name: string; // short display name, e.g. "Qwen3.8-27B"
   vendor: string;
   created: number; // epoch seconds (0 when unknown)
-  context?: number; // context length in tokens (OpenRouter)
+  context?: number; // context length in tokens (models.dev `limit.context`)
   downloads?: number;
   likes?: number;
   trendingScore?: number;
   hfUrl?: string;
-  openrouterUrl?: string;
+  modelsdevUrl?: string; // registry detail page (models.dev provider#model)
   pricing?: LivePricing;
   benchmarks: LiveBenchmark[];
 }
@@ -101,6 +101,7 @@ export function vendorFromId(id: string): string {
 
 /**
  * Extract benchmark numbers from a markdown model card. Only plain
+
  * pipe-tables are parsed (the format most labs use); HTML-table cards return
  * nothing rather than guessing. Frontier cards today report modern
  * benchmarks (HLE, Terminal Bench, DeepSWE…) as often as MMLU, so any
@@ -181,50 +182,96 @@ async function fetchCardMarkdown(hfId: string): Promise<string> {
   }
 }
 
-/** Newest models from OpenRouter (created timestamps), limit by recency. */
-export async function fetchOpenRouterNewest(limit = 18, maxAgeDays = 120): Promise<LiveModel[]> {
+/**
+ * Newest releases from the keyless models.dev registry. Each provider entry
+ * (OpenAI, Anthropic, Google, Meta, xAI, DeepSeek, Moonshot, MiniMax, Mistral,
+ * Qwen/Alibaba, Nvidia, Cohere, Amazon, Groq, togetherai…) carries per-model
+ * `release_date` (ISO), `open_weights`, `limit.context` and `cost`
+ * (real USD per 1M tokens). Frontier-only providers' models keep their
+ * official release date; open-weight models also get a HF repo link when a
+ * matching Hugging Face org exists.
+ */
+export async function fetchModelsDevNewest(limit = 24, maxAgeDays = 30): Promise<LiveModel[]> {
   try {
-    const j = await fetchJSON<{
-      data: Array<{
-        id: string;
-        name?: string;
-        created?: number;
-        context_length?: number;
-        hugging_face_id?: string;
-        pricing?: { prompt?: string | number; completion?: string | number };
-      }>;
-    }>(OPENROUTER_API);
+    const j = await fetchJSON<Record<string, { name?: string; models?: Record<string, ModelsDevModel> }>>(MODELSDEV_API);
     const now = Date.now() / 1000;
     const out: LiveModel[] = [];
-    for (const raw of j.data) {
-      const created = typeof raw.created === 'number' ? raw.created : 0;
-      if (!created || now - created > maxAgeDays * 24 * 3600) continue;
-      const hfId = (raw.hugging_face_id || '').trim();
-      const id = hfId || raw.id;
-      const name = hfId ? hfId.split('/').slice(1).join('/') : raw.id.split('/').slice(1).join('/');
-      const pricing = raw.pricing
-        ? {
-            prompt: num(raw.pricing.prompt),
-            completion: num(raw.pricing.completion),
-          }
-        : undefined;
-      out.push({
-        id,
-        name: name || raw.id,
-        vendor: vendorFromId(id),
-        created,
-        context: typeof raw.context_length === 'number' ? raw.context_length : undefined,
-        hfUrl: hfId ? `https://huggingface.co/${hfId}` : undefined,
-        openrouterUrl: `https://openrouter.ai/${raw.id}`,
-        pricing,
-        benchmarks: [],
-      });
+    for (const [providerId, provider] of Object.entries(j)) {
+      for (const m of Object.values(provider.models || {})) {
+        if (!m.release_date) continue;
+        const created = parseIsoDay(m.release_date);
+        if (!created || now - created > maxAgeDays * 24 * 3600) continue;
+        const id = `${providerId}/${m.id}`;
+        const vendor = providerName(providerId, provider.name) || vendorFromId(m.id);
+        const openWeights = m.open_weights === true;
+        out.push({
+          id,
+          name: m.name || m.id,
+          vendor,
+          created,
+          context: typeof m.limit?.context === 'number' ? m.limit.context : undefined,
+          hfUrl: openWeights ? guessHfUrl(m.id, vendor) : undefined,
+          modelsdevUrl: `https://models.dev/${providerId}`,
+          pricing:
+            m.cost && (m.cost.input != null || m.cost.output != null)
+              ? { prompt: m.cost.input, completion: m.cost.output }
+              : undefined,
+          benchmarks: [],
+        });
+      }
     }
     out.sort((a, b) => b.created - a.created);
     return out.slice(0, limit);
   } catch {
     return [];
   }
+}
+
+/** Raw model row of the models.dev registry (fields the desk consumes). */
+interface ModelsDevModel {
+  id: string;
+  name?: string;
+  release_date?: string;
+  open_weights?: boolean;
+  limit?: { context?: number };
+  cost?: { input?: number; output?: number };
+}
+
+/** Parse an ISO day ("2026-09-04") to epoch seconds (UTC noon to survive TZ shifts). */
+export function parseIsoDay(iso: string): number {
+  const t = Date.parse(iso + 'T12:00:00Z');
+  return Number.isFinite(t) ? Math.floor(t / 1000) : 0;
+}
+
+/** Display name for a models.dev provider (registry name or prettified id). */
+export function providerName(providerId: string, name?: string): string {
+  if (name) return name;
+  return providerId
+    .split('-')
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(' ');
+}
+
+/** Best-effort HF repo URL for an open-weight model id (deduped by HF later). */
+function guessHfUrl(modelId: string, vendor: string): string | undefined {
+  const known: Record<string, string> = {
+    openai: 'openai',
+    google: 'google',
+    meta: 'meta-llama',
+    nvidia: 'nvidia',
+    mistral: 'mistralai',
+    moonshot: 'moonshotai',
+    deepseek: 'deepseek-ai',
+    alibaba: 'Qwen',
+    qwen: 'Qwen',
+    minimax: 'MiniMaxAI',
+    'z.ai': 'zai-org',
+    ibm: 'ibm-granite',
+    microsoft: 'microsoft',
+    cohere: 'cohere',
+  };
+  const org = known[vendor.toLowerCase()];
+  return org ? `https://huggingface.co/${org}/${modelId}` : undefined;
 }
 
 /** Normalize a numeric or numeric-string price to a number (USD per token). */
@@ -264,88 +311,25 @@ export async function fetchHfTrending(limit = 14): Promise<LiveModel[]> {
   }
 }
 
-/** Newest models from Together AI. */
-export async function fetchTogetherNewest(limit = 12): Promise<LiveModel[]> {
-  try {
-    const j = await fetchJSON<{ data: Array<{ id: string; display_name?: string; created_at?: string; model_type?: string; context_length?: number }> }>(
-      TOGETHER_API,
-    );
-    const out: LiveModel[] = [];
-    for (const raw of j.data || []) {
-      // Only include text generation models
-      if (raw.model_type && !['chat', 'completion', 'instruct'].includes(raw.model_type)) continue;
-      const created = raw.created_at ? Math.floor(new Date(raw.created_at).getTime() / 1000) : 0;
-      out.push({
-        id: raw.id,
-        name: raw.display_name || raw.id.split('/').pop() || raw.id,
-        vendor: vendorFromId(raw.id),
-        created,
-        context: raw.context_length,
-        hfUrl: `https://huggingface.co/${raw.id}`,
-        benchmarks: [],
-      });
-    }
-    out.sort((a, b) => b.created - a.created);
-    return out.slice(0, limit);
-  } catch {
-    return [];
-  }
-}
-
-/** Newest models from Groq. */
-export async function fetchGroqNewest(limit = 12): Promise<LiveModel[]> {
-  try {
-    const j = await fetchJSON<{ data: Array<{ id: string; created?: number; owned_by?: string }> }>(
-      GROQ_API,
-    );
-    const out: LiveModel[] = [];
-    for (const raw of j.data || []) {
-      // Filter to known model families
-      const id = raw.id;
-      if (!id.match(/llama|mixtral|gemma|qwen|deepseek|whisper|distil/i)) continue;
-      out.push({
-        id: 'groq/' + id,
-        name: id,
-        vendor: vendorFromId(id),
-        created: raw.created || 0,
-        benchmarks: [],
-      });
-    }
-    return out.slice(0, limit);
-  } catch {
-    return [];
-  }
-}
-
 /**
- * Merge OpenRouter + HF trending + Together + Groq into one newest-first
- * list (deduped by HF id), attaching card-extracted benchmarks to the
+ * Merge models.dev releases + Hugging Face trending into one newest-first
+ * list (deduped by id), attaching card-extracted benchmarks to the
  * top entries. Bounded card fetches keep the route fast.
  */
 export async function getLiveModels(): Promise<LiveModel[]> {
-  const [fromOr, fromHf, fromTogether, fromGroq] = await Promise.all([
-    fetchOpenRouterNewest(),
-    fetchHfTrending(),
-    fetchTogetherNewest(),
-    fetchGroqNewest(),
-  ]);
+  const [fromRegistry, fromHf] = await Promise.all([fetchModelsDevNewest(), fetchHfTrending()]);
   const byId = new Map<string, LiveModel>();
-  for (const m of fromOr) byId.set(m.id, m);
+  for (const m of fromRegistry) byId.set(m.id, m);
   for (const m of fromHf) {
     const ex = byId.get(m.id);
     if (ex) {
       ex.downloads = ex.downloads ?? m.downloads;
       ex.likes = ex.likes ?? m.likes;
       ex.trendingScore = ex.trendingScore ?? m.trendingScore;
+      ex.hfUrl = ex.hfUrl ?? m.hfUrl;
     } else {
       byId.set(m.id, m);
     }
-  }
-  for (const m of fromTogether) {
-    if (!byId.has(m.id)) byId.set(m.id, m);
-  }
-  for (const m of fromGroq) {
-    if (!byId.has(m.id)) byId.set(m.id, m);
   }
   const merged = [...byId.values()].sort((a, b) => b.created - a.created);
   // Attach card benchmarks to the freshest entries only (bounded work).
@@ -357,7 +341,7 @@ export async function getLiveModels(): Promise<LiveModel[]> {
       }
     }),
   );
-  return merged.slice(0, 22);
+  return merged.slice(0, 30);
 }
 
 export function fmtDownloads(n: number | undefined): string {

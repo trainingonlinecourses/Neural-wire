@@ -1,15 +1,15 @@
 /**
  * MODEL RELEASES — REAL recently-launched models, pulled live from:
- *  • OpenRouter  (frontier/closed + open models — real `created`
- *    timestamps and REAL per-token USD pricing)
+ *  • models.dev   (keyless aggregated registry — 213 providers: OpenAI,
+ *    Anthropic, Google, Meta, xAI, DeepSeek, Moonshot, MiniMax, Mistral,
+ *    Qwen/Alibaba, Nvidia, Cohere, Amazon, Groq, togetherai… with real
+ *    `release_date` ISO stamps and REAL per-1M-token USD pricing)
  *  • Hugging Face (open-weight repos — real `createdAt`, downloads, likes)
- *  • Together AI (open models — real `created_at` listing dates)
- *  • Groq (open-model hosting)
  *
  * Classification: a model with a Hugging Face repo → OPEN WEIGHTS
- * (the HF card is the authoritative source);no HF repo → FRONTIER /
- * API-ONLY commercial model (sourced from its OpenRouter page). Cost
- * tier is derived from REAL OpenRouter pricing when present. Nothing here
+ * (the HF card is the authoritative source); no HF repo → FRONTIER /
+ * API-ONLY commercial model (sourced from its models.dev provider page).
+ * Cost tier is derived from REAL registry pricing when present. Nothing here
  * is fabricated — every field comes from a live registry API.
  */
 
@@ -25,27 +25,27 @@ export interface ModelRelease {
   releasedAt: number;
   /** true = repo on Hugging Face (open weights); false = API-only frontier. */
   openSource: boolean;
-  /** Derived from REAL OpenRouter pricing: free|low|medium|high|unknown. */
+  /** Derived from REAL registry pricing: free|low|medium|high|unknown. */
   costTier: string;
   context?: number;
   downloads?: number;
   likes?: number;
   trendingScore?: number;
-  /** Real Hugging Face repo (open weights. */
+  /** Real Hugging Face repo (open weights). */
   hfUrl?: string;
-  /** Real OpenRouter model page. */
-  openrouterUrl?: string;
-  /** Primary real reference link (HF card when open, else OpenRouter page. */
+  /** Real models.dev provider page. */
+  modelsdevUrl?: string;
+  /** Primary real reference link (HF card when open, else models.dev page). */
   source: string;
-  /** Real USD per 1M input tokens (OpenRouter pricing. */
+  /** Real USD per 1M input tokens (registry pricing). */
   pricePromptPerM?: number;
-  /** Real USD per 1M output tokens (OpenRouter pricing. */
+  /** Real USD per 1M output tokens (registry pricing). */
   priceCompletionPerM?: number;
 }
 
-/** Scale a real per-token OpenRouter price to per-1M-token USD. */
+/** Registry prices are already per-1M tokens — pass through unchanged. */
 export function perMillion(v: number | undefined): number | undefined {
-  return v != null ? v * 1_000_000 : undefined;
+  return v;
 }
 
 /** Real cost tier from actual per-1M-token USD pricing (exact zeros → free). */
@@ -78,8 +78,8 @@ export function releaseFromLiveModel(m: LiveModel): ModelRelease {
     likes: m.likes,
     trendingScore: m.trendingScore,
     hfUrl: m.hfUrl,
-    openrouterUrl: m.openrouterUrl,
-    source: m.hfUrl ?? m.openrouterUrl ?? '',
+    modelsdevUrl: m.modelsdevUrl,
+    source: m.hfUrl ?? m.modelsdevUrl ?? '',
     pricePromptPerM: promptPerM,
     priceCompletionPerM: completionPerM,
   };
@@ -128,8 +128,8 @@ export function kindLabel(r: ModelRelease): string {
 }
 
 /**
- * Live-fetch the newest releases from OpenRouter + Hugging Face + Together +
- * Groq, then classify real frontier vs open weights. Shows ONLY real,dated
+ * Live-fetch the newest releases from models.dev + Hugging Face, then
+ * classify real frontier vs open weights. Shows ONLY real, dated
  * model launches — no curated examples. */
 export async function getLiveReleases(days =30, limit =24): Promise<ModelRelease[]> {
   const live = await getLiveModels();

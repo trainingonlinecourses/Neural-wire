@@ -21,8 +21,8 @@ function fixture(m: Partial<LiveModel> & { id: string }): LiveModel {
 }
 
 describe('live model releases (real registry mappers)', () => {
-  it('scales per-token OpenRouter pricing to USD per 1M tokens', () => {
-    expect(perMillion(0.000006)).toBe(6);
+  it('passes registry pricing through (already per-1M tokens)', () => {
+    expect(perMillion(6)).toBe(6);
     expect(perMillion(undefined)).toBeUndefined();
   });
 
@@ -40,7 +40,7 @@ describe('live model releases (real registry mappers)', () => {
     expect(open.openSource).toBe(true);
     expect(open.source).toBe('https://huggingface.co/Qwen/Qwen3.8-27B');
     const frontier = releaseFromLiveModel(
-      fixture({ id: 'gpt-5.1', openrouterUrl: 'https://openrouter.ai/gpt-5.1' }),
+      fixture({ id: 'gpt-5.1', modelsdevUrl: 'https://openrouter.ai/gpt-5.1' }),
     );
     expect(frontier.openSource).toBe(false);
     expect(frontier.source).toBe('https://openrouter.ai/gpt-5.1');

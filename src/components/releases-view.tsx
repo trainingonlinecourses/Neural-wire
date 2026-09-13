@@ -43,7 +43,7 @@ export function ReleasesView({ data }: { data: NewsData }) {
   const [failed, setFailed] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  // Pull live releases from OpenRouter + Hugging Face + Together + Groq.
+  // Pull live releases from models.dev + Hugging Face.
   useEffect(() => {
     let alive = true;
     fetch('/api/models/releases', { cache: 'no-store' })
@@ -137,11 +137,11 @@ export function ReleasesView({ data }: { data: NewsData }) {
 
       <div className="wrap">
         <div className="meta-row">
-          <span>RECENTLY LAUNCHED MODELS — LIVE FROM OPENROUTER · HUGGING FACE · TOGETHER · GROQ</span>
+          <span>RECENTLY LAUNCHED MODELS — LIVE FROM MODELS.DEV · HUGGING FACE</span>
           <span className="meta-right dim">frontier = API-only · open = public weights on HF</span>
         </div>
         {failed && <p className="empty">Live release registry unavailable right now — try again in a moment.</p>}
-        {!releases && !failed && <p className="empty">⟳ polling OpenRouter + Hugging Face + Together + Groq…</p>}
+        {!releases && !failed && <p className="empty">⟳ polling models.dev + Hugging Face…</p>}
         {releases && releases.length === 0 && <p className="empty">No recently-launched models found in the registries right now.</p>}
                 {releases && releases.length > 0 && totalReleases === 0 && <p className="empty">No launches match the current filter.</p>}
         {visible.map((s) => (
@@ -245,9 +245,9 @@ function ReleaseCard({
         <span className={`rel-kind${release.openSource ? ' open' : ' frontier'}`}>{kindLabel(release)}</span>
       </div>
       <div className="rel-stats">
-        <span className="rel-stat" title="Cost tier from real OpenRouter pricing">💲 {COST_LABELS[release.costTier] ?? release.costTier}</span>
+        <span className="rel-stat" title="Cost tier from real registry pricing (models.dev)">💲 {COST_LABELS[release.costTier] ?? release.costTier}</span>
         {release.pricePromptPerM != null && (
-          <span className="rel-stat" title="Real OpenRouter input price">{release.pricePromptPerM > 0 ? 'in ' + fmtMoney(release.pricePromptPerM) : 'in $0'}</span>
+          <span className="rel-stat" title="Real registry input price (USD per 1M tokens, models.dev)">{release.pricePromptPerM > 0 ? 'in ' + fmtMoney(release.pricePromptPerM) : 'in $0'}</span>
         )}
         {release.context && <span className="rel-stat" title="Context window">🧠 ctx {Math.round(release.context / 1000)}k</span>}
         {release.downloads != null && <span className="rel-stat" title="Downloads (HF)">⬇ {fmtDownloads(release.downloads)}</span>}
@@ -259,8 +259,8 @@ function ReleaseCard({
         {release.hfUrl && (
           <a className="open rel-src" href={release.hfUrl} target="_blank" rel="noopener noreferrer">HF ↗</a>
         )}
-        {release.openrouterUrl && (
-          <a className="open rel-src" href={release.openrouterUrl} target="_blank" rel="noopener noreferrer">OR ↗</a>
+        {release.modelsdevUrl && (
+          <a className="open rel-src" href={release.modelsdevUrl} target="_blank" rel="noopener noreferrer" title="models.dev provider page">MD ↗</a>
         )}
         {release.source && (
           <a className="open rel-src" href={release.source} target="_blank" rel="noopener noreferrer" title={release.source}>CARD ↗</a>
